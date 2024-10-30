@@ -3,8 +3,9 @@ read -p "Post title: " title
 filename="_posts/$(date +%Y-%m-%d)-${title// /-}.md"
 cat >$filename <<-EOM
 ---
-layout: post
 title: "$title"
+author: knowgyu
+description: " "
 date: $(date +%Y-%m-%d) $(date +%H:%M:%S) +0900
 categories: []
 tags: []
