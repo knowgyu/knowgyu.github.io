@@ -19,7 +19,7 @@ title: knowgyu # the main title
 tagline: 안녕하세요! # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  안녕하세요. 배웠던 내용을 정리하는 블로그입니다.
+  안녕하세요구르트
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
@@ -61,7 +61,7 @@ analytics:
   google:
     id: # fill in your Google Analytics ID
   goatcounter:
-    id: knowgyu # fill in your GoatCounter ID
+    id: knowgyu
   umami:
     id: # fill in your Umami ID
     domain: # fill in your Umami domain
