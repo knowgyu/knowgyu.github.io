@@ -1,0 +1,15 @@
+#!/bin/bash
+read -p "Post title: " title
+filename="_posts/$(date +%Y-%m-%d)-${title// /-}.md"
+cat >$filename <<-EOM
+---
+layout: post
+title: "$title"
+date: $(date +%Y-%m-%d) $(date +%H:%M:%S) +0900
+categories: []
+tags: []
+---
+
+여기에 글 내용을 작성하세요.
+EOM
+echo "New post created: $filename"
