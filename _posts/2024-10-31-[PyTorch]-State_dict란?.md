@@ -2,7 +2,7 @@
 title: "[PyTorch] State_dict란?"
 author: knowgyu
 description: " "
-date: 2024-10-31 12:08:32 +0900
+date: 2023-11-15 12:08:32 +0900
 math: true
 categories: [PyTorch]
 tags: [PyTorch]

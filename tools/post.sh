@@ -7,8 +7,9 @@ title: "$title"
 author: knowgyu
 description: " "
 date: $(date +%Y-%m-%d) $(date +%H:%M:%S) +0900
-categories: []
-tags: []
+math: true
+categories: [PyTorch]
+tags: [PyTorch]
 ---
 
 여기에 글 내용을 작성하세요.
