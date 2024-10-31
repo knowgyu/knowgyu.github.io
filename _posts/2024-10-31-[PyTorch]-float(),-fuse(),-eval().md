@@ -2,7 +2,7 @@
 title: "[PyTorch] float(), fuse(), eval()"
 author: knowgyu
 description: " "
-date: 2024-10-31 12:09:49 +0900
+date: 2023-11-15 12:09:49 +0900
 math: true
 categories: [PyTorch]
 tags: [PyTorch]
