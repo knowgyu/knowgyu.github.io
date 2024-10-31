@@ -78,7 +78,8 @@ Moon
 > An example showing the `info` type prompt.
 {: .prompt-info }
 
-> An example showing the `warning` type prompt.
+> An example showing{: .prompt-tip }
+ the `warning` type prompt.
 {: .prompt-warning }
 
 > An example showing the `danger` type prompt.
