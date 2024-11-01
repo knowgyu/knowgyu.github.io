@@ -8,15 +8,13 @@ categories: [Deep Learning, PyTorch]
 tags: [PyTorch]
 ---
 
-#PyTorch #모델 #모델/불러오기 
-***
 본 문서는 모델을 불러오는 과정에서 사용되는 `float()`, `fuse()`, `eval()`함수에 대해 다룹니다.
 
 ## fuse()
 ***
-`fuse()` 함수는 여러개의 PyTorch 모듈을 하나의 모듈로 합칠 때 사용됩니다. 이는 memory access time과 kernel launch time을 줄여 성능을 향상시킬 수 있습니다.
-특히 elementwise addition, multiplication, and activation functions에서 유용합니다. 이러한 퓨전 프로세스는 연산들을 하나의 커널로 합치고, 메모리를 읽고 쓰는 횟수를 줄여줍니다.
-아래는 `torch.jit.script`를 사용해 함수를 합치는 예시입니다.
+`fuse()` 함수는 여러개의 PyTorch 모듈을 하나의 모듈로 합칠 때 사용됩니다. 이는 memory access time과 kernel launch time을 줄여 성능을 향상시킬 수 있습니다.<br>
+특히 elementwise addition, multiplication, and activation functions에서 유용합니다. 이러한 퓨전 프로세스는 연산들을 하나의 커널로 합치고, 메모리를 읽고 쓰는 횟수를 줄여줍니다.<br>
+아래는 `torch.jit.script`를 사용해 함수를 합치는 예시입니다.<br>
 ```python
 import torch
 
@@ -61,7 +59,5 @@ print(float_tensor)
 ```
 
 
-
-These functions are commonly used in PyTorch for various purposes. I hope this helps! Let me know if you have any further questions.
 
 https://coffeedjimmy.github.io/pytorch/2019/11/05/pytorch_nograd_vs_train_eval/
