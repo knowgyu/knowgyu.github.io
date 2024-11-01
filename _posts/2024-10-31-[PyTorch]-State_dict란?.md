@@ -8,9 +8,7 @@ categories: [Deep Learning, PyTorch]
 tags: [PyTorch]
 ---
 
-#PyTorch #State_dict #모델 #파이토치
-***
-참고 : https://tutorials.pytorch.kr/recipes/recipes/what_is_state_dict.html
+https://tutorials.pytorch.kr/recipes/recipes/what_is_state_dict.html<br>
 
 ## STATE_DICT란?
 ---
