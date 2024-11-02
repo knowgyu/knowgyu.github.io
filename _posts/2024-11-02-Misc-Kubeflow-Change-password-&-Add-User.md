@@ -108,7 +108,7 @@ kubectl rollout restart deployment dex -n auth
 
 - 접속 확인
 
-![Untitled.png](/assets/img/kubeflow/kubepipe401.png)
+![Untitled.png](/assets/img/kubeflow/kubepipe402.png)
 
 ⚠️ 위 이미지에서 좌측 상단을 보면, 네임스페이스가 할당되지 않은 것을 확인할 수 없습니다.
 
@@ -154,7 +154,7 @@ profile.kubeflow.org/유저네임 created
 
 Kubeflow 대시보드를 새로고침(F5) 합니다.
 
-![Untitled.png](/assets/img/kubeflow/kubepipe402.png)
+![Untitled.png](/assets/img/kubeflow/kubepipe401.png)
 
 정상적으로 네임스페이스가 할당된 것을 확인할 수 있습니다.
 
