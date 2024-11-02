@@ -2,7 +2,7 @@
 title: "Kubeflow Pipeline을 활용한 Yolo 학습 파이프라인 시작하기"
 author: knowgyu
 description: " "
-date: 2024-11-02 03:52:04 +0900
+date: 2023-11-23 03:52:04 +0900
 math: true
 categories: [MLOps, Kubeflow-Pipeline]
 tags: [MLOps, Kubeflow]
