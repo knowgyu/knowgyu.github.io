@@ -115,7 +115,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: 'sw2-pv-test'
+  storageClassName: 'knowgyu-pv-test'
   hostPath:
     path: "/data/datasets/coco8"
   nodeAffinity:
@@ -125,7 +125,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - stans-dev
+          - knowgyu
 ```
 
 > `accessModes` 의 경우 Many와 Once가 있는데, Many로 설정하게 된다면 여러 개의 노드에서 동시에 사용할 수 있도록 지정하는 것입니다. 하지만, 현재 minikube를 이용해 단일 노드로 생성했기에, RWO모드로 지정합니다.
@@ -136,9 +136,9 @@ spec:
 
 - `name: pv-test`
 - `storage: 1Gi`
-- `storageClassName: 'sw2-pv-test'`
+- `storageClassName: 'knowgyu-pv-test'`
 - `path: "/data/datasets/coco8"`
-- `values : stans-dev`
+- `values : knowgyu`
 
 <br>
 
