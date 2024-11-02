@@ -8,7 +8,7 @@ author: knowgyu
 description: " "
 date: $(date +%Y-%m-%d) $(date +%H:%M:%S) +0900
 math: true
-categories: [MLOps, Kubeflow-Pipeline]
+categories: [MLOps, Kubeflow-Pipeline-Run]
 tags: [MLOps, Kubeflow]
 ---
 
