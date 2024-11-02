@@ -2,7 +2,7 @@
 title: "PV Mount & HyperParameter Tuning"
 author: knowgyu
 description: " "
-date: 2024-11-02 08:14:07 +0900
+date: 2023-12-05 08:14:07 +0900
 math: true
 categories: [MLOps, Kubeflow-Pipeline-YOLOv8]
 tags: [MLOps, Kubeflow]
@@ -295,7 +295,7 @@ def train_pipeline(
 
 ## 정리
 
-YOLOv8의 경우 모델과 데이터셋이 없더라도, 기본적으로 `coco128` 데이터셋과 [`yolov8n.pt`](http://yolov8n.pt) 모델을 다운로드해 학습을 실행합니다. 하지만, 커스텀 데이터셋을 학습시키기 위해선 파이프라인의 각 컴포넌트들이 실행될 때 내 클러스터 노드의 볼륨에 있는 데이터에 접근해 읽고, 아티팩트를 저장할 수 있어야합니다.
+YOLOv8의 경우 모델과 데이터셋이 없더라도, 기본적으로 `coco128` 데이터셋과 `yolov8n.pt` 모델을 다운로드해 학습을 실행합니다. 하지만, 커스텀 데이터셋을 학습시키기 위해선 파이프라인의 각 컴포넌트들이 실행될 때 내 클러스터 노드의 볼륨에 있는 데이터에 접근해 읽고, 아티팩트를 저장할 수 있어야합니다.
 
 이를 위해, `pv.yaml`을 통해 내 클러스터 노드의 경로를 지정해 Persistent Volume을 생성하였고, 각 컴포넌트에서 PV에 마운트하기위해 `pvc.yaml`을 생성했고, `dsl.VolumeOp` 에서 PVC를 생성할 수 있지만, 미리 생성한 PVC를 이용해 PV와 PVC를 바인딩하여 각 컴포넌트에서 내 클러스터 노드 로컬 볼륨에 접근할 수 있습니다.
 
@@ -328,7 +328,7 @@ model = YOLO("yolov8n.pt")
 result_grid = model.tune(data='coco8.yaml', use_ray=True)
 ```
 
-~~학습 컴포넌트를 거쳐 생성된 [`last.pt`](http://last.pt) 를 불러와 하이퍼파라미터 튜닝을 하는 컴포넌트를 추가해보겠습니다.~~
+~~학습 컴포넌트를 거쳐 생성된 `knowgyu`를 불러와 하이퍼파라미터 튜닝을 하는 컴포넌트를 추가해보겠습니다.~~
 
 - ~~tune 컴포넌트~~
 
@@ -436,7 +436,7 @@ def train(
     results = model.train(data='coco8.yaml', epochs=epochs, imgsz=imgsz, batch=batchsize,
                           project='testprj', name='testexp', exist_ok=True,)
 
-    return os.path.join('testprj','testexp','weights','last.pt')
+    return os.path.join('testprj','testexp','weights','knowgyu')
     
 @partial(
     create_component_from_func,
