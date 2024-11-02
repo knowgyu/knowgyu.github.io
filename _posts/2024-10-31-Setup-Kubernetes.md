@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-11-19 14:02:58 +0900
 math: true
-categories: [MLOps, Kubeflow, Setup]
+categories: [MLOps, Kubeflow-Setup]
 tags: [MLOps, Kubeflow]
 ---
 
@@ -149,7 +149,7 @@ kubectl get nodes -o wide
 
 # 아래와 같은 출력이 보이면 정상 설치
 NAME        STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
-stans-dev   Ready    control-plane,master   18h   v1.21.7   192.168.1.87   <none>        Ubuntu 22.04.3 LTS   6.2.0-36-generic   docker://24.0.7
+gyu         Ready    control-plane,master   18h   v1.21.7   192.168.1.87   <none>        Ubuntu 22.04.3 LTS   6.2.0-36-generic   docker://24.0.7
 ```
 
 ## Install Kubernetes Modules(클라이언트 노드)
@@ -260,5 +260,5 @@ kubectl get nodes "-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable
 
 ```bash
 NAME        GPU
-stans-dev   1
+gyu         1
 ```

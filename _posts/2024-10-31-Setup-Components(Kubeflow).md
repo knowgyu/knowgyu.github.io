@@ -4,13 +4,11 @@ author: knowgyu
 description: " "
 date: 2023-11-16 14:03:07 +0900
 math: true
-categories: [MLOps, Kubeflow, Setup]
+categories: [MLOps, Kubeflow-Setup]
 tags: [MLOps, Kubeflow]
 ---
 
-#kubeflow #MLOps 
-https://mlops-for-all.github.io/docs/introduction/intro
-# Setup Component
+# Setup Components
 ---
 ## **Kubeflow v1.4.0**
 
