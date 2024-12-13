@@ -4,8 +4,8 @@ author: knowgyu
 description: " "
 date: 2023-11-13 16:01:17 +0900
 math: true
-categories: []
-tags: []
+categories: [Deep Learning, Dataset]
+tags: [Augmentation, Albumentations]
 ---
 
 ## 1. Albumentations란?
