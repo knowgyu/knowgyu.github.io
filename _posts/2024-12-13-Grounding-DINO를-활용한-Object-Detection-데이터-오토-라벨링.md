@@ -4,8 +4,8 @@ author: knowgyu
 description: " "
 date: 2023-10-18 15:49:06 +0900
 math: true
-categories: []
-tags: []
+categories: [Deep Learning, Auto annotation]
+tags: [Auto Annotation, Grounding DINO]
 ---
 
 **본 문서에서는 Zero-Shot Object Detector 모델인 Grounding DINO를 활용해 이미지 라벨링 작업을 자동화하는 방법을 다룹니다.**   
