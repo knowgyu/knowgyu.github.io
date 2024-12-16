@@ -8,8 +8,8 @@ author: knowgyu
 description: " "
 date: $(date +%Y-%m-%d) $(date +%H:%M:%S) +0900
 math: true
-categories: [Computer Science, 코딩테스트 합격자되기 C++편]
-tags: [Algorithm, DataStructure]
+categories: [Computer Science, Problem Solving]
+tags: [Algorithm, Problem Solving, BOJ]
 ---
 
 여기에 글 내용을 작성하세요.
