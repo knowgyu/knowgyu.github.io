@@ -7,15 +7,15 @@ pin : true
 categories: []
 tags: [첫번째 게시글]
 ---
-# 테스트 페이지
-
-안녕하세요. 블로그 첫 게시글입니다.
+# 안녕하세요!
 
 ```cpp
 #include <iostream>
 using namespace std;
 
 int main(){
+  
+  cout << "Hello World!" << '\n';
   return 0;
 }
 ```
