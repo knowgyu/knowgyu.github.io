@@ -1,7 +1,7 @@
 ---
 title: "안녕하세요"
 author: knowgyu
-date: 2000-01-01 11:22:33 +0900
+date: 2018-03-02 11:22:33 +0900
 description: 첫번째 게시글
 pin : true
 categories: []
