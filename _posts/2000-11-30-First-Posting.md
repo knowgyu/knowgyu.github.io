@@ -2,7 +2,7 @@
 title: "안녕하세요"
 author: knowgyu
 date: 2018-03-02 11:22:33 +0900
-description: 첫번째 게시글
+description: 자기소개
 pin : true
 categories: []
 tags: [첫번째 게시글]
