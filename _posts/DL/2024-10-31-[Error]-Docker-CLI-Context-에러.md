@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-09-05 13:49:13 +0900
 math: true
-categories: [Docker]
+categories: [Computer Science, Docker]
 tags: [Docker, Trouble Shooting]
 ---
 

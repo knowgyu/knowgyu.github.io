@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-11-15 12:09:49 +0900
 math: true
-categories: [Deep Learning, PyTorch]
+categories: [AI & CV, PyTorch]
 tags: [PyTorch]
 ---
 

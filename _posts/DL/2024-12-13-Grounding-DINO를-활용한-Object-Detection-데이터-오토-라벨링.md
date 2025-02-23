@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-10-18 15:49:06 +0900
 math: true
-categories: [Deep Learning, Dataset]
+categories: [AI & CV, Dataset]
 tags: [Auto Annotation, Grounding DINO]
 ---
 

@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-12-10 09:43:07 +0900
 math: true
-categories: [MLOps, 4-Kubeflow-Pipeline-YOLOv8]
+categories: [AI & CV, Kubeflow]
 tags: [MLOps, Kubeflow]
 ---
 

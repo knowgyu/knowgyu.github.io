@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-11-13 16:01:17 +0900
 math: true
-categories: [Deep Learning, Dataset]
+categories: [AI & CV, Dataset]
 tags: [Augmentation, Albumentations]
 ---
 

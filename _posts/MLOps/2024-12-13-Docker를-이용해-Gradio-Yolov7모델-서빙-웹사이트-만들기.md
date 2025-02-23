@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2023-10-13 10:34:32 +0900
 math: true
-categories: [MLOps, Gradio를 활용한 웹 기반 서빙]
+categories: [AI & CV, Gradio를 활용한 웹 기반 서빙]
 tags: [MLOps, Yolo, Gradio, Docker]
 ---
 

@@ -4,7 +4,7 @@ author: knowgyu
 description: " "
 date: 2022-10-25 07:24:20 +0900
 math: true
-categories: [Embedded System, Control]
+categories: [Embedded System, Control Engineering]
 tags: [Embedded System, Control]
 ---
 
