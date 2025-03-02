@@ -82,7 +82,7 @@ tags: []
 
 > #### '23.12 Kubeflow 파이프라인 구축 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![Kubeflow](https://img.shields.io/badge/-Kubeflow-326CE5?style=flat-square&logo=kubeflow&logoColor=white)     ![Kubernetes](https://img.shields.io/badge/-Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
 > - Minikube를 활용하여 온프레미스 환경에서 YOLOv8 모델 학습 및 평가를 위한 Kubeflow 파이프라인 구축  
-> - **참고 링크**: [블로그 글](https://knowgyu.github.io/categories/mlops/)
+> - **참고 링크**: [블로그 글](https://knowgyu.github.io/categories/kubeflow/)
 {: .highlight}
 
 > #### '24.11 ArUco 마커를 활용한 자율주행 RC카 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![Raspberry Pi](https://img.shields.io/badge/-Raspberry%20Pi-A22846?style=flat-square&logo=raspberrypi&logoColor=white)     ![Renesas](https://img.shields.io/badge/-Renesas-0077C8?style=flat-square&logo=renesas&logoColor=white)
