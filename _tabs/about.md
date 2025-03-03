@@ -84,3 +84,10 @@ order: 4
 > - 라즈베리파이로 영상 처리 후 ArUco 마커를 인식하여 제어 명령을 생성하고, 르네사스 보드에서 명령을 받아 모터를 제어하는 자율주행 RC카  
 > - **참고 링크**: [블로그 글](https://knowgyu.github.io/posts/Aruco-%EB%A7%88%EC%BB%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%9E%90%EC%9C%A8%EC%A3%BC%ED%96%89-RC%EC%B9%B4/)
 {: .highlight}
+
+> #### '25.01 - '25.02 AI 실버케어 로봇 영웅이 ![C++](https://img.shields.io/badge/-C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)     ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![ROS](https://img.shields.io/badge/-ROS-22314E?style=flat-square&logo=ros&logoColor=white)
+> - 독거노인을 위한 로봇으로 주요 특징으로는 4가지 모니터링 기능 제공.
+> - 정신 건강 모니터링, 활력 징후 모니터링, 실시간 활동 모니터링, 주거 환경 모니터링
+> - Hector SLAM + ROS Navigation Stack을 활용해 실내 자율주행 기능 구현
+> - **참고 링크**: [블로그 글](https://knowgyu.github.io/categories/ros/)
+{: .highlight}

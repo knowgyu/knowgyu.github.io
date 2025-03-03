@@ -74,6 +74,7 @@ tags: []
 > #### '22.07 - '23.06 자율운항선박 프로젝트 ![C++](https://img.shields.io/badge/-C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)     ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![ROS](https://img.shields.io/badge/-ROS-22314E?style=flat-square&logo=ros&logoColor=white)
 > - IMO 레벨 3 수준의 자율운항 선박(무인 경비선) 개발   
 >   Jetson 보드와 ST 보드, 그리고 GNSS와 LiDAR 센서를 활용해 수동운항 및 자율운항 구현  
+>   Adaptive Clustering 알고리즘과 Artificial Potential Field 알고리즘을 활용해 장애물 인식 및 회피 알고리즘 구현
 {: .highlight}
 
 > #### '23.08 - '23.11 지능형 CCTV 딥러닝 모델 개발 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![PyTorch](https://img.shields.io/badge/-PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
@@ -88,4 +89,11 @@ tags: []
 > #### '24.11 ArUco 마커를 활용한 자율주행 RC카 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![Raspberry Pi](https://img.shields.io/badge/-Raspberry%20Pi-A22846?style=flat-square&logo=raspberrypi&logoColor=white)     ![Renesas](https://img.shields.io/badge/-Renesas-0077C8?style=flat-square&logo=renesas&logoColor=white)
 > - 라즈베리파이로 영상 처리 후 ArUco 마커를 인식하여 제어 명령을 생성하고, 르네사스 보드에서 명령을 받아 모터를 제어하는 자율주행 RC카  
 > - **참고 링크**: [블로그 글](https://knowgyu.github.io/posts/Aruco-%EB%A7%88%EC%BB%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%9E%90%EC%9C%A8%EC%A3%BC%ED%96%89-RC%EC%B9%B4/)
+{: .highlight}
+
+> #### '25.01 - '25.02 AI 실버케어 로봇 영웅이 ![C++](https://img.shields.io/badge/-C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)     ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![ROS](https://img.shields.io/badge/-ROS-22314E?style=flat-square&logo=ros&logoColor=white)
+> - 독거노인을 위한 로봇으로 주요 특징으로는 4가지 모니터링 기능 제공.
+> - 정신 건강 모니터링, 활력 징후 모니터링, 실시간 활동 모니터링, 주거 환경 모니터링
+> - Hector SLAM + ROS Navigation Stack을 활용해 실내 자율주행 기능 구현
+> - **참고 링크**: [블로그 글](https://knowgyu.github.io/categories/ros/)
 {: .highlight}
