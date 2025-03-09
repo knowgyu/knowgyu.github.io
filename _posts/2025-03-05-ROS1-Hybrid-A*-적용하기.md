@@ -101,6 +101,7 @@ roslaunch hybrid_astar_planner test.launch
 > 모든 의존성이 올바르게 설정되어 있지 않으면, 빌드 시 오류가 발생할 수 있습니다.
 {: .prompt-warning}
 
+![alt text](/assets/img/ros/astar.gif)
 ---
 
 
