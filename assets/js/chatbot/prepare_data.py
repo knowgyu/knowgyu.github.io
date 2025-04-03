@@ -1,129 +1,128 @@
 import os
 import json
 import re
+import time
+import gc
 from datetime import datetime
+from pathlib import Path
 import yaml
+import openai
+from dotenv import load_dotenv
+
+# 환경 변수 로드
+load_dotenv()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def extract_frontmatter(content):
-    """마크다운 파일에서 frontmatter와 콘텐츠 추출"""
-    pattern = r'^---\s*$(.*?)^---\s*$(.*)'
-    match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
-
+    """마크다운 파일에서 YAML 프론트매터 추출"""
+    pattern = r'^---\s*\n(.*?)\n---\s*\n'
+    match = re.search(pattern, content, re.DOTALL)
     if not match:
         return {}, content
 
     frontmatter_text = match.group(1)
-    content_text = match.group(2)
+    rest_content = content[match.end():]
 
-    # YAML 파싱 시도
     try:
         frontmatter = yaml.safe_load(frontmatter_text)
-        if frontmatter is None:
-            frontmatter = {}
+        return frontmatter, rest_content
     except Exception as e:
         print(f"YAML 파싱 오류: {e}")
-        # 수동 파싱 시도
-        frontmatter = {}
-        for line in frontmatter_text.strip().split('\n'):
-            if ':' in line:
-                key, value = line.split(':', 1)
-                frontmatter[key.strip()] = value.strip()
+        return {}, content
 
-    return frontmatter, content_text.strip()
+def chunk_text(text, chunk_size=800, overlap=100, max_chunks=5):
+    """텍스트를 일정 크기의 청크로 나눔"""
+    chunks = []
+    start = 0
+
+    # 텍스트가 너무 짧으면 그대로 반환
+    if len(text) <= chunk_size:
+        return [text]
+
+    while start < len(text) and len(chunks) < max_chunks:
+        end = min(start + chunk_size, len(text))
+
+        # 문장 경계 찾기
+        if end < len(text):
+            sentence_end = max(
+                text.rfind('. ', start, end),
+                text.rfind('? ', start, end),
+                text.rfind('! ', start, end)
+            )
+
+            if sentence_end > start:
+                end = sentence_end + 2
+
+        chunks.append(text[start:end].strip())
+        start = end - overlap
+
+    return chunks
+
+def create_embedding(text):
+    """OpenAI API를 사용해 텍스트 임베딩 생성"""
+    if not text.strip():
+        return None
+
+    try:
+        # 텍스트가 너무 길면 잘라내기 (OpenAI 제한)
+        if len(text) > 8000:
+            print(f"텍스트 길이 초과 ({len(text)}자), 8000자로 잘라냅니다.")
+            text = text[:8000]
+
+        response = openai.embeddings.create(  # 수정: openai.Embedding -> openai.embeddings
+            input=[text],  # input은 리스트로 전달
+            model="text-embedding-ada-002"
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        print(f"임베딩 생성 오류: {e}")
+        return None
+
 
 def process_post_file(file_path, category_from_path=''):
-    """포스트 파일 처리"""
+    """포스트 파일 처리 및 청크 생성"""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
 
+        # 프론트매터와 본문 분리
         frontmatter, post_content = extract_frontmatter(content)
 
-        filename = os.path.basename(file_path)
-        post_id = os.path.splitext(filename)[0]
+        # 파일명에서 날짜와 제목 추출 (yyyy-mm-dd-title.md)
+        file_name = os.path.basename(file_path)
+        match = re.match(r'(\d{4}-\d{2}-\d{2})-(.*?)\.md', file_name)
 
-        # 파일명에서 날짜 추출 (YYYY-MM-DD 형식)
-        date_match = re.match(r'(\d{4}-\d{2}-\d{2})', post_id)
-        date_from_filename = date_match.group(1) if date_match else None
+        if match:
+            date_str = match.group(1)
+            title_from_filename = match.group(2).replace('-', ' ')
+        else:
+            date_str = frontmatter.get('date', datetime.now().strftime('%Y-%m-%d'))
+            title_from_filename = os.path.splitext(file_name)[0]
 
-        # 프론트매터나 파일명에서 날짜 처리
-        date_str = ''
-        if 'date' in frontmatter:
-            try:
-                # 다양한 날짜 형식 처리 시도
-                date_formats = [
-                    '%Y-%m-%d %H:%M:%S %z',  # 2025-02-12 13:46:04 +0900
-                    '%Y-%m-%d',              # 2025-02-12
-                    '%Y-%m-%d %H:%M:%S'      # 2025-02-12 13:46:04
-                ]
+        # 카테고리 처리 (프론트매터와 경로 모두 고려)
+        categories = frontmatter.get('categories', [])
+        if isinstance(categories, str):
+            categories = [categories]
 
-                for fmt in date_formats:
-                    try:
-                        date_obj = datetime.strptime(str(frontmatter['date']), fmt)
-                        date_str = date_obj.isoformat()
-                        break
-                    except ValueError:
-                        continue
-            except Exception as e:
-                print(f"날짜 형식 오류 ({file_path}): {e}")
-                # 파일명에서 날짜 사용
-                if date_from_filename:
-                    date_str = f"{date_from_filename}T00:00:00"
-        elif date_from_filename:
-            date_str = f"{date_from_filename}T00:00:00"
-
-        # 카테고리 처리
-        categories = []
-        if 'categories' in frontmatter:
-            # 프론트매터의 카테고리 처리
-            if isinstance(frontmatter['categories'], list):
-                categories = frontmatter['categories']
-            elif isinstance(frontmatter['categories'], str):
-                # 문자열을 리스트로 변환 (쉼표로 구분된 경우 처리)
-                if ',' in frontmatter['categories']:
-                    categories = [c.strip() for c in frontmatter['categories'].split(',')]
-                else:
-                    categories = [frontmatter['categories']]
-
-        # 파일 경로에서 카테고리 추출 (프론트매터에 없는 경우)
-        if not categories and category_from_path:
-            # 경로를 슬래시로 구분된 카테고리로 변환
-            path_categories = category_from_path.replace('_', ' ').split('/')
-            categories = path_categories
+        # 경로 기반 카테고리 추가
+        if category_from_path and category_from_path not in categories:
+            categories.append(category_from_path)
 
         # 태그 처리
-        tags = []
-        if 'tags' in frontmatter:
-            if isinstance(frontmatter['tags'], list):
-                tags = frontmatter['tags']
-            elif isinstance(frontmatter['tags'], str):
-                # 문자열을 리스트로 변환
-                if ',' in frontmatter['tags']:
-                    tags = [t.strip() for t in frontmatter['tags'].split(',')]
-                # [tag1, tag2] 형식 처리
-                elif frontmatter['tags'].startswith('[') and frontmatter['tags'].endswith(']'):
-                    tags_str = frontmatter['tags'][1:-1]
-                    tags = [t.strip() for t in tags_str.split(',')]
-                else:
-                    tags = [frontmatter['tags']]
+        tags = frontmatter.get('tags', [])
+        if isinstance(tags, str):
+            tags = [tags]
 
-        # 최종 URL 경로 생성
-        # Jekyll 규칙에 따라 날짜와 제목으로 URL 형성
-        # 파일명에서 날짜 부분 제거
-        slug = re.sub(r'^\d{4}-\d{2}-\d{2}-', '', post_id)
-        url_path = f"/{slug}/"
+        # 포스트 URL 경로 생성
+        url_path = frontmatter.get('permalink', f"/{date_str.replace('-', '/')}/{title_from_filename.replace(' ', '-')}/")
 
-        # 카테고리 경로가 있는 경우 URL에 포함
-        if category_from_path:
-            # _posts/ 이후의 경로에서 파일명을 제외한 부분
-            category_path = '/'.join(category_from_path.split('/'))
-            if category_path:
-                url_path = f"/{category_path.lower()}/{slug}/"
+        # 포스트 ID 생성
+        post_id = re.sub(r'[^a-zA-Z0-9]', '-', url_path).strip('-')
 
-        # 최종 결과 반환
-        return {
+        # 결과 객체 생성
+        result = {
             'id': post_id,
-            'title': frontmatter.get('title', ''),
+            'title': frontmatter.get('title', title_from_filename),
             'path': url_path,
             'categories': categories,
             'content': post_content,
@@ -131,53 +130,205 @@ def process_post_file(file_path, category_from_path=''):
             'tags': tags,
             'author': frontmatter.get('author', '')
         }
+
+        # 청크 생성 (제목 + 내용에서)
+        full_text = f"{result['title']}\n\n{post_content}"
+        chunks = chunk_text(full_text)
+
+        # 청크 정보 저장
+        result['chunks'] = []
+        for i, chunk_content in enumerate(chunks):
+            result['chunks'].append({
+                'id': f"{post_id}_chunk_{i}",
+                'text': chunk_content,
+                'index': i
+            })
+
+        return result
     except Exception as e:
         print(f"파일 처리 중 오류 ({file_path}): {e}")
         return None
 
 def walk_posts_directory(posts_dir, base_path=''):
     """포스트 디렉토리 재귀적 탐색"""
+    print(f"디렉토리 탐색 중: {posts_dir}")
     all_posts = []
 
-    try:
-        for item in os.listdir(posts_dir):
-            full_path = os.path.join(posts_dir, item)
+    for item in os.listdir(posts_dir):
+        path = os.path.join(posts_dir, item)
 
-            # 숨김 파일 및 디렉토리 건너뛰기
-            if item.startswith('.'):
-                continue
-
-            # 파일인 경우 처리
-            if os.path.isfile(full_path) and item.endswith('.md'):
-                category_path = base_path if base_path else ''
-                post = process_post_file(full_path, category_path)
-                if post:
-                    all_posts.append(post)
-
-            # 디렉토리인 경우 재귀 호출
-            elif os.path.isdir(full_path):
-                # 현재 디렉토리 이름을 카테고리 경로에 추가
-                new_base_path = os.path.join(base_path, item) if base_path else item
-                sub_posts = walk_posts_directory(full_path, new_base_path)
-                all_posts.extend(sub_posts)
-    except Exception as e:
-        print(f"디렉토리 탐색 중 오류 ({posts_dir}): {e}")
+        if os.path.isdir(path):
+            # 디렉토리인 경우 재귀 탐색
+            # 디렉토리명을 카테고리로 사용
+            category = item if not base_path else f"{base_path}/{item}"
+            sub_posts = walk_posts_directory(path, category)
+            all_posts.extend(sub_posts)
+        elif item.endswith('.md'):
+            # 마크다운 파일인 경우 처리
+            post_data = process_post_file(path, base_path)
+            if post_data:
+                all_posts.append(post_data)
 
     return all_posts
 
-# 메인 실행 부분
+def save_embedding_batch(embeddings, batch_id, output_dir):
+    """임베딩 데이터를 분할 저장"""
+    os.makedirs(output_dir, exist_ok=True)
+    batch_path = os.path.join(output_dir, f"embeddings_batch_{batch_id}.json")
+    with open(batch_path, 'w', encoding='utf-8') as f:
+        json.dump(embeddings, f, ensure_ascii=False)
+    print(f"임베딩 배치 {batch_id} 저장 완료 ({len(embeddings)}개)")
+    return batch_path
+
 if __name__ == "__main__":
+    print("RAG를 위한 포스트 데이터 및 임베딩 생성 시작...")
+
+    # API 키 확인
+    if not openai.api_key:
+        print("OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인하세요.")
+        exit(1)
+    else:
+        print("OpenAI API 키가 설정되었습니다.")
+
+    # 디렉토리 및 파일 경로 설정
     posts_directory = os.path.join(os.getcwd(), '_posts')
     output_path = os.path.join(os.getcwd(), 'assets/js/chatbot/posts-data.json')
+    embedding_dir = os.path.join(os.getcwd(), 'assets/js/chatbot/embeddings')
+    index_path = os.path.join(embedding_dir, 'index.json')
 
-    # 모든 포스트 재귀적으로 처리
+    # 디렉토리 생성
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    os.makedirs(embedding_dir, exist_ok=True)
+
+    # 포스트 디렉토리 확인
+    if not os.path.exists(posts_directory):
+        print(f"포스트 디렉토리를 찾을 수 없습니다: {posts_directory}")
+        exit(1)
+    else:
+        print(f"포스트 디렉토리 확인됨: {posts_directory}")
+
+    # 모든 포스트 처리
+    print("포스트 파일 수집 및 처리 중...")
     posts = walk_posts_directory(posts_directory)
 
-    # 날짜별로 정렬 (최신 글 먼저)
+    # 날짜순 정렬 (최신 포스트 우선)
     posts.sort(key=lambda x: x.get('date', ''), reverse=True)
 
-    # JSON 파일 저장
+    # 너무 긴 콘텐츠 자르기
+    for post in posts:
+        if len(post['content']) > 20000:  # 약 20KB로 제한
+            post['content'] = post['content'][:20000] + "..."
+
+    print(f"{len(posts)}개 포스트 처리 완료, 저장 중...")
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(posts, f, ensure_ascii=False, indent=2)
 
-    print(f"성공적으로 {len(posts)}개의 포스트를 처리하여 {output_path}에 저장했습니다.")
+    # 배치 처리를 위한 준비
+    batch_size = 50  # 한 번에 처리할 청크 수
+    batch_id = 0
+    current_batch = {}
+    processed_chunks = set()
+    embedding_batches = []
+
+    # 기존 인덱스 파일 로드 (있으면)
+    if os.path.exists(index_path):
+        try:
+            with open(index_path, 'r', encoding='utf-8') as f:
+                index_data = json.load(f)
+                embedding_batches = index_data.get('batches', [])
+                processed_chunks = set(index_data.get('processed_chunks', []))
+                print(f"인덱스 로드: {len(processed_chunks)}개 청크 이미 처리됨")
+        except Exception as e:
+            print(f"인덱스 로드 실패: {e}")
+
+    # 포스트를 배치로 나눠 처리
+    total_chunks = sum(len(post.get('chunks', [])) for post in posts)
+    processed_count = 0
+
+    print(f"임베딩 생성 시작: 총 {total_chunks}개 청크 처리 예정")
+
+    for post in posts:
+        if 'chunks' not in post:
+            continue
+
+        for chunk in post['chunks']:
+            chunk_id = chunk['id']
+
+            # 이미 처리한 청크는 건너뛰기
+            if chunk_id in processed_chunks:
+                continue
+
+            # 텍스트가 너무 길면 잘라내기
+            if len(chunk['text']) > 8000:
+                chunk['text'] = chunk['text'][:8000]
+
+            print(f"임베딩 생성 중: {chunk_id} ({processed_count+1}/{total_chunks})")
+
+            try:
+                # API 요청 제한 방지
+                if processed_count > 0 and processed_count % 5 == 0:
+                    print("API 요청 제한 방지 위해 대기...")
+                    time.sleep(2)
+
+                embedding = create_embedding(chunk['text'])
+                if embedding:
+                    current_batch[chunk_id] = embedding
+                    processed_chunks.add(chunk_id)
+                    processed_count += 1
+
+                    # 배치가 다 차면 저장하고 메모리 비우기
+                    if len(current_batch) >= batch_size:
+                        batch_path = save_embedding_batch(current_batch, batch_id, embedding_dir)
+                        embedding_batches.append({
+                            'id': batch_id,
+                            'path': os.path.basename(batch_path),
+                            'chunks': list(current_batch.keys())
+                        })
+
+                        # 인덱스 업데이트
+                        with open(index_path, 'w', encoding='utf-8') as f:
+                            json.dump({
+                                'batches': embedding_batches,
+                                'processed_chunks': list(processed_chunks),
+                                'last_updated': datetime.now().isoformat()
+                            }, f, ensure_ascii=False, indent=2)
+
+                        # 메모리 비우기
+                        current_batch = {}
+                        gc.collect()  # 가비지 컬렉션 강제 실행
+                        batch_id += 1
+                        print(f"메모리 정리 및 배치 {batch_id-1} 저장 완료")
+            except Exception as e:
+                print(f"청크 {chunk_id} 임베딩 실패: {e}")
+                continue
+
+    # 남은 배치 저장
+    if current_batch:
+        batch_path = save_embedding_batch(current_batch, batch_id, embedding_dir)
+        embedding_batches.append({
+            'id': batch_id,
+            'path': os.path.basename(batch_path),
+            'chunks': list(current_batch.keys())
+        })
+
+    # 최종 인덱스 업데이트
+    with open(index_path, 'w', encoding='utf-8') as f:
+        json.dump({
+            'batches': embedding_batches,
+            'processed_chunks': list(processed_chunks),
+            'last_updated': datetime.now().isoformat()
+        }, f, ensure_ascii=False, indent=2)
+
+    print(f"처리 완료: {len(posts)}개 포스트, {len(processed_chunks)}개 임베딩")
+
+    # 클라이언트용 인덱스 파일 생성
+    index_js_path = os.path.join(os.getcwd(), 'assets/js/chatbot/embeddings-index.js')
+    with open(index_js_path, 'w', encoding='utf-8') as f:
+        f.write(f"// 자동 생성된 파일 - {datetime.now().isoformat()}\n")
+        f.write("const embeddingIndex = ")
+        json.dump({
+            'batches': embedding_batches,
+            'count': len(processed_chunks),
+            'last_updated': datetime.now().isoformat()
+        }, f, ensure_ascii=False, indent=2)
+        f.write(";\n\nexport default embeddingIndex;")

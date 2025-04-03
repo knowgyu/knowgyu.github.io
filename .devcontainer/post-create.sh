@@ -40,3 +40,9 @@ echo -e "\nunset LESS" >>~/.zshrc
 
 # NVM 자동 로드 설정 추가
 echo -e "\n# NVM 자동 로드\nexport NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"" >>~/.zshrc
+
+# Python 관련 패키지 설치
+echo "Installing Python packages..."
+sudo apt-get update
+sudo apt-get install -y python-is-python3 pip
+pip install pyyaml python-dotenv openai numpy
