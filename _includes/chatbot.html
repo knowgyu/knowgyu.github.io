@@ -10,7 +10,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     z-index: 9999 !important;
     overflow: hidden !important;
-    transition: all 0.3s ease !important;
+    transition: height 0.3s ease, width 0.3s ease, border-radius 0.3s ease !important;
   }
 
   #chatbot-container.collapsed {
@@ -24,8 +24,13 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    cursor: pointer !important;
+    cursor: grab !important;
+    user-select: none !important;
     font-weight: 600 !important;
+  }
+
+  .chatbot-header:active {
+    cursor: grabbing !important;
   }
 
   .chatbot-header h3 {
@@ -124,8 +129,8 @@
     height: 60px !important;
     width: 60px !important;
     border-radius: 50% !important;
-    right: 20px !important;
-    bottom: 20px !important;
+    right: 50px !important;
+    bottom: 50px !important;
     overflow: hidden !important;
   }
 
