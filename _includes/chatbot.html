@@ -5,12 +5,12 @@
     bottom: 50px !important;
     right: 20px !important;
     width: 350px !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     background-color: #fff !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     z-index: 9999 !important;
     overflow: hidden !important;
-    transition: height 0.3s ease !important;
+    transition: all 0.3s ease !important;
   }
 
   #chatbot-container.collapsed {
@@ -18,13 +18,14 @@
   }
 
   .chatbot-header {
-    padding: 10px 15px !important;
-    background-color: #4a89dc !important;
+    padding: 15px !important;
+    background: linear-gradient(135deg, #4a6cf7, #7038ff) !important;
     color: white !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     cursor: pointer !important;
+    font-weight: 600 !important;
   }
 
   .chatbot-header h3 {
@@ -60,14 +61,16 @@
   }
 
   .chatbot-messages .message.user {
-    background-color: #4a89dc !important;
+    background-color: #e6f2ff !important;
     color: white !important;
     margin-left: auto !important;
+    border-right: 3px solid #4a6cf7 !important;
   }
 
   .chatbot-messages .message.bot {
-    background-color: #f8f9fa !important;
+    background-color: #f5f7fb !important;
     color: #333 !important;
+    border-left: 3px solid #4a6cf7 !important;
   }
 
   .chatbot-messages .message.bot a {
@@ -101,12 +104,12 @@
 
   .chatbot-loading {
     display: inline-block !important;
-    height: 12px !important;
-    width: 12px !important;
-    border: 2px solid rgba(0, 0, 0, 0.2) !important;
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid rgba(74, 108, 247, 0.3) !important;
     border-radius: 50% !important;
-    border-top-color: #4a89dc !important;
-    animation: spin 1s infinite linear !important;
+    border-top-color: #4a6cf7 !important;
+    animation: spin 1s ease-in-out infinite !important;
     margin-right: 8px !important;
   }
 
@@ -118,7 +121,7 @@
 </style>
 
 <div id="chatbot-container" class="chatbot-container">
-  <div class="chatbot-header">
+  <div class="chatbot-header" style="font-family:'NanumBarunGothic">
     <h3>블로그 도우미</h3>
     <button id="chatbot-toggle">
       <i class="fas fa-chevron-down"></i>
