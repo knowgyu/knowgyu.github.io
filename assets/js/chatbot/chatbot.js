@@ -103,7 +103,7 @@ class BlogChatbot {
 
       // OpenAI API 호출 (Netlify 함수)
       const response = await fetch(
-        'https://your-netlify-app.netlify.app/.netlify/functions/chat',
+        'https://knowgyu-ai-functions.netlify.app/.netlify/functions/chat',
         {
           method: 'POST',
           headers: {
