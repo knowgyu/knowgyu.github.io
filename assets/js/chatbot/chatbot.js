@@ -29,7 +29,7 @@ class BlogChatbot {
 
   async init() {
     try {
-      // 데이터 로드
+      // 포스트 데이터 로드
       console.log('포스트 데이터 로드 시도...');
       const response = await fetch('/assets/js/chatbot/posts-data.json');
       this.postsData = await response.json();
@@ -79,16 +79,89 @@ class BlogChatbot {
     );
 
     try {
-      const answer = this.generateAnswer(userQuery);
-      // 로딩 메시지 업데이트
+      // 관련 포스트 찾기
+      const relevantPosts = this.findRelevantPosts(userQuery);
+
+      if (relevantPosts.length === 0) {
+        this.updateMessage(
+          loadingId,
+          '죄송합니다, 질문과 관련된 내용을 찾을 수 없습니다.',
+          'bot'
+        );
+        return;
+      }
+
+      // 관련 내용 추출
+      const context = relevantPosts
+        .map((post) => {
+          return `제목: ${post.title}\n내용: ${this.extractRelevantText(
+            post.content,
+            userQuery
+          )}`;
+        })
+        .join('\n\n');
+
+      // OpenAI API 호출 (Netlify 함수)
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: userQuery,
+          context: context,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('API 응답 오류: ' + response.status);
+      }
+
+      const data = await response.json();
+
+      // 결과 표시
+      let answer = data.answer;
+
+      // 출처 추가
+      answer += '<br><br><div class="sources">참고한 글: ';
+      answer += relevantPosts
+        .map((post) => {
+          // 경로가 /로 시작하는지 확인하고 조정
+          const path = post.path.startsWith('/')
+            ? post.path.substring(1)
+            : post.path;
+          return `<a href="/posts/${path}" target="_blank">${post.title}</a>`;
+        })
+        .join(', ');
+      answer += '</div>';
+
       this.updateMessage(loadingId, answer, 'bot');
     } catch (error) {
       console.error('답변 생성 중 오류:', error);
-      this.updateMessage(
-        loadingId,
-        '죄송합니다, 답변을 생성하는 중 오류가 발생했습니다.',
-        'bot'
-      );
+
+      // 오류 발생 시 대체 응답
+      let fallbackAnswer =
+        '죄송합니다, API 연결 중 문제가 발생했습니다.<br><br>';
+
+      // 관련 포스트가 있으면 기본 응답으로 제공
+      const relevantPosts = this.findRelevantPosts(userQuery);
+      if (relevantPosts.length > 0) {
+        fallbackAnswer += '<strong>관련된 글을 찾았습니다:</strong><br><br>';
+
+        relevantPosts.forEach((post) => {
+          const path = post.path.startsWith('/')
+            ? post.path.substring(1)
+            : post.path;
+
+          fallbackAnswer += `<div class="post-result">
+            <strong>${post.title}</strong>에서:<br>
+            ${this.extractRelevantText(post.content, userQuery)}<br>
+            <div class="source">출처: <a href="/posts/${path}" target="_blank">자세히 보기</a></div>
+          </div><br>`;
+        });
+      }
+
+      this.updateMessage(loadingId, fallbackAnswer, 'bot');
     }
   }
 
@@ -114,31 +187,6 @@ class BlogChatbot {
       lastMessage.innerHTML = text;
       this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
     }
-  }
-
-  generateAnswer(query) {
-    // 관련 포스트 찾기
-    const relevantPosts = this.findRelevantPosts(query);
-
-    if (relevantPosts.length === 0) {
-      return '죄송합니다, 질문과 관련된 내용을 찾을 수 없습니다.';
-    }
-
-    // 답변 생성
-    let answer = `<strong>질문과 관련된 내용을 찾았습니다:</strong><br><br>`;
-
-    relevantPosts.forEach((post) => {
-      // 관련 부분 추출
-      const relevantText = this.extractRelevantText(post.content, query);
-
-      answer += `<div class="post-result">
-        <strong>${post.title}</strong>에서:<br>
-        ${relevantText}<br>
-        <div class="source">출처: <a href="${post.path}" target="_blank">자세히 보기</a></div>
-      </div><br>`;
-    });
-
-    return answer;
   }
 
   findRelevantPosts(query) {
