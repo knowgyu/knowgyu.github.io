@@ -102,16 +102,19 @@ class BlogChatbot {
         .join('\n\n');
 
       // OpenAI API 호출 (Netlify 함수)
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: userQuery,
-          context: context,
-        }),
-      });
+      const response = await fetch(
+        'https://your-netlify-app.netlify.app/.netlify/functions/chat',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: userQuery,
+            context: context,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('API 응답 오류: ' + response.status);
