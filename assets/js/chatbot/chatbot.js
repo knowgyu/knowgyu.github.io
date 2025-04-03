@@ -54,13 +54,18 @@ class BlogChatbot {
 
   toggleChatbot() {
     this.container.classList.toggle('collapsed');
-    const icon = this.toggleButton.querySelector('i');
+
+    // 접힌 상태에 따라 처리
     if (this.container.classList.contains('collapsed')) {
-      icon.classList.remove('fa-chevron-down');
-      icon.classList.add('fa-chevron-up');
+      // 여기서는 아이콘 변경 로직이 필요 없음 (CSS로 처리)
+      console.log('챗봇이 접혔습니다.');
     } else {
-      icon.classList.remove('fa-chevron-up');
-      icon.classList.add('fa-chevron-down');
+      console.log('챗봇이 열렸습니다.');
+    }
+
+    // 자동 스크롤 (열린 경우)
+    if (!this.container.classList.contains('collapsed')) {
+      this.scrollToBottom();
     }
   }
 

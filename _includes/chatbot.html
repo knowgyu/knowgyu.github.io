@@ -118,13 +118,60 @@
       transform: rotate(360deg) !important;
     }
   }
+
+  /* 접힌 상태의 챗봇 스타일 */
+  #chatbot-container.collapsed {
+    height: 60px !important;
+    width: 60px !important;
+    border-radius: 50% !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    overflow: hidden !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-header {
+    height: 60px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-header h3 {
+    display: none !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-body {
+    display: none !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-header button {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 24px !important;
+  }
+
+  /* 아이콘 스타일 */
+  .chatbot-icon {
+    display: none !important;
+    font-size: 24px !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-icon {
+    display: block !important;
+  }
+
+  #chatbot-container.collapsed .chatbot-toggle-icon {
+    display: none !important;
+  }
 </style>
 
 <div id="chatbot-container" class="chatbot-container">
   <div class="chatbot-header" style="font-family:'NanumBarunGothic">
     <h3>GyuPT</h3>
     <button id="chatbot-toggle">
-      <i class="fas fa-chevron-down"></i>
+      <i class="fas fa-chevron-down chatbot-toggle-icon"></i>
+      <i class="fas fa-comments chatbot-icon"></i>
     </button>
   </div>
   <div class="chatbot-body">
