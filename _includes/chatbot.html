@@ -1,0 +1,145 @@
+<style>
+  /* 챗봇 스타일 - 인라인 버전 */
+  #chatbot-container {
+    position: fixed !important;
+    bottom: 50px !important;
+    right: 20px !important;
+    width: 350px !important;
+    border-radius: 12px !important;
+    background-color: #fff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    z-index: 9999 !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #chatbot-container.collapsed {
+    height: 50px !important;
+  }
+
+  .chatbot-header {
+    padding: 15px !important;
+    background: linear-gradient(135deg, #4a6cf7, #7038ff) !important;
+    color: white !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+  }
+
+  .chatbot-header h3 {
+    margin: 0 !important;
+    font-size: 16px !important;
+  }
+
+  .chatbot-header button {
+    background: none !important;
+    border: none !important;
+    color: white !important;
+    cursor: pointer !important;
+  }
+
+  .chatbot-body {
+    height: 400px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .chatbot-messages {
+    flex: 1 !important;
+    padding: 15px !important;
+    overflow-y: auto !important;
+  }
+
+  .chatbot-messages .message {
+    margin-bottom: 10px !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    max-width: 85% !important;
+    word-break: break-word !important;
+  }
+
+  .chatbot-messages .message.user {
+    background-color: #e6f2ff !important;
+    color: white !important;
+    margin-left: auto !important;
+    border-right: 3px solid #4a6cf7 !important;
+  }
+
+  .chatbot-messages .message.bot {
+    background-color: #f5f7fb !important;
+    color: #333 !important;
+    border-left: 3px solid #4a6cf7 !important;
+  }
+
+  .chatbot-messages .message.bot a {
+    color: #4a89dc !important;
+    text-decoration: underline !important;
+  }
+
+  .chatbot-input-container {
+    display: flex !important;
+    padding: 10px !important;
+    border-top: 1px solid #e9ecef !important;
+  }
+
+  .chatbot-input-container input {
+    flex: 1 !important;
+    padding: 8px 12px !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 4px 0 0 4px !important;
+    background-color: #fff !important;
+    color: #333 !important;
+  }
+
+  .chatbot-input-container button {
+    padding: 8px 16px !important;
+    border: none !important;
+    background-color: #4a89dc !important;
+    color: white !important;
+    border-radius: 0 4px 4px 0 !important;
+    cursor: pointer !important;
+  }
+
+  .chatbot-loading {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid rgba(74, 108, 247, 0.3) !important;
+    border-radius: 50% !important;
+    border-top-color: #4a6cf7 !important;
+    animation: spin 1s ease-in-out infinite !important;
+    margin-right: 8px !important;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg) !important;
+    }
+  }
+</style>
+
+<div id="chatbot-container" class="chatbot-container">
+  <div class="chatbot-header" style="font-family:'NanumBarunGothic">
+    <h3>블로그 도우미</h3>
+    <button id="chatbot-toggle">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+  <div class="chatbot-body">
+    <div id="chatbot-messages" class="chatbot-messages">
+      <div class="message bot">안녕하세요! 블로그 내용에 관한 질문이 있으시면 언제든지 물어보세요.</div>
+    </div>
+    <div class="chatbot-input-container">
+      <input
+        type="text"
+        id="chatbot-input"
+        placeholder="질문을 입력하세요..."
+      >
+      <button id="chatbot-submit">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
