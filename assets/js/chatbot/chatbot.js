@@ -64,6 +64,7 @@ class BlogChatbot {
     }
   }
 
+  // 수정된 handleUserInput 메서드
   async handleUserInput() {
     const userQuery = this.input.value.trim();
     if (userQuery === '') return;
@@ -74,12 +75,26 @@ class BlogChatbot {
 
     // 챗봇 응답 생성 (로딩 표시)
     const loadingId = this.addMessage(
-      '<div class="chatbot-loading"></div> 답변을 생성 중입니다...',
+      '<div class="chatbot-loading"></div>',
       'bot'
     );
 
     try {
-      // 관련 포스트 찾기
+      // API URL 설정 (기존과 동일)
+      let apiUrl;
+      const isLocalhost =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+      const netlifyDevPort = 8888;
+
+      if (isLocalhost) {
+        apiUrl = `http://localhost:${netlifyDevPort}/.netlify/functions/chat`;
+      } else {
+        apiUrl =
+          'https://knowgyu-ai-functions.netlify.app/.netlify/functions/chat';
+      }
+
+      // 관련 포스트 찾기 (기존과 동일)
       const relevantPosts = this.findRelevantPosts(userQuery);
       let context = '관련 정보를 찾을 수 없습니다.';
 
@@ -95,29 +110,7 @@ class BlogChatbot {
           .join('\n\n');
       }
 
-      // 자동으로 적절한 API 엔드포인트 선택
-      let apiUrl;
-
-      // 로컬 환경 감지 (localhost 또는 127.0.0.1)
-      const isLocalhost =
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1';
-
-      // Netlify CLI로 실행된 로컬 함수 검사 (기본 포트: 8888)
-      const netlifyDevPort = 8888;
-
-      if (isLocalhost) {
-        // 로컬 개발 환경에서는 로컬 Netlify Functions 사용
-        apiUrl = `http://localhost:${netlifyDevPort}/.netlify/functions/chat`;
-        console.log('로컬 개발 환경 감지: 로컬 Netlify 함수 사용');
-      } else {
-        // 프로덕션 환경에서는 배포된 Netlify Functions 사용
-        apiUrl =
-          'https://knowgyu-ai-functions.netlify.app/.netlify/functions/chat';
-        console.log('프로덕션 환경 감지: 배포된 Netlify 함수 사용');
-      }
-
-      // OpenAI API 호출
+      // API 호출
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -135,50 +128,80 @@ class BlogChatbot {
 
       const data = await response.json();
 
-      // 결과 표시
-      let answer = data.answer;
+      // 로딩 메시지를 빈 메시지로 업데이트
+      this.updateMessage(loadingId, '', 'bot');
 
-      // 출처 추가
-      answer += '<br><br><div class="sources">참고한 글: ';
-      answer += relevantPosts
-        .map((post) => {
-          // 경로에서 카테고리 부분 제거하고 마지막 부분만 사용
-          const pathParts = post.path.split('/').filter((part) => part !== '');
-          const lastPart = pathParts[pathParts.length - 1] || '';
+      // 스트리밍 시뮬레이션 시작
+      await this.simulateStreaming(data.chunks || [data.answer], loadingId);
 
-          return `<a href="/posts/${lastPart}/" target="_blank">${post.title}</a>`;
-        })
-        .join(', ');
-      answer += '</div>';
+      // 참고 링크 추가
+      if (relevantPosts.length > 0) {
+        const sourcesList = document.createElement('div');
+        sourcesList.className = 'sources';
+        sourcesList.innerHTML =
+          '참고한 글: ' +
+          relevantPosts
+            .map((post) => {
+              const pathParts = post.path
+                .split('/')
+                .filter((part) => part !== '');
+              const lastPart = pathParts[pathParts.length - 1] || '';
+              return `<a href="/posts/${lastPart}/" target="_blank">${post.title}</a>`;
+            })
+            .join(', ');
 
-      this.updateMessage(loadingId, answer, 'bot');
+        const botMessage = this.messagesContainer.querySelector(
+          `.message.bot:last-child`
+        );
+        botMessage.appendChild(sourcesList);
+      }
     } catch (error) {
       console.error('답변 생성 중 오류:', error);
+      this.updateMessage(
+        loadingId,
+        '죄송합니다, 응답 생성 중 오류가 발생했습니다.',
+        'bot'
+      );
+    }
+  }
 
-      // 오류 발생 시 대체 응답
-      let fallbackAnswer =
-        '죄송합니다, API 연결 중 문제가 발생했습니다.<br><br>';
+  // 스트리밍 효과를 시뮬레이션하는 메서드 - 속도 조절
+  async simulateStreaming(chunks, messageId) {
+    const botMessage = this.messagesContainer.querySelector(
+      `.message.bot:last-child`
+    );
+    let currentText = '';
 
-      // 관련 포스트가 있으면 기본 응답으로 제공
-      const relevantPosts = this.findRelevantPosts(userQuery);
-      if (relevantPosts.length > 0) {
-        fallbackAnswer += '<strong>관련된 글을 찾았습니다:</strong><br><br>';
+    // chunks가 문자열이면 배열로 변환
+    if (typeof chunks === 'string') {
+      chunks = [chunks];
+    }
 
-        relevantPosts.forEach((post) => {
-          // 경로에서 카테고리 부분 제거하고 마지막 부분만 사용
-          const pathParts = post.path.split('/').filter((part) => part !== '');
-          const lastPart = pathParts[pathParts.length - 1] || '';
+    for (const chunk of chunks) {
+      // 한 번에 청크 전체가 아닌 문자 단위로 표시
+      for (let i = 0; i < chunk.length; i++) {
+        currentText += chunk[i];
+        botMessage.innerHTML = currentText;
+        this.scrollToBottom();
 
-          fallbackAnswer += `<div class="post-result">
-            <strong>${post.title}</strong>에서:<br>
-            ${this.extractRelevantText(post.content, userQuery)}<br>
-            <div class="source">출처: <a href="/posts/${lastPart}/" target="_blank">자세히 보기</a></div>
-          </div><br>`;
-        });
+        // 문자별 타이핑 딜레이 (20-40ms 사이의 랜덤 값)
+        // 이 값을 조절하여 원하는 속도로 설정
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.floor(Math.random() * 20) + 20)
+        );
       }
 
-      this.updateMessage(loadingId, fallbackAnswer, 'bot');
+      // 각 청크(문장) 사이의 추가 딜레이
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // 공백 추가
+      if (chunk[chunk.length - 1] !== ' ') {
+        currentText += ' ';
+        botMessage.innerHTML = currentText;
+      }
     }
+
+    return currentText;
   }
 
   addMessage(text, sender) {
