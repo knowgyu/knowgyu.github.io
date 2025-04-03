@@ -126,11 +126,11 @@ class BlogChatbot {
       answer += '<br><br><div class="sources">참고한 글: ';
       answer += relevantPosts
         .map((post) => {
-          // 경로가 /로 시작하는지 확인하고 조정
-          const path = post.path.startsWith('/')
-            ? post.path.substring(1)
-            : post.path;
-          return `<a href="/posts/${path}" target="_blank">${post.title}</a>`;
+          // 경로에서 카테고리 부분 제거하고 마지막 부분만 사용
+          const pathParts = post.path.split('/').filter((part) => part !== '');
+          const lastPart = pathParts[pathParts.length - 1] || '';
+
+          return `<a href="/posts/${lastPart}/" target="_blank">${post.title}</a>`;
         })
         .join(', ');
       answer += '</div>';
@@ -149,14 +149,14 @@ class BlogChatbot {
         fallbackAnswer += '<strong>관련된 글을 찾았습니다:</strong><br><br>';
 
         relevantPosts.forEach((post) => {
-          const path = post.path.startsWith('/')
-            ? post.path.substring(1)
-            : post.path;
+          // 경로에서 카테고리 부분 제거하고 마지막 부분만 사용
+          const pathParts = post.path.split('/').filter((part) => part !== '');
+          const lastPart = pathParts[pathParts.length - 1] || '';
 
           fallbackAnswer += `<div class="post-result">
             <strong>${post.title}</strong>에서:<br>
             ${this.extractRelevantText(post.content, userQuery)}<br>
-            <div class="source">출처: <a href="/posts/${path}" target="_blank">자세히 보기</a></div>
+            <div class="source">출처: <a href="/posts/${lastPart}/" target="_blank">자세히 보기</a></div>
           </div><br>`;
         });
       }
@@ -171,21 +171,27 @@ class BlogChatbot {
     messageElement.innerHTML = text;
 
     this.messagesContainer.appendChild(messageElement);
-    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+    this.scrollToBottom(); // 자동 스크롤 추가
+    this.saveConversation(); // 대화 내역 저장
 
     return Date.now().toString(); // 메시지 ID 반환
   }
 
   updateMessage(id, text, sender) {
     // 실제 구현에서는 ID를 활용하여 특정 메시지 업데이트
-    // 이 간단한 예제에서는 마지막 메시지를 업데이트
     const messages = this.messagesContainer.querySelectorAll(
       `.message.${sender}`
     );
     const lastMessage = messages[messages.length - 1];
     if (lastMessage) {
-      lastMessage.innerHTML = text;
-      this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+      // 사용자 검색어로 키워드 하이라이팅 적용
+      const userQuery = this.input.value.trim();
+      const keywords = userQuery.split(' ').filter((k) => k.length > 1);
+      const highlightedText = this.highlightKeywords(text, keywords);
+
+      lastMessage.innerHTML = highlightedText;
+      this.scrollToBottom(); // 자동 스크롤
+      this.saveConversation(); // 대화 내역 저장
     }
   }
 
@@ -248,6 +254,40 @@ class BlogChatbot {
 
     // 키워드를 찾지 못한 경우 앞부분 반환
     return content.substring(0, 200).replace(/\n/g, ' ') + '...';
+  }
+
+  // 이전 대화 내역 저장
+  saveConversation() {
+    const messages = this.messagesContainer.innerHTML;
+    localStorage.setItem('chatHistory', messages);
+    console.log('대화 내역이 저장되었습니다.');
+  }
+
+  // 저장된 대화 내역 불러오기
+  loadConversation() {
+    const history = localStorage.getItem('chatHistory');
+    if (history) {
+      this.messagesContainer.innerHTML = history;
+      console.log('이전 대화 내역을 불러왔습니다.');
+      this.scrollToBottom();
+    }
+  }
+
+  // 키워드 하이라이팅
+  highlightKeywords(text, keywords) {
+    if (!keywords || keywords.length === 0) return text;
+
+    keywords.forEach((keyword) => {
+      if (keyword.length < 2) return; // 너무 짧은 키워드는 제외
+      const regex = new RegExp(`(${keyword})`, 'gi');
+      text = text.replace(regex, '<span class="highlight">$1</span>');
+    });
+    return text;
+  }
+
+  // 자동 스크롤
+  scrollToBottom() {
+    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
   }
 }
 
