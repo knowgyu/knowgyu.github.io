@@ -81,40 +81,53 @@ class BlogChatbot {
     try {
       // 관련 포스트 찾기
       const relevantPosts = this.findRelevantPosts(userQuery);
+      let context = '관련 정보를 찾을 수 없습니다.';
 
-      if (relevantPosts.length === 0) {
-        this.updateMessage(
-          loadingId,
-          '죄송합니다, 질문과 관련된 내용을 찾을 수 없습니다.',
-          'bot'
-        );
-        return;
+      if (relevantPosts.length > 0) {
+        context = relevantPosts
+          .map(
+            (post) =>
+              `제목: ${post.title}\n내용: ${this.extractRelevantText(
+                post.content,
+                userQuery
+              )}`
+          )
+          .join('\n\n');
       }
 
-      // 관련 내용 추출
-      const context = relevantPosts
-        .map((post) => {
-          return `제목: ${post.title}\n내용: ${this.extractRelevantText(
-            post.content,
-            userQuery
-          )}`;
-        })
-        .join('\n\n');
+      // 자동으로 적절한 API 엔드포인트 선택
+      let apiUrl;
 
-      // OpenAI API 호출 (Netlify 함수)
-      const response = await fetch(
-        'https://knowgyu-ai-functions.netlify.app/.netlify/functions/chat',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            question: userQuery,
-            context: context,
-          }),
-        }
-      );
+      // 로컬 환경 감지 (localhost 또는 127.0.0.1)
+      const isLocalhost =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+
+      // Netlify CLI로 실행된 로컬 함수 검사 (기본 포트: 8888)
+      const netlifyDevPort = 8888;
+
+      if (isLocalhost) {
+        // 로컬 개발 환경에서는 로컬 Netlify Functions 사용
+        apiUrl = `http://localhost:${netlifyDevPort}/.netlify/functions/chat`;
+        console.log('로컬 개발 환경 감지: 로컬 Netlify 함수 사용');
+      } else {
+        // 프로덕션 환경에서는 배포된 Netlify Functions 사용
+        apiUrl =
+          'https://knowgyu-ai-functions.netlify.app/.netlify/functions/chat';
+        console.log('프로덕션 환경 감지: 배포된 Netlify 함수 사용');
+      }
+
+      // OpenAI API 호출
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: userQuery,
+          context: context,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error('API 응답 오류: ' + response.status);
