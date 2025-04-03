@@ -1,3 +1,6 @@
 [submodule "assets/lib"]
 	path = assets/lib
 	url = https://github.com/cotes2020/chirpy-static-assets.git
+[submodule "knowgyu-ai-functions"]
+	path = knowgyu-ai-functions
+	url = https://github.com/knowgyu/knowgyu-ai-functions.git
