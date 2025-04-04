@@ -159,6 +159,12 @@ class BlogChatbot {
           `.message.bot:last-child`
         );
         botMessage.appendChild(sourcesList);
+
+        // 참고 링크 추가 후 스크롤 조정
+        this.scrollToBottom();
+
+        // DOM 업데이트를 위해 약간의 지연 후 한 번 더 스크롤
+        setTimeout(() => this.scrollToBottom(), 100);
       }
     } catch (error) {
       console.error('답변 생성 중 오류:', error);
@@ -192,7 +198,7 @@ class BlogChatbot {
         // 문자별 타이핑 딜레이 (20-40ms 사이의 랜덤 값)
         // 이 값을 조절하여 원하는 속도로 설정
         await new Promise((resolve) =>
-          setTimeout(resolve, Math.floor(Math.random() * 20) + 20)
+          setTimeout(resolve, Math.floor(Math.random() * 20) + 10)
         );
       }
 
