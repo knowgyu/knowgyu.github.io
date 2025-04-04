@@ -29,11 +29,13 @@ class BlogChatbot {
 
   async init() {
     try {
-      // 포스트 데이터 로드
       console.log('포스트 데이터 로드 시도...');
       const response = await fetch('/assets/js/chatbot/posts-data.json');
       this.postsData = await response.json();
       console.log(`${this.postsData.length}개의 포스트 데이터 로드됨`);
+
+      // 이전 대화 불러오기
+      this.loadConversation();
 
       // 이벤트 리스너 설정
       this.submitButton.addEventListener('click', () => this.handleUserInput());
@@ -160,6 +162,9 @@ class BlogChatbot {
         );
         botMessage.appendChild(sourcesList);
 
+        // 참고 링크 추가 후 대화 내역 저장
+        this.saveConversation();
+
         // 참고 링크 추가 후 스크롤 조정
         this.scrollToBottom();
 
@@ -196,21 +201,24 @@ class BlogChatbot {
         this.scrollToBottom();
 
         // 문자별 타이핑 딜레이 (20-40ms 사이의 랜덤 값)
-        // 이 값을 조절하여 원하는 속도로 설정
         await new Promise((resolve) =>
-          setTimeout(resolve, Math.floor(Math.random() * 20) + 10)
+          setTimeout(resolve, Math.floor(Math.random() * 10) + 10)
         );
       }
 
       // 각 청크(문장) 사이의 추가 딜레이
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // 공백 추가
+      // 문장 끝에 공백 추가
       if (chunk[chunk.length - 1] !== ' ') {
         currentText += ' ';
         botMessage.innerHTML = currentText;
       }
     }
+
+    // 모든 청크를 표시한 뒤 대화 내역 저장
+    botMessage.innerHTML = currentText;
+    this.saveConversation();
 
     return currentText;
   }
@@ -309,13 +317,15 @@ class BlogChatbot {
   // 이전 대화 내역 저장
   saveConversation() {
     const messages = this.messagesContainer.innerHTML;
-    localStorage.setItem('chatHistory', messages);
-    console.log('대화 내역이 저장되었습니다.');
+    // localStorage 대신 sessionStorage 사용
+    sessionStorage.setItem('chatHistory', messages);
+    console.log('대화 내역이 세션에 저장되었습니다.');
   }
 
   // 저장된 대화 내역 불러오기
   loadConversation() {
-    const history = localStorage.getItem('chatHistory');
+    // localStorage 대신 sessionStorage에서 불러오기
+    const history = sessionStorage.getItem('chatHistory');
     if (history) {
       this.messagesContainer.innerHTML = history;
       console.log('이전 대화 내역을 불러왔습니다.');
