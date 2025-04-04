@@ -71,13 +71,39 @@ def create_embedding(text):
 
         response = openai.embeddings.create(  # 수정: openai.Embedding -> openai.embeddings
             input=[text],  # input은 리스트로 전달
-            model="text-embedding-ada-002"
+            model="text-embedding-3-large"
         )
         return response.data[0].embedding
     except Exception as e:
         print(f"임베딩 생성 오류: {e}")
         return None
 
+def process_markdown_file(md_file_path):
+    # 파일 내용 읽기
+    with open(md_file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    frontmatter, body = extract_frontmatter(content)
+
+    # 프론트매터의 date가 있으면 사용, 없으면 파일 생성 시간 사용
+    fm_date = frontmatter.get('date', None)
+    if fm_date:
+        post_date = fm_date  # 프론트매터에 정의된 date
+    else:
+        # 파일 생성 시각으로 대체
+        timestamp = os.path.getmtime(md_file_path)
+        post_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
+    post_data = {
+        "title": frontmatter.get("title", os.path.splitext(os.path.basename(md_file_path))[0]),
+        "date": post_date,
+        "categories": frontmatter.get("categories", []),
+        "tags": frontmatter.get("tags", []),
+        "content": body,
+        "path": str(md_file_path),
+    }
+
+    return post_data
 
 def process_post_file(file_path, category_from_path=''):
     """포스트 파일 처리 및 청크 생성"""
