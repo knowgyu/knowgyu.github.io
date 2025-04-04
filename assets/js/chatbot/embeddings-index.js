@@ -1,4 +1,4 @@
-// 자동 생성된 파일 - 2025-04-03T10:39:36.069422
+// 자동 생성된 파일 - 2025-04-04T00:48:14.012219
 const embeddingIndex = {
   "batches": [
     {
@@ -553,10 +553,98 @@ const embeddingIndex = {
         "2024-10-31-Setup-Components-MLflow-Tracking-Server_chunk_0",
         "2000-11-30-First-Posting_chunk_0"
       ]
+    },
+    {
+      "id": 0,
+      "path": "embeddings_batch_0.json",
+      "chunks": [
+        "2025-01-09-BOJ-1700_chunk_0",
+        "2025-01-09-BOJ-1700_chunk_1",
+        "2025-01-09-BOJ-1700_chunk_2",
+        "2025-01-09-BOJ-1700_chunk_3",
+        "2025-01-09-BOJ-1700_chunk_4",
+        "2025-01-09-BOJ-2437_chunk_0",
+        "2025-01-09-BOJ-2437_chunk_1",
+        "2025-01-09-BOJ-2437_chunk_2",
+        "2025-01-09-BOJ-2437_chunk_3",
+        "2025-01-09-BOJ-2437_chunk_4",
+        "2024-12-17-BOJ-21939-----------Version-1_chunk_0",
+        "2024-12-17-BOJ-21939-----------Version-1_chunk_1",
+        "2024-12-17-BOJ-21939-----------Version-1_chunk_2",
+        "2024-12-17-BOJ-21939-----------Version-1_chunk_3",
+        "2024-12-17-BOJ-21939-----------Version-1_chunk_4",
+        "2024-12-17-BOJ-1327_chunk_0",
+        "2024-12-17-BOJ-1327_chunk_1",
+        "2024-12-17-BOJ-1327_chunk_2",
+        "2024-12-17-BOJ-1327_chunk_3",
+        "2024-12-17-BOJ-1327_chunk_4",
+        "2024-12-17-BOJ-1422_chunk_0",
+        "2024-12-17-BOJ-1422_chunk_1",
+        "2024-12-17-BOJ-1422_chunk_2",
+        "2024-12-17-BOJ-1422_chunk_3",
+        "2024-12-17-BOJ-1422_chunk_4",
+        "2024-12-17-BOJ-21944-----------Version-2_chunk_0",
+        "2024-12-17-BOJ-21944-----------Version-2_chunk_1",
+        "2024-12-17-BOJ-21944-----------Version-2_chunk_2",
+        "2024-12-17-BOJ-21944-----------Version-2_chunk_3",
+        "2024-12-17-BOJ-21944-----------Version-2_chunk_4",
+        "2024-12-17-BOJ-22940_chunk_0",
+        "2024-12-17-BOJ-22940_chunk_1",
+        "2024-12-17-BOJ-22940_chunk_2",
+        "2024-12-17-BOJ-22940_chunk_3",
+        "2024-12-17-BOJ-22940_chunk_4",
+        "2024-12-16-BOJ-19585_chunk_0",
+        "2024-12-16-BOJ-19585_chunk_1",
+        "2024-12-16-BOJ-19585_chunk_2",
+        "2024-12-16-BOJ-19585_chunk_3",
+        "2024-12-16-BOJ-19585_chunk_4",
+        "2024-12-16-BOJ-5446_chunk_0",
+        "2024-12-16-BOJ-5446_chunk_1",
+        "2024-12-16-BOJ-5446_chunk_2",
+        "2024-12-16-BOJ-5446_chunk_3",
+        "2024-12-16-BOJ-5446_chunk_4",
+        "2024-12-16-BOJ-12904-2048-Hard_chunk_0",
+        "2024-12-16-BOJ-12904-2048-Hard_chunk_1",
+        "2024-12-16-BOJ-12904-2048-Hard_chunk_2",
+        "2024-12-16-BOJ-12904-2048-Hard_chunk_3",
+        "2024-12-16-BOJ-12904-2048-Hard_chunk_4"
+      ]
+    },
+    {
+      "id": 1,
+      "path": "embeddings_batch_1.json",
+      "chunks": [
+        "2024-12-16-BOJ-5670_chunk_0",
+        "2024-12-16-BOJ-5670_chunk_1",
+        "2024-12-16-BOJ-5670_chunk_2",
+        "2024-12-16-BOJ-5670_chunk_3",
+        "2024-12-16-BOJ-5670_chunk_4",
+        "2024-12-16-BOJ-20541_chunk_0",
+        "2024-12-16-BOJ-20541_chunk_1",
+        "2024-12-16-BOJ-20541_chunk_2",
+        "2024-12-16-BOJ-20541_chunk_3",
+        "2024-12-16-BOJ-20541_chunk_4",
+        "2024-10-31-Error-Docker-CLI-Context_chunk_0",
+        "2024-10-31-PyTorch_chunk_0",
+        "2024-10-31-PyTorch_chunk_1",
+        "2024-10-31-PyTorch_chunk_2",
+        "2024-10-31-PyTorch_chunk_3",
+        "2024-10-31-PyTorch_chunk_4",
+        "2024-10-31-PyTorch-State-dict_chunk_0",
+        "2024-10-31-PyTorch-State-dict_chunk_1",
+        "2024-10-31-PyTorch-State-dict_chunk_2",
+        "2024-10-31-PyTorch-State-dict_chunk_3",
+        "2024-10-31-PyTorch-State-dict_chunk_4",
+        "2024-10-31-PyTorch-float----fuse----eval_chunk_0",
+        "2024-10-31-PyTorch-float----fuse----eval_chunk_1",
+        "2024-10-31-PyTorch-float----fuse----eval_chunk_2",
+        "2024-10-31-PyTorch-float----fuse----eval_chunk_3",
+        "2024-10-31-PyTorch-float----fuse----eval_chunk_4"
+      ]
     }
   ],
-  "count": 493,
-  "last_updated": "2025-04-03T10:39:36.069429"
+  "count": 569,
+  "last_updated": "2025-04-04T00:48:14.012233"
 };
 
 export default embeddingIndex;
