@@ -1,4 +1,55 @@
+<script>
+  // DOM 렌더링 전에 챗봇 상태 초기화
+  (function () {
+    const isCollapsed = sessionStorage.getItem('chatbotCollapsed');
+    if (isCollapsed === 'true') {
+      document.documentElement.classList.add('chatbot-initial-collapsed');
+    }
+  })();
+</script>
+
 <style>
+  /* 초기 접힌 상태를 제어하는 CSS 추가 */
+  .chatbot-initial-collapsed #chatbot-container {
+    height: 60px !important;
+    width: 60px !important;
+    border-radius: 50% !important;
+    right: 50px !important;
+    bottom: 50px !important;
+    overflow: hidden !important;
+    transition: none !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-header {
+    height: 60px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-header h3 {
+    display: none !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-body {
+    display: none !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-header button {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 24px !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-icon {
+    display: block !important;
+  }
+
+  .chatbot-initial-collapsed #chatbot-container .chatbot-toggle-icon {
+    display: none !important;
+  }
+
   /* 챗봇 스타일 - 인라인 버전 */
   #chatbot-container {
     position: fixed !important;
@@ -172,7 +223,7 @@
 </style>
 
 <div id="chatbot-container" class="chatbot-container">
-  <div class="chatbot-header" style="font-family:'NanumBarunGothic">
+  <div class="chatbot-header" style="font-family:'NanumBarunGothic'">
     <h3>GyuPT</h3>
     <button id="chatbot-toggle">
       <i class="fas fa-chevron-down chatbot-toggle-icon"></i>
@@ -195,3 +246,19 @@
     </div>
   </div>
 </div>
+
+<script>
+  // 페이지 로드 완료 후 초기 클래스 제거
+  document.addEventListener('DOMContentLoaded', function () {
+    // 초기 렌더링 상태 클래스 제거 (트랜지션 활성화)
+    setTimeout(function () {
+      document.documentElement.classList.remove('chatbot-initial-collapsed');
+      // 실제 collapsed 클래스 적용 (JS가 로드된 후)
+      const chatbotContainer = document.getElementById('chatbot-container');
+      const isCollapsed = sessionStorage.getItem('chatbotCollapsed');
+      if (isCollapsed === 'true' && chatbotContainer) {
+        chatbotContainer.classList.add('collapsed');
+      }
+    }, 100);
+  });
+</script>

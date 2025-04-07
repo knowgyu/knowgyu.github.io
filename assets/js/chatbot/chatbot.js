@@ -27,6 +27,7 @@ class BlogChatbot {
     this.init();
   }
 
+  // init 메서드 수정 - 저장된 상태 불러오기
   async init() {
     try {
       console.log('포스트 데이터 로드 시도...');
@@ -36,6 +37,9 @@ class BlogChatbot {
 
       // 이전 대화 불러오기
       this.loadConversation();
+
+      // 이전 상태(열림/접힘) 불러오기
+      this.loadChatbotState();
 
       // 이벤트 리스너 설정
       this.submitButton.addEventListener('click', () => this.handleUserInput());
@@ -54,14 +58,18 @@ class BlogChatbot {
     }
   }
 
+  // toggleChatbot 메서드 수정 - 상태 저장 추가
   toggleChatbot() {
     this.container.classList.toggle('collapsed');
 
     // 접힌 상태에 따라 처리
     if (this.container.classList.contains('collapsed')) {
-      // 여기서는 아이콘 변경 로직이 필요 없음 (CSS로 처리)
+      // 상태 저장 - 접힌 상태
+      sessionStorage.setItem('chatbotCollapsed', 'true');
       console.log('챗봇이 접혔습니다.');
     } else {
+      // 상태 저장 - 열린 상태
+      sessionStorage.setItem('chatbotCollapsed', 'false');
       console.log('챗봇이 열렸습니다.');
     }
 
@@ -331,6 +339,24 @@ class BlogChatbot {
       console.log('이전 대화 내역을 불러왔습니다.');
       this.scrollToBottom();
     }
+  }
+
+  // 새로운 메서드 추가 - 챗봇 상태 로드
+  loadChatbotState() {
+    const isCollapsed = sessionStorage.getItem('chatbotCollapsed');
+
+    if (isCollapsed === 'true') {
+      // 접힌 상태로 설정
+      this.container.classList.add('collapsed');
+      console.log('챗봇 상태 복원: 접힘');
+    } else if (isCollapsed === 'false') {
+      // 열린 상태로 설정
+      this.container.classList.remove('collapsed');
+      console.log('챗봇 상태 복원: 열림');
+      // 열린 상태에서는 스크롤 조정
+      setTimeout(() => this.scrollToBottom(), 100);
+    }
+    // 저장된 값이 없으면 기본 상태(CSS에 정의된 상태) 유지
   }
 
   // 키워드 하이라이팅
