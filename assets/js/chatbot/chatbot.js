@@ -5,9 +5,7 @@ class BlogChatbot {
     this.container = document.getElementById('chatbot-container');
 
     if (!this.container) {
-      console.error(
-        '챗봇 컨테이너를 찾을 수 없습니다. HTML이 제대로 로드되었는지 확인하세요.'
-      );
+      console.error('챗봇 컨테이너를 찾을 수 없습니다.');
       return;
     }
 
@@ -16,18 +14,11 @@ class BlogChatbot {
     this.submitButton = document.getElementById('chatbot-submit');
     this.toggleButton = document.getElementById('chatbot-toggle');
 
-    console.log('모든 DOM 요소 참조 완료:', {
-      container: !!this.container,
-      messagesContainer: !!this.messagesContainer,
-      input: !!this.input,
-      submitButton: !!this.submitButton,
-      toggleButton: !!this.toggleButton,
-    });
+    console.log('모든 DOM 요소 참조 완료');
 
     this.init();
   }
 
-  // init 메서드 수정 - 저장된 상태 불러오기
   async init() {
     try {
       console.log('포스트 데이터 로드 시도...');
@@ -35,13 +26,13 @@ class BlogChatbot {
       this.postsData = await response.json();
       console.log(`${this.postsData.length}개의 포스트 데이터 로드됨`);
 
-      // 이전 대화 불러오기
+      // 1. 챗봇 상태 초기화
+      this.initChatbotState();
+
+      // 2. 대화 내역 불러오기
       this.loadConversation();
 
-      // 이전 상태(열림/접힘) 불러오기
-      this.loadChatbotState();
-
-      // 이벤트 리스너 설정
+      // 3. 이벤트 리스너 설정
       this.submitButton.addEventListener('click', () => this.handleUserInput());
       this.input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') this.handleUserInput();
@@ -58,23 +49,41 @@ class BlogChatbot {
     }
   }
 
-  // toggleChatbot 메서드 수정 - 상태 저장 추가
+  // 초기 챗봇 상태 설정 (새로운 메서드)
+  initChatbotState() {
+    const isCollapsed = sessionStorage.getItem('chatbotCollapsed');
+
+    // 최초 접근 시 기본값 설정 (열린 상태)
+    if (isCollapsed === null) {
+      sessionStorage.setItem('chatbotCollapsed', 'false');
+    }
+
+    // 상태에 따라 클래스 적용
+    if (isCollapsed === 'true') {
+      this.container.classList.add('collapsed');
+    } else {
+      this.container.classList.remove('collapsed');
+    }
+
+    // 모든 설정 완료 후 챗봇 표시
+    this.container.classList.add('visible');
+
+    // 열린 상태일 경우 스크롤 조정
+    if (isCollapsed !== 'true') {
+      setTimeout(() => this.scrollToBottom(), 100);
+    }
+  }
+
   toggleChatbot() {
     this.container.classList.toggle('collapsed');
 
     // 접힌 상태에 따라 처리
-    if (this.container.classList.contains('collapsed')) {
-      // 상태 저장 - 접힌 상태
-      sessionStorage.setItem('chatbotCollapsed', 'true');
-      console.log('챗봇이 접혔습니다.');
-    } else {
-      // 상태 저장 - 열린 상태
-      sessionStorage.setItem('chatbotCollapsed', 'false');
-      console.log('챗봇이 열렸습니다.');
-    }
+    const isCollapsed = this.container.classList.contains('collapsed');
+    sessionStorage.setItem('chatbotCollapsed', isCollapsed ? 'true' : 'false');
+    console.log(`챗봇이 ${isCollapsed ? '접혔습니다.' : '열렸습니다.'}`);
 
-    // 자동 스크롤 (열린 경우)
-    if (!this.container.classList.contains('collapsed')) {
+    // 열린 상태에서만 스크롤 조정
+    if (!isCollapsed) {
       this.scrollToBottom();
     }
   }
@@ -325,38 +334,18 @@ class BlogChatbot {
   // 이전 대화 내역 저장
   saveConversation() {
     const messages = this.messagesContainer.innerHTML;
-    // localStorage 대신 sessionStorage 사용
     sessionStorage.setItem('chatHistory', messages);
     console.log('대화 내역이 세션에 저장되었습니다.');
   }
 
   // 저장된 대화 내역 불러오기
   loadConversation() {
-    // localStorage 대신 sessionStorage에서 불러오기
     const history = sessionStorage.getItem('chatHistory');
     if (history) {
       this.messagesContainer.innerHTML = history;
       console.log('이전 대화 내역을 불러왔습니다.');
       this.scrollToBottom();
     }
-  }
-
-  // 새로운 메서드 추가 - 챗봇 상태 로드
-  loadChatbotState() {
-    const isCollapsed = sessionStorage.getItem('chatbotCollapsed');
-
-    if (isCollapsed === 'true') {
-      // 접힌 상태로 설정
-      this.container.classList.add('collapsed');
-      console.log('챗봇 상태 복원: 접힘');
-    } else if (isCollapsed === 'false') {
-      // 열린 상태로 설정
-      this.container.classList.remove('collapsed');
-      console.log('챗봇 상태 복원: 열림');
-      // 열린 상태에서는 스크롤 조정
-      setTimeout(() => this.scrollToBottom(), 100);
-    }
-    // 저장된 값이 없으면 기본 상태(CSS에 정의된 상태) 유지
   }
 
   // 키워드 하이라이팅
