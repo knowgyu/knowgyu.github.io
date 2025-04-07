@@ -16,10 +16,10 @@ timezone: Asia/Seoul
 
 title: knowgyu # the main title
 
-tagline: 안녕하세요! # it will display as the subtitle
+tagline: "안녕하세요!<br> 현재 GyuPT 고도화 중입니다!" # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  안녕하세요!
+  안녕하세요! 노규헌의 블로그입니다.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
