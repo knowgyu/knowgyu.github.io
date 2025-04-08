@@ -1,6 +1,5 @@
 class BlogChatbot {
   constructor() {
-    console.log('챗봇 생성자 호출됨');
     this.postsData = [];
     this.container = document.getElementById('chatbot-container');
 
@@ -14,17 +13,13 @@ class BlogChatbot {
     this.submitButton = document.getElementById('chatbot-submit');
     this.toggleButton = document.getElementById('chatbot-toggle');
 
-    console.log('모든 DOM 요소 참조 완료');
-
     this.init();
   }
 
   async init() {
     try {
-      console.log('포스트 데이터 로드 시도...');
       const response = await fetch('/assets/js/chatbot/posts-data.json');
       this.postsData = await response.json();
-      console.log(`${this.postsData.length}개의 포스트 데이터 로드됨`);
 
       // 1. 챗봇 상태 초기화
       this.initChatbotState();
@@ -38,10 +33,7 @@ class BlogChatbot {
         if (e.key === 'Enter') this.handleUserInput();
       });
       this.toggleButton.addEventListener('click', () => this.toggleChatbot());
-
-      console.log('블로그 챗봇이 초기화되었습니다.');
     } catch (error) {
-      console.error('챗봇 초기화 중 오류 발생:', error);
       this.addMessage(
         '시스템 초기화 중 오류가 발생했습니다. 나중에 다시 시도해주세요.',
         'bot'
@@ -80,7 +72,6 @@ class BlogChatbot {
     // 접힌 상태에 따라 처리
     const isCollapsed = this.container.classList.contains('collapsed');
     sessionStorage.setItem('chatbotCollapsed', isCollapsed ? 'true' : 'false');
-    console.log(`챗봇이 ${isCollapsed ? '접혔습니다.' : '열렸습니다.'}`);
 
     // 열린 상태에서만 스크롤 조정
     if (!isCollapsed) {
@@ -335,7 +326,6 @@ class BlogChatbot {
   saveConversation() {
     const messages = this.messagesContainer.innerHTML;
     sessionStorage.setItem('chatHistory', messages);
-    console.log('대화 내역이 세션에 저장되었습니다.');
   }
 
   // 저장된 대화 내역 불러오기
@@ -343,7 +333,6 @@ class BlogChatbot {
     const history = sessionStorage.getItem('chatHistory');
     if (history) {
       this.messagesContainer.innerHTML = history;
-      console.log('이전 대화 내역을 불러왔습니다.');
       this.scrollToBottom();
     }
   }
@@ -368,16 +357,5 @@ class BlogChatbot {
 
 // 페이지 로드 시 챗봇 초기화
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM이 로드되었습니다. 챗봇 초기화 중...');
   const chatbot = new BlogChatbot();
-});
-
-// 로드 실패 시 추가 확인을 위한 백업 핸들러
-window.addEventListener('load', () => {
-  console.log('window.load 이벤트 발생');
-  if (!document.getElementById('chatbot-container')) {
-    console.error(
-      'window.load 이벤트 후에도 챗봇 컨테이너를 찾을 수 없습니다.'
-    );
-  }
 });
