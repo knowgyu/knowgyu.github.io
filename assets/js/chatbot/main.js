@@ -120,8 +120,12 @@ const Chatbot = (function () {
         loadingId
       );
 
-      // 7. 참고 링크 추가
-      if (relevantPosts.length > 0) {
+      // 7. 참고 링크 추가 - 서버에서 받은 참고 문서 정보 사용
+      if (response.sourcePosts && response.sourcePosts.length > 0) {
+        // 서버에서 받은 참고 문서 정보 사용
+        ChatbotUI.addSourceLinks(response.sourcePosts, loadingId);
+      } else if (relevantPosts.length > 0) {
+        // 서버에서 받은 정보가 없으면 기존 키워드 기반 검색 결과 사용 (폴백)
         ChatbotUI.addSourceLinks(relevantPosts, loadingId);
       }
     } catch (error) {

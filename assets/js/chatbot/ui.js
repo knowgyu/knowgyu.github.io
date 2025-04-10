@@ -175,17 +175,19 @@ const ChatbotUI = (function () {
       '참고한 글: ' +
       posts
         .map((post) => {
-          const pathParts = post.path.split('/').filter((part) => part !== '');
+          // 서버에서 받은 형식과 클라이언트의 형식을 모두 처리
+          const path = post.path || post.url || '';
+          const pathParts = path.split('/').filter((part) => part !== '');
           const lastPart = pathParts[pathParts.length - 1] || '';
-          return `<a href="/posts/${lastPart}/" target="_blank">${post.title}</a>`;
+          const postUrl = path.startsWith('/') ? `/posts/${lastPart}/` : path;
+
+          return `<a href="${postUrl}" target="_blank">${post.title}</a>`;
         })
         .join(', ');
 
     messageElement.appendChild(sourcesList);
     saveConversation();
     scrollToBottom();
-
-    setTimeout(() => scrollToBottom(), 100);
   }
 
   // 자동 스크롤
