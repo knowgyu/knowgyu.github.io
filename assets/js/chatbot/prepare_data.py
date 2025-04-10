@@ -30,7 +30,7 @@ def extract_frontmatter(content):
         print(f"YAML 파싱 오류: {e}")
         return {}, content
 
-def chunk_text(text, chunk_size=800, overlap=100, max_chunks=5):
+def chunk_text(text, chunk_size=1500, overlap=300, max_chunks=8):
     """텍스트를 일정 크기의 청크로 나눔"""
     chunks = []
     start = 0
