@@ -64,40 +64,21 @@ const Chatbot = (function () {
     );
 
     try {
-      // 관련 컨텍스트 구성 (간소화)
-      let context = '';
+      // 서버 호출 (빈 컨텍스트로)
+      const response = await ChatbotAPI.getChatResponse(userQuery, '');
 
-      // 1. 현재 페이지 컨텍스트 확인 (계속 필요함)
-      const currentPageContext = ChatbotSearch.getCurrentPageContext();
-
-      // 2. 컨텍스트 구성 (간소화)
-      if (currentPageContext) {
-        // 현재 페이지 정보만 추가
-        context = `[현재 보고 있는 게시글]\n제목: ${currentPageContext.title}\n내용: ${currentPageContext.content}\n\n`;
-      }
-
-      // 3. API 호출
-      const response = await ChatbotAPI.getChatResponse(userQuery, context);
-
-      // 4. 로딩 메시지 업데이트
+      // 로딩 메시지 업데이트
       ChatbotUI.updateMessage(loadingId, '');
 
-      // 5. 스트리밍 효과 시작
+      // 스트리밍 효과 시작
       await ChatbotUI.simulateStreaming(
         response.chunks || [response.answer],
         loadingId
       );
 
-      // 6. 참고 링크 추가 - 서버에서 받은 참고 문서 정보 사용
+      // 서버에서 받은 참고 문서 정보가 있는 경우만 표시
       if (response.sourcePosts && response.sourcePosts.length > 0) {
-        // 서버에서 받은 참고 문서 정보 사용
         ChatbotUI.addSourceLinks(response.sourcePosts, loadingId);
-      } else {
-        // 서버에서 받은 정보가 없을 경우 폴백으로 간단한 클라이언트 검색 실행
-        const relevantPosts = ChatbotSearch.findRelevantPosts(userQuery);
-        if (relevantPosts.length > 0) {
-          ChatbotUI.addSourceLinks(relevantPosts, loadingId);
-        }
       }
     } catch (error) {
       console.error('답변 생성 중 오류:', error);
