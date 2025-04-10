@@ -64,69 +64,40 @@ const Chatbot = (function () {
     );
 
     try {
-      // 관련 컨텍스트 구성
-      let context = '관련 정보를 찾을 수 없습니다.';
+      // 관련 컨텍스트 구성 (간소화)
+      let context = '';
 
-      // 1. 관련 포스트 찾기
-      const relevantPosts = ChatbotSearch.findRelevantPosts(userQuery);
-
-      // 2. 현재 페이지 컨텍스트 확인
+      // 1. 현재 페이지 컨텍스트 확인 (계속 필요함)
       const currentPageContext = ChatbotSearch.getCurrentPageContext();
 
-      // 3. 컨텍스트 구성
+      // 2. 컨텍스트 구성 (간소화)
       if (currentPageContext) {
-        // 현재 페이지 정보를 우선 추가
+        // 현재 페이지 정보만 추가
         context = `[현재 보고 있는 게시글]\n제목: ${currentPageContext.title}\n내용: ${currentPageContext.content}\n\n`;
-
-        // 추가 관련 포스트가 있으면 함께 추가
-        if (relevantPosts.length > 0) {
-          context += relevantPosts
-            .map(
-              (post) =>
-                `제목: ${post.title}\n내용: ${ChatbotSearch.extractRelevantText(
-                  post.content,
-                  userQuery
-                )}`
-            )
-            .join('\n\n');
-        }
-
-        // 현재 페이지를 관련 포스트 목록에 추가
-        if (!relevantPosts.some((p) => p.isCurrentPage)) {
-          relevantPosts.unshift(currentPageContext);
-        }
-      } else if (relevantPosts.length > 0) {
-        // 현재 페이지가 포스트가 아니라면 기존 검색 결과만 사용
-        context = relevantPosts
-          .map(
-            (post) =>
-              `제목: ${post.title}\n내용: ${ChatbotSearch.extractRelevantText(
-                post.content,
-                userQuery
-              )}`
-          )
-          .join('\n\n');
       }
 
-      // 4. API 호출
+      // 3. API 호출
       const response = await ChatbotAPI.getChatResponse(userQuery, context);
 
-      // 5. 로딩 메시지 업데이트
+      // 4. 로딩 메시지 업데이트
       ChatbotUI.updateMessage(loadingId, '');
 
-      // 6. 스트리밍 효과 시작
+      // 5. 스트리밍 효과 시작
       await ChatbotUI.simulateStreaming(
         response.chunks || [response.answer],
         loadingId
       );
 
-      // 7. 참고 링크 추가 - 서버에서 받은 참고 문서 정보 사용
+      // 6. 참고 링크 추가 - 서버에서 받은 참고 문서 정보 사용
       if (response.sourcePosts && response.sourcePosts.length > 0) {
         // 서버에서 받은 참고 문서 정보 사용
         ChatbotUI.addSourceLinks(response.sourcePosts, loadingId);
-      } else if (relevantPosts.length > 0) {
-        // 서버에서 받은 정보가 없으면 기존 키워드 기반 검색 결과 사용 (폴백)
-        ChatbotUI.addSourceLinks(relevantPosts, loadingId);
+      } else {
+        // 서버에서 받은 정보가 없을 경우 폴백으로 간단한 클라이언트 검색 실행
+        const relevantPosts = ChatbotSearch.findRelevantPosts(userQuery);
+        if (relevantPosts.length > 0) {
+          ChatbotUI.addSourceLinks(relevantPosts, loadingId);
+        }
       }
     } catch (error) {
       console.error('답변 생성 중 오류:', error);
