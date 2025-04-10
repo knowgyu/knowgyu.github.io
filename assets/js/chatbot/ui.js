@@ -79,7 +79,8 @@ const ChatbotUI = (function () {
 
   // 메시지 추가
   function addMessage(text, sender) {
-    const id = Date.now().toString();
+    // 더 안정적인 고유 ID 생성
+    const id = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const messageElement = document.createElement('div');
     messageElement.classList.add('message', sender);
     messageElement.dataset.id = id; // ID를 데이터 속성으로 저장
@@ -106,10 +107,18 @@ const ChatbotUI = (function () {
 
   // 스트리밍 효과
   async function simulateStreaming(chunks, messageId) {
+    // 더 명확한 선택자로 메시지 요소 탐색
     const messageElement = messagesContainer.querySelector(
-      `.message[data-id="${messageId}"]`
+      `.message.bot[data-id="${messageId}"]`
     );
-    if (!messageElement) return;
+
+    if (!messageElement) {
+      console.error(`메시지 ID ${messageId}를 찾을 수 없습니다.`);
+      return;
+    }
+
+    // 메시지 타입 확인 로깅
+    console.log(`메시지 클래스: ${messageElement.className}`);
 
     let currentText = '';
 
@@ -156,7 +165,7 @@ const ChatbotUI = (function () {
     if (posts.length === 0) return;
 
     const messageElement = messagesContainer.querySelector(
-      `.message[data-id="${messageId}"]`
+      `.message.bot[data-id="${messageId}"]`
     );
     if (!messageElement) return;
 
