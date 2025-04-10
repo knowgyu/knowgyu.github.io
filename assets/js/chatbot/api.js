@@ -1,3 +1,15 @@
+/**
+ * GyuPT 챗봇 API 모듈
+ *
+ * 이 모듈은 외부 API와의 통신을 담당합니다.
+ * - 적절한 API URL 결정 (로컬/프로덕션)
+ * - 질문 및 컨텍스트를 서버에 전송
+ * - 응답 처리 및 오류 관리
+ *
+ * 사용 예시:
+ * const response = await ChatbotAPI.getChatResponse('질문', '컨텍스트');
+ */
+
 const ChatbotAPI = (function () {
   // API URL 가져오기
   function getApiUrl() {

@@ -1,3 +1,16 @@
+/**
+ * GyuPT 챗봇 메인 모듈
+ *
+ * 이 모듈은 챗봇의 모든 기능을 통합하고 초기화합니다.
+ * - UI, 검색, API 모듈 초기화
+ * - 이벤트 리스너 설정
+ * - 사용자 입력 처리
+ * - 각 모듈 간 조율
+ *
+ * 모든 모듈(config.js, ui.js, search.js, api.js)이
+ * 먼저 로드된 후에 이 모듈이 실행되어야 합니다.
+ */
+
 const Chatbot = (function () {
   // 초기화
   async function init() {

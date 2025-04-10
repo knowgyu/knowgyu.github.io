@@ -1,3 +1,17 @@
+/**
+ * GyuPT 챗봇 검색 모듈
+ *
+ * 이 모듈은 포스트 검색과 컨텍스트 추출 기능을 담당합니다.
+ * - 블로그 포스트 데이터 로드
+ * - 사용자 질문과 관련된 포스트 검색
+ * - 현재 페이지 컨텍스트 추출
+ * - 시간 관련 쿼리 분석 (최근 글 우선 정렬)
+ *
+ * 사용 예시:
+ * await ChatbotSearch.init(); // 검색 모듈 초기화
+ * const relevantPosts = ChatbotSearch.findRelevantPosts('Git 사용법'); // 관련 포스트 검색
+ */
+
 const ChatbotSearch = (function () {
   // 프라이빗 변수
   let postsData = [];

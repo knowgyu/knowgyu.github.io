@@ -1,3 +1,18 @@
+/**
+ * GyuPT 챗봇 UI 모듈
+ *
+ * 이 모듈은 챗봇의 시각적 요소와 사용자 인터페이스를 관리합니다.
+ * - 메시지 추가 및 업데이트
+ * - 챗봇 토글 (접기/펼치기) 기능
+ * - 타이핑 효과 시뮬레이션
+ * - 대화 내역 저장 및 로드
+ *
+ * 사용 예시:
+ * ChatbotUI.init(); // UI 초기화
+ * const messageId = ChatbotUI.addMessage('안녕하세요', 'bot'); // 메시지 추가
+ * ChatbotUI.toggle(); // 챗봇 접기/펼치기
+ */
+
 const ChatbotUI = (function () {
   // 프라이빗 변수
   let container;
