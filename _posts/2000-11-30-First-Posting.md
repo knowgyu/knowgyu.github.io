@@ -47,6 +47,11 @@ tags: []
 > #### '24.07 - Present 삼성 청년 SW아카데미(SSAFY)<sup>12th</sup> 
 > - 1학기 임베디드 트랙 (성적 우수)  
 > - 웹, 알고리즘, 임베디드 총 800시간 교육 수강  
+>
+> - 2학기 프로젝트 기간
+> - AI 실버케어 로봇 영웅이
+> - 생성형 AI를 활용한 레시피 추천 서비스 Recipedia
+> - 스마트 이메일 클라이언트 프로그램 Mail@
 {: .highlight}
 
 ---
@@ -96,4 +101,15 @@ tags: []
 > - 정신 건강 모니터링, 활력 징후 모니터링, 실시간 활동 모니터링, 주거 환경 모니터링
 > - Hector SLAM + ROS Navigation Stack을 활용해 실내 자율주행 기능 구현
 > - **참고 링크**: [블로그 글](https://knowgyu.github.io/categories/ros/)
+{: .highlight}
+
+> #### '25.02 - '25.04 생성형 AI를 활용한 레시피 추천 서비스 Recipedia !![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
+> - 냉장고 내 재료들을 활용해 레시피를 추천해주는 서비스  
+> - 선호/비선호 재료, 식단, 알러지 정보를 포함하여 LLM을 활용해 요리 이름을 생성하고, 유튜브 내 레시피 영상 리스트를 제공.  
+> - 영상과 함께 단계별 레시피 제공  
+{: .highlight}
+
+> #### '25.04 - '25.05 스마트 이메일 클라이언트 프로그램 Mail@ ![Electron.js](https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=Electron&logoColor=white)     ![C++](https://img.shields.io/badge/-C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)     ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)     ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white)
+> - AI를 활용해 메일 자동분류, 작성 어시스턴트, 첨부파일 관리를 해주는 이메일 클라이언트 프로그램
+> - 윈도우 데스크톱 프로그램으로 오프라인 환경에서도 동작
 {: .highlight}
