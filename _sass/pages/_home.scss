@@ -1,0 +1,244 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/breakpoints' as bp;
+@use '../abstracts/placeholders';
+
+.home-intro {
+  margin-top: 1.5rem;
+  margin-bottom: 1.75rem;
+  padding: 1.65rem 1.8rem;
+  border: 1px solid var(--main-border-color);
+  border-radius: 1.75rem;
+  background: var(--intro-bg);
+  box-shadow: var(--soft-shadow);
+
+  @include bp.lg {
+    margin-top: 2rem;
+    padding: 1.65rem 1.85rem;
+  }
+}
+
+.home-intro__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.42rem 0.78rem;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: var(--accent-color);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-intro__title {
+  margin: 0.8rem 0 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.home-intro__description {
+  max-width: 42rem;
+  margin: 0.9rem 0 0;
+  color: var(--text-muted-color);
+  font-size: 1rem;
+  line-height: 1.74;
+}
+
+#post-list {
+  margin-top: 0;
+
+  @include bp.lg {
+    margin-top: 0.5rem;
+  }
+
+  .card-wrapper {
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .card {
+    border: 0;
+    background: none;
+
+    %img-radius {
+      border-radius: v.$radius-lg v.$radius-lg 0 0;
+
+      @include bp.md {
+        border-radius: 0 v.$radius-lg v.$radius-lg 0;
+      }
+    }
+
+    .preview-img {
+      @extend %img-radius;
+
+      img {
+        @extend %img-radius;
+      }
+    }
+
+    .card-body {
+      height: 100%;
+      padding: 1.15rem;
+
+      @include bp.md {
+        padding: 1.65rem 1.75rem 1.4rem;
+      }
+
+      .card-title {
+        @extend %text-clip;
+
+        color: var(--heading-color) !important;
+        font-size: 1.26rem;
+        line-height: 1.32;
+      }
+
+      %muted {
+        color: var(--text-muted-color) !important;
+      }
+
+      .card-text {
+        @include bp.md {
+          display: inherit !important;
+        }
+
+        &.content {
+          @extend %muted;
+
+          p {
+            @extend %text-clip;
+
+            line-height: 1.7;
+            margin: 0;
+            -webkit-line-clamp: 3;
+          }
+        }
+      }
+
+      .post-meta {
+        @extend %muted;
+
+        i {
+          &:not(:first-child) {
+            margin-left: 1.5rem;
+
+            @include bp.md {
+              margin-left: 1.75rem;
+            }
+          }
+        }
+
+        em {
+          @extend %normal-font-style;
+
+          color: inherit;
+        }
+
+        > div:first-child {
+          display: block;
+
+          @extend %text-ellipsis;
+        }
+      }
+    }
+  }
+}
+
+.post-preview {
+  position: relative;
+  border: 1px solid var(--card-border-color);
+  border-radius: 1.8rem;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+
+  &::before {
+    background: linear-gradient(135deg, rgba(22, 119, 255, 0.04), rgba(22, 119, 255, 0.08));
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--card-border-strong-color);
+    box-shadow: var(--card-shadow-hover);
+  }
+}
+
+.pagination {
+  color: var(--text-color);
+  font-family: v.$font-family-heading;
+  justify-content: space-evenly;
+
+  @include bp.lg {
+    font-size: 0.85rem;
+    justify-content: center;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  .page-item {
+    @include bp.lt(bp.get(lg)) {
+      &:not(:first-child):not(:last-child) {
+        display: none;
+      }
+    }
+
+    @include bp.lg {
+      &:not(:last-child) {
+        margin-right: 0.7rem;
+      }
+    }
+
+    .page-link {
+      color: var(--btn-patinator-text-color);
+      padding: 0 0.75rem;
+      display: -webkit-box;
+      -webkit-box-pack: center;
+      -webkit-box-align: center;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background-color: inherit;
+    }
+
+    &.active {
+      .page-link {
+        background-color: var(--btn-paginator-hover-color);
+        border-color: var(--main-border-color);
+      }
+    }
+
+    &:not(.active) {
+      .page-link {
+        &:hover {
+          border-color: var(--main-border-color);
+          background: rgba(255, 250, 244, 0.95);
+        }
+      }
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+
+      .page-link {
+        color: rgba(108, 117, 125, 0.57);
+      }
+    }
+  }
+
+  .page-index {
+    @include bp.lg {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Tech Notes Mark</title>
+  <desc id="desc">Abstract speech bubble mark for the blog.</desc>
+  <defs>
+    <linearGradient id="bg" x1="64" x2="448" y1="48" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#21455e"/>
+      <stop offset="1" stop-color="#5d7d66"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <ellipse cx="246" cy="222" rx="148" ry="118" fill="#f8fbff"/>
+  <path d="M320 307c30 21 57 48 81 81-43-12-79-25-109-47z" fill="#f8fbff"/>
+  <circle cx="186" cy="220" r="18" fill="#21455e"/>
+  <circle cx="246" cy="220" r="18" fill="#21455e"/>
+  <circle cx="306" cy="220" r="18" fill="#21455e"/>
+</svg>

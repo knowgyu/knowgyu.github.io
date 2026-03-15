@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="{{ '/assets/css/chatbot.css' | relative_url }}">
+
+<section
+  id="chatbot-container"
+  class="chatbot-container chatbot-hidden"
+  aria-label="GyuPT chatbot"
+>
+  <button
+    id="chatbot-toggle"
+    class="chatbot-header"
+    type="button"
+    aria-expanded="false"
+    aria-controls="chatbot-body"
+  >
+    <span class="chatbot-header-copy">
+      <span class="chatbot-title">GyuPT</span>
+      <span id="chatbot-status" class="chatbot-status"> 블로그 내용을 바탕으로 답변합니다. </span>
+    </span>
+    <span class="chatbot-header-icons" aria-hidden="true">
+      <i class="fas fa-chevron-up chatbot-toggle-icon"></i>
+      <i class="fas fa-comments chatbot-bubble-icon"></i>
+    </span>
+  </button>
+
+  <div id="chatbot-body" class="chatbot-body">
+    <div class="chatbot-toolbar">
+      <p class="chatbot-toolbar-copy">블로그 글과 작업 기록을 기준으로 답합니다. Markdown을 지원합니다.</p>
+      <button id="chatbot-reset" class="chatbot-reset" type="button">새 대화</button>
+    </div>
+
+    <div
+      id="chatbot-suggestions"
+      class="chatbot-suggestions"
+      aria-label="추천 질문"
+    ></div>
+
+    <div
+      id="chatbot-messages"
+      class="chatbot-messages"
+      role="log"
+      aria-live="polite"
+    ></div>
+
+    <form id="chatbot-form" class="chatbot-input-container">
+      <label class="visually-hidden" for="chatbot-input">질문 입력</label>
+      <div class="chatbot-input-shell">
+        <textarea
+          id="chatbot-input"
+          rows="1"
+          maxlength="1200"
+          placeholder="질문을 입력하세요."
+        ></textarea>
+      </div>
+      <button id="chatbot-submit" type="submit" aria-label="질문 보내기">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </form>
+  </div>
+</section>
+
+<script src="{{ '/assets/js/chatbot/config.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/markdown.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/page-context.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/api.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/ui.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/main.js' | relative_url }}"></script>
