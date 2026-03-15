@@ -29,3 +29,6 @@ assets/js/dist
 
 # Local Netlify folder
 .netlify
+
+# Local functions repo kept outside blog tracking
+knowgyu-ai-functions/
