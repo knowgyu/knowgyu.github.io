@@ -1,4 +1,10 @@
-<link rel="stylesheet" href="{{ '/assets/css/chatbot.css' | relative_url }}">
+{% if site.github and site.github.build_revision %}
+  {% assign chatbot_asset_version = site.github.build_revision %}
+{% else %}
+  {% assign chatbot_asset_version = site.time | date: '%s' %}
+{% endif %}
+
+<link rel="stylesheet" href="{{ '/assets/css/chatbot.css' | relative_url }}?v={{ chatbot_asset_version }}">
 
 <section
   id="chatbot-container"
@@ -25,7 +31,15 @@
   <div id="chatbot-body" class="chatbot-body">
     <div class="chatbot-toolbar">
       <p class="chatbot-toolbar-copy">블로그 글과 작업 기록을 기준으로 답합니다. Markdown을 지원합니다.</p>
-      <button id="chatbot-reset" class="chatbot-reset" type="button">새 대화</button>
+      <button
+        id="chatbot-reset"
+        class="chatbot-reset"
+        type="button"
+        aria-label="새 대화"
+        title="새 대화"
+      >
+        <span aria-hidden="true">✨</span>
+      </button>
     </div>
 
     <div
@@ -58,9 +72,9 @@
   </div>
 </section>
 
-<script src="{{ '/assets/js/chatbot/config.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/chatbot/markdown.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/chatbot/page-context.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/chatbot/api.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/chatbot/ui.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/chatbot/main.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/chatbot/config.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>
+<script src="{{ '/assets/js/chatbot/markdown.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>
+<script src="{{ '/assets/js/chatbot/page-context.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>
+<script src="{{ '/assets/js/chatbot/api.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>
+<script src="{{ '/assets/js/chatbot/ui.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>
+<script src="{{ '/assets/js/chatbot/main.js' | relative_url }}?v={{ chatbot_asset_version }}"></script>

@@ -148,8 +148,15 @@
   border-radius: 999px;
   background: rgba(33, 69, 94, 0.06);
   color: var(--text-color);
-  font-size: 0.75rem;
-  padding: 0.35rem 0.7rem;
+  font-size: 1rem;
+  line-height: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
