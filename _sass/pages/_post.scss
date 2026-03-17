@@ -19,7 +19,7 @@
   > header,
   > .content,
   > .post-tail-wrapper {
-    max-width: 49rem;
+    width: min(100%, 52rem);
     margin-left: auto;
     margin-right: auto;
   }
@@ -28,6 +28,26 @@
     margin-bottom: 2.2rem;
     padding-bottom: 1.2rem;
     border-bottom: 1px solid var(--main-border-color);
+  }
+
+  @include bp.xl {
+    > header,
+    > .content,
+    > .post-tail-wrapper {
+      width: min(100%, 68rem);
+      margin-left: 0;
+      margin-right: auto;
+    }
+  }
+
+  @include bp.xxl {
+    > header,
+    > .content,
+    > .post-tail-wrapper {
+      width: min(100%, 74rem);
+      margin-left: 0;
+      margin-right: auto;
+    }
   }
 }
 
@@ -84,6 +104,20 @@ header {
     > .footnotes {
       margin-left: auto;
       margin-right: auto;
+    }
+
+    @include bp.xl {
+      > p,
+      > ul,
+      > ol,
+      > blockquote,
+      > .table-wrapper,
+      > div[class^='language-'],
+      > .highlight,
+      > .footnotes {
+        margin-left: 0;
+        margin-right: auto;
+      }
     }
 
     img {

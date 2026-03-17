@@ -228,6 +228,24 @@ main {
     max-inline-size: 70ch;
   }
 
+  @include bp.xl {
+    p,
+    li,
+    blockquote,
+    .table-wrapper {
+      max-inline-size: 98ch;
+    }
+  }
+
+  @include bp.xxl {
+    p,
+    li,
+    blockquote,
+    .table-wrapper {
+      max-inline-size: 106ch;
+    }
+  }
+
   p {
     margin-bottom: 1rem;
   }
@@ -236,6 +254,14 @@ main {
   > h3,
   > h4 {
     max-inline-size: 30ch;
+  }
+
+  @include bp.xl {
+    > h2,
+    > h3,
+    > h4 {
+      max-inline-size: 36ch;
+    }
   }
 
   ::marker {
@@ -450,6 +476,10 @@ mjx-container {
     margin-left: v.$sidebar-width-large;
   }
 
+  @include bp.xxl {
+    justify-content: flex-start !important;
+  }
+
   > .container {
     min-height: 100vh;
     padding-top: 1rem;
@@ -478,10 +508,19 @@ mjx-container {
       }
     }
 
-    @include bp.xxxl {
-      max-width: v.$main-content-max-width;
+    @include bp.xxl {
+      width: min(100%, 1500px);
+      max-width: none;
+      margin-left: 0;
+      margin-right: auto;
 
-      @include mx.pl-pr(1.75rem, true);
+      @include mx.pl-pr(2.25rem, true);
+    }
+
+    @include bp.xxxl {
+      width: min(100%, 1580px);
+
+      @include mx.pl-pr(2.5rem, true);
     }
   }
 }
