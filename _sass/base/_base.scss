@@ -37,11 +37,6 @@ html {
   }
 }
 
-@font-face {
-  font-family: 'NanumBarunGothic';
-  src: url('NanumBarunGothic.otf') format('opentype');
-}
-
 body {
   background: var(--main-bg);
   padding: env(safe-area-inset-top) env(safe-area-inset-right)

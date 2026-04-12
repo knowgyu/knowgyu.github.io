@@ -26,8 +26,9 @@ $code-icon-width: 1.75rem !default;
 
 /* fonts */
 
-$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable',
-  'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+$font-family-base: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic',
+  'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont,
   sans-serif !default;
-$font-family-heading: 'SF Pro Display', 'Segoe UI Variable', 'Segoe UI',
-  'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !default;
+$font-family-heading: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic',
+  'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont,
+  sans-serif !default;
