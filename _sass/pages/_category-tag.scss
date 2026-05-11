@@ -3,27 +3,31 @@
 @use '../abstracts/placeholders';
 
 .dash {
-  margin: 0 0.5rem 0.6rem 0.5rem;
-  border-bottom: 2px dotted var(--dash-color);
+  margin: 0 0.5rem 0.85rem 0.5rem;
+  border-bottom: 1px solid var(--console-border-soft, var(--dash-color));
 }
 
 #page-category,
 #page-tag {
   ul > li {
-    line-height: 1.5rem;
-    padding: 0.6rem 0;
+    line-height: 1.55rem;
+    margin: 0.35rem 0;
+    border: 1px solid var(--console-border-soft, transparent);
+    border-radius: 0.85rem;
+    background: var(--console-bg-strong, transparent);
+    padding: 0.7rem 0.85rem;
 
     /* dot */
     &::before {
-      background: #999999;
-      width: 5px;
-      height: 5px;
+      background: var(--console-accent, #999999);
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       display: block;
       content: '';
       position: relative;
-      top: 0.6rem;
-      margin-right: 0.5rem;
+      top: 0.55rem;
+      margin-right: 0.6rem;
 
       @include bp.lt(bp.get(sm)) {
         margin: 0 0.5rem;
@@ -34,7 +38,9 @@
     > a {
       @extend %no-bottom-border;
 
-      font-size: 1.1rem;
+      color: var(--text-color);
+      font-size: 1.02rem;
+      font-weight: 700;
 
       @include bp.lt(bp.get(sm)) {
         @include mx.text-ellipsis;

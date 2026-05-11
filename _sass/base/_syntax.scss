@@ -14,12 +14,20 @@
   @extend %code-snippet-bg;
 
   overflow: auto;
+  max-inline-size: 100%;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
   border: 1px solid var(--language-border-color);
   padding-bottom: 0.75rem;
+  scrollbar-gutter: stable;
 
   @at-root figure#{&} {
     @extend %code-snippet-bg;
+  }
+
+  > code {
+    display: block;
+    min-width: 100%;
   }
 
   pre {
@@ -30,6 +38,9 @@
   }
 
   table {
+    width: max-content;
+    min-width: 100%;
+
     td {
       &:first-child {
         display: inline-block;
@@ -56,6 +67,15 @@
     -o-user-select: none;
     -ms-user-select: none;
     user-select: none;
+  }
+
+  @include bp.lt(bp.get(md)) {
+    padding-bottom: 0.55rem;
+
+    pre {
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
   }
 } /* .highlight */
 

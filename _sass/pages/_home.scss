@@ -2,55 +2,11 @@
 @use '../abstracts/breakpoints' as bp;
 @use '../abstracts/placeholders';
 
-.home-intro {
-  margin-top: 1.5rem;
-  margin-bottom: 1.75rem;
-  padding: 1.65rem 1.8rem;
-  border: 1px solid var(--main-border-color);
-  border-radius: 1.75rem;
-  background: var(--intro-bg);
-  box-shadow: var(--soft-shadow);
-
-  @include bp.lg {
-    margin-top: 2rem;
-    padding: 1.65rem 1.85rem;
-  }
-}
-
-.home-intro__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  margin: 0;
-  padding: 0.42rem 0.78rem;
-  border-radius: 999px;
-  background: #eef4ff;
-  color: var(--accent-color);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.home-intro__title {
-  margin: 0.8rem 0 0;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-}
-
-.home-intro__description {
-  max-width: 42rem;
-  margin: 0.9rem 0 0;
-  color: var(--text-muted-color);
-  font-size: 1rem;
-  line-height: 1.74;
-}
-
 #post-list {
-  margin-top: 0;
+  margin-top: 1rem;
 
   @include bp.lg {
-    margin-top: 0.5rem;
+    margin-top: 1.35rem;
   }
 
   .card-wrapper {
@@ -59,7 +15,11 @@
     }
 
     &:not(:last-child) {
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
+
+      @include bp.md {
+        margin-bottom: 1rem;
+      }
     }
   }
 
@@ -85,7 +45,7 @@
 
     .card-body {
       height: 100%;
-      padding: 1.15rem;
+      padding: 0.88rem 0.95rem;
 
       @include bp.md {
         padding: 1.65rem 1.75rem 1.4rem;
@@ -95,8 +55,13 @@
         @extend %text-clip;
 
         color: var(--heading-color) !important;
-        font-size: 1.26rem;
-        line-height: 1.32;
+        font-size: 1.14rem;
+        line-height: 1.25;
+
+        @include bp.md {
+          font-size: 1.26rem;
+          line-height: 1.32;
+        }
       }
 
       %muted {
@@ -123,6 +88,14 @@
 
       .post-meta {
         @extend %muted;
+
+        font-size: 0.78rem;
+        line-height: 1.45;
+
+        @include bp.md {
+          font-size: inherit;
+          line-height: inherit;
+        }
 
         i {
           &:not(:first-child) {
@@ -152,10 +125,11 @@
 
 .post-preview {
   position: relative;
-  border: 1px solid var(--card-border-color);
-  border-radius: 1.8rem;
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  border: 1px solid var(--console-border-soft, var(--card-border-color));
+  border-radius: 1.45rem;
+  background:
+    linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 88%, var(--console-bg)));
+  box-shadow: var(--console-shadow-soft, var(--card-shadow));
   overflow: hidden;
   transition:
     transform 0.22s ease,
@@ -163,13 +137,13 @@
     border-color 0.22s ease;
 
   &::before {
-    background: linear-gradient(135deg, rgba(22, 119, 255, 0.04), rgba(22, 119, 255, 0.08));
+    background: linear-gradient(135deg, var(--console-accent-faint, rgba(54, 95, 125, 0.04)), transparent);
   }
 
   &:hover {
     transform: translateY(-2px);
     border-color: var(--card-border-strong-color);
-    box-shadow: var(--card-shadow-hover);
+    box-shadow: var(--console-shadow, var(--card-shadow-hover));
   }
 }
 
@@ -240,5 +214,20 @@
     @include bp.lg {
       display: none;
     }
+  }
+}
+
+.post-card-meta {
+  .categories {
+    color: var(--console-accent-strong, var(--accent-color));
+    font-weight: 700;
+  }
+
+  .pin {
+    border: 1px solid var(--console-border-soft, var(--main-border-color));
+    border-radius: 999px;
+    background: var(--console-accent-faint, transparent);
+    color: var(--console-accent-strong, var(--accent-color));
+    padding: 0.16rem 0.5rem;
   }
 }

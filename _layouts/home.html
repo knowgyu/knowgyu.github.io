@@ -46,14 +46,6 @@ refactor: true
   {% endfor %}
 {% endif %}
 
-<section class="home-intro">
-  <p class="home-intro__eyebrow">Technical notes</p>
-  <h1 class="home-intro__title">{{ site.title }}</h1>
-  <p class="home-intro__description">
-    로보틱스, 임베디드, MLOps, 컴퓨터 사이언스를 실전 중심으로 정리하는 개인 기술 아카이브입니다.
-  </p>
-</section>
-
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
     <article class="card-wrapper card">
@@ -91,7 +83,7 @@ refactor: true
               <p>{% include post-description.html %}</p>
             </div>
 
-            <div class="post-meta flex-grow-1 d-flex align-items-end">
+            <div class="post-meta post-card-meta flex-grow-1 d-flex align-items-end">
               <div class="me-auto">
                 <!-- posted date -->
                 <i class="far fa-calendar fa-fw me-1"></i>

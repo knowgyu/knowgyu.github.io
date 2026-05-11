@@ -2,12 +2,16 @@
 @use '../abstracts/placeholders';
 
 %-category-icon-color {
-  color: gray;
+  color: var(--console-accent, gray);
 }
 
 .categories {
-  margin-bottom: 2rem;
-  border-color: var(--categories-border);
+  margin-bottom: 1rem;
+  border-color: var(--console-border-soft, var(--categories-border));
+  border-radius: 1.15rem;
+  background: var(--console-bg-strong, var(--card-bg));
+  box-shadow: var(--console-shadow-soft, var(--card-shadow));
+  overflow: hidden;
 
   &.card,
   .list-group {
@@ -17,13 +21,20 @@
   .card-header {
     $radius: calc(v.$radius-lg - 1px);
 
-    padding: 0.75rem;
+    padding: 0.88rem 0.95rem;
     border-radius: $radius;
     border-bottom: 0;
+    background: linear-gradient(180deg, var(--console-bg-strong, var(--card-bg)), var(--console-bg, var(--card-bg)));
 
     &.hide-border-bottom {
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+    }
+
+    a {
+      color: var(--heading-color);
+      font-weight: 800;
+      letter-spacing: -0.01em;
     }
   }
 
@@ -33,10 +44,21 @@
     font-size: 86%; /* fontawesome icons */
   }
 
+  .list-group {
+    border-radius: 0;
+  }
+
   .list-group-item {
+    border-color: var(--console-border-soft, var(--categories-border));
     border-left: none;
     border-right: none;
-    padding-left: 2rem;
+    padding: 0.82rem 1.1rem 0.82rem 2rem;
+    background: var(--console-bg-strong, var(--card-bg));
+
+    a {
+      color: var(--text-color);
+      font-weight: 700;
+    }
 
     &:first-child {
       border-top-left-radius: 0;
@@ -52,9 +74,10 @@
 .category-trigger {
   width: 1.7rem;
   height: 1.7rem;
-  border-radius: 50%;
+  border: 1px solid var(--console-border-soft, transparent);
+  border-radius: 0.6rem;
   text-align: center;
-  color: #6c757d !important;
+  color: var(--console-muted-color, #6c757d) !important;
 
   i {
     position: relative;

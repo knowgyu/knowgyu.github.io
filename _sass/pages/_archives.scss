@@ -3,17 +3,17 @@
 @use '../abstracts/placeholders';
 
 #archives {
-  letter-spacing: 0.03rem;
+  letter-spacing: 0;
 
   @include bp.lt(bp.get(sm)) {
-    margin-top: -1rem;
+    margin-top: -0.25rem;
 
     ul {
       letter-spacing: 0;
     }
   }
 
-  $timeline-width: 4px;
+  $timeline-width: 2px;
 
   %timeline {
     content: '';
@@ -24,118 +24,131 @@
   }
 
   .year {
-    height: 3.5rem;
-    font-size: 1.5rem;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.55rem;
+    height: auto;
+    min-height: 2.5rem;
+    margin: 1.25rem 0 0.55rem;
+    padding: 0.25rem 0.72rem;
+    border: 1px solid var(--console-border-soft, var(--main-border-color));
+    border-radius: 999px;
+    background: var(--console-bg-strong, var(--card-bg));
+    color: var(--heading-color);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
     position: relative;
-    left: 2px;
-    margin-left: -$timeline-width;
+    left: 0;
 
     &::before {
-      @extend %timeline;
-
-      height: 72px;
-      left: 79px;
-      bottom: 16px;
-    }
-
-    &:first-child::before {
-      @extend %timeline;
-
-      height: 32px;
-      top: 24px;
+      display: none;
     }
 
     /* Year dot */
     &::after {
       content: '';
       display: inline-block;
-      position: relative;
       border-radius: 50%;
-      width: 12px;
-      height: 12px;
-      left: 21.5px;
-      border: 3px solid;
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--timeline-node-bg);
       background-color: var(--timeline-year-dot-color);
-      border-color: var(--timeline-node-bg);
-      box-shadow: 0 0 2px 0 #c2c6cc;
-      z-index: 1;
+      box-shadow: none;
+      order: -1;
     }
   }
 
   ul {
+    margin: 0 0 0 0.85rem;
+    padding-left: 0.95rem;
+    border-left: 1px solid var(--console-border-soft, var(--timeline-color));
+
     li {
-      font-size: 1.1rem;
-      line-height: 3rem;
+      display: grid;
+      grid-template-columns: 3.25rem 2.15rem minmax(0, 1fr);
+      align-items: center;
+      gap: 0.45rem;
+      margin: 0.36rem 0;
+      border: 1px solid transparent;
+      border-radius: 0.85rem;
+      font-size: 0.96rem;
+      line-height: 1.45;
+      padding: 0.55rem 0.7rem;
+      position: relative;
 
       @extend %text-ellipsis;
 
       &:nth-child(odd) {
-        background-color: var(--main-bg, #ffffff);
-        background-image: linear-gradient(
-          to left,
-          #ffffff,
-          #fbfbfb,
-          #fbfbfb,
-          #fbfbfb,
-          #ffffff
-        );
+        background: var(--console-bg-strong, var(--main-bg));
+      }
+
+      &:nth-child(even) {
+        background: var(--console-bg, var(--main-bg));
       }
 
       &::before {
-        @extend %timeline;
+        content: '';
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: var(--timeline-node-bg);
+        position: absolute;
+        left: -1.22rem;
+        top: 50%;
+        transform: translateY(-50%);
+      }
 
-        top: 0;
-        left: 77px;
-        height: 3.1rem;
+      &:hover {
+        border-color: var(--console-border-soft, var(--main-border-color));
       }
     }
 
     &:last-child li:last-child::before {
-      height: 1.5rem;
+      height: 7px;
     }
   } /* #archives ul */
 
   .date {
     white-space: nowrap;
     display: inline-block;
-    position: relative;
-    right: 0.5rem;
+    position: static;
+    right: auto;
+    color: var(--console-muted-color, var(--text-muted-color));
+    font-weight: 700;
 
     &.month {
-      width: 1.4rem;
-      text-align: center;
+      width: auto;
+      text-align: left;
+      font-size: 0.74rem;
+      text-transform: uppercase;
     }
 
     &.day {
-      font-size: 85%;
+      font-size: 0.82rem;
       font-family: v.$font-family-base;
     }
   }
 
   a {
-    /* post title in Archvies */
-    margin-left: 2.5rem;
-    position: relative;
-    top: 0.1rem;
+    /* post title in Archives */
+    min-width: 0;
+    margin-left: 0;
+    position: static;
+    color: var(--text-color);
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover {
       border-bottom: none;
+      color: var(--link-hover-color);
     }
 
     &::before {
-      /* the dot before post title */
-      content: '';
-      display: inline-block;
-      position: relative;
-      border-radius: 50%;
-      width: 8px;
-      height: 8px;
-      float: left;
-      top: 1.35rem;
-      left: 71px;
-      background-color: var(--timeline-node-bg);
-      box-shadow: 0 0 3px 0 #c2c6cc;
-      z-index: 1;
+      display: none;
     }
   }
 } /* #archives */

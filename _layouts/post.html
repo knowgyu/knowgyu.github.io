@@ -21,7 +21,7 @@ script_includes:
       <p class="post-desc fw-light mb-4">{{ page.description }}</p>
     {% endif %}
 
-    <div class="post-meta text-muted">
+    <div class="post-meta post-header-meta text-muted">
       <!-- published date -->
       <span>
         {{ site.data.locales[lang].post.posted }}
@@ -134,7 +134,8 @@ script_includes:
   <div class="post-tail-wrapper text-muted">
     <!-- categories -->
     {% if page.categories.size > 0 %}
-      <div class="post-meta mb-3">
+      <div class="post-meta post-category-strip mb-3">
+        <span class="post-taxonomy-label">Category</span>
         <i class="far fa-folder-open fa-fw me-1"></i>
         {% for category in page.categories %}
           <a href="{{ site.baseurl }}/categories/{{ category | slugify | url_encode }}/">{{ category }}</a>
@@ -145,7 +146,7 @@ script_includes:
 
     <!-- tags -->
     {% if page.tags.size > 0 %}
-      <div class="post-tags">
+      <div class="post-tags post-tags--context" hidden aria-hidden="true">
         <i class="fa fa-tags fa-fw me-1"></i>
         {% for tag in page.tags %}
           <a

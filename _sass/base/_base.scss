@@ -38,7 +38,9 @@ html {
 }
 
 body {
-  background: var(--main-bg);
+  background:
+    radial-gradient(circle at 16% 0%, var(--console-accent-faint, transparent), transparent 24rem),
+    linear-gradient(180deg, var(--main-bg) 0%, var(--console-bg, var(--main-bg)) 100%);
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
   color: var(--text-color);
@@ -48,6 +50,14 @@ body {
 }
 
 h1.dynamic-title {
+  margin-top: 1.8rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.025em;
+
+  ~ .content {
+    margin-top: 1.35rem;
+  }
+
   @include bp.lt(bp.get(lg)) {
     display: none;
 

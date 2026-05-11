@@ -173,12 +173,22 @@
       label.textContent = '참고한 글';
       sources.appendChild(label);
 
-      message.sources.forEach((source) => {
+      message.sources.forEach((source, index) => {
         const link = document.createElement('a');
         link.href = normalizeSourcePath(source.path);
         link.target = '_blank';
         link.rel = 'noreferrer';
-        link.textContent = source.title;
+
+        const sourceIndex = document.createElement('span');
+        sourceIndex.className = 'source-index';
+        sourceIndex.textContent = String(index + 1).padStart(2, '0');
+        link.appendChild(sourceIndex);
+
+        const sourceTitle = document.createElement('span');
+        sourceTitle.className = 'source-title';
+        sourceTitle.textContent = source.title;
+        link.appendChild(sourceTitle);
+
         sources.appendChild(link);
       });
 

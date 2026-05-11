@@ -29,6 +29,23 @@
 - `_config.yml`
   `title`, `tagline`, `theme_mode`, avatar, 소셜 링크 등 사이트 메타 정보는 여기서 바꾼다.
 
+
+## OfficeWhere 연결 톤
+
+- 목표는 OfficeWhere를 그대로 복제하는 것이 아니라, 같은 사람이 만든 지식 작업대처럼 보이게 하는 것이다.
+- 핵심 감각:
+  - 조용한 생산성 콘솔
+  - 낮은 채도의 슬레이트/블루 accent
+  - 얇은 border와 중립 surface
+  - 메타데이터는 작은 pill/label/row로 표기
+  - 큰 glow/gradient/AI 장식은 피하기
+- 적용 순서:
+  1. 챗봇: 떠 있는 AI 위젯이 아니라 블로그 지식 콘솔처럼 보이게 한다.
+  2. 홈: 글 카드와 intro를 조용한 workbench surface로 맞춘다.
+  3. 포스트: 본문 가독성을 유지하면서 header/meta/code/table/blockquote 질감을 정리한다.
+  4. 카테고리/아카이브: 라이브러리/로그 화면처럼 구조화한다.
+  5. Tags는 주 네비게이션/포스트 하단에서 보이지 않게 하되, 필요하면 기존 tag archive route와 챗봇 메타데이터는 보존한다.
+
 ## 현재 라이트 모드 방향
 
 - Pantone 2026 `Cloud Dancer` 를 참고한 거의 흰색에 가까운 오프화이트 베이스
