@@ -4,6 +4,14 @@ from pathlib import Path
 import re, sys
 root = Path(__file__).resolve().parents[1]
 errors=[]
+forbidden_site_paths = [
+    root / '_site' / 'DESIGN.md',
+    root / '_site' / 'DESIGN_GUIDE.md',
+    root / '_site' / 'WORKLOG.md',
+    root / '_site' / 'embedding_scripts.sh',
+    root / '_site' / '마크다운파일변환기.py',
+    root / '_site' / 'tests',
+]
 if not (root/'DESIGN.md').exists(): errors.append('DESIGN.md is missing')
 # Inspect authored web sources only; generated sites, vendor bundles, and research
 # notes may legitimately quote the patterns this guard is meant to prevent.
@@ -69,6 +77,9 @@ for directory in (root / '_sass/base', root / '_sass/layout', root / '_sass/page
         s = f.read_text()
         if re.search(r'box-shadow\s*:\s*var\(--card-shadow(?:-hover)?\b', s):
             errors.append(f'{f}: non-overlay card shadow')
+for path in forbidden_site_paths:
+    if path.exists():
+        errors.append(f'{path}: forbidden generated output')
 if errors:
     print('\n'.join(errors)); sys.exit(1)
 print('design contract: PASS')

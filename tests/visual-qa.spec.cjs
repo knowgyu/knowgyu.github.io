@@ -6,6 +6,8 @@ const ROUTES = [
   { name: 'home', path: '/' },
   { name: 'categories', path: '/categories/' },
   { name: 'archives', path: '/archives/' },
+  { name: 'tags', path: '/tags/' },
+  { name: 'search-open', path: '/' },
   {
     name: 'post',
     path: '/posts/ROS1-하이퍼파라미터-튜닝-및-마무리/',
@@ -173,6 +175,38 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         }
       }
 
+      if (route === 'tags') {
+        if (!count('#tags .tag')) fail('#tags .tag', 'count', '0', '>0')
+        for (const tag of document.querySelectorAll('#tags .tag')) {
+          const tagStyle = style(tag)
+          const radius = cssNumber(tagStyle.borderTopLeftRadius)
+          if (radius != null && radius > 8)
+            fail('#tags .tag', 'border-radius', `${radius}px`, '<=8px')
+          if (tagStyle.boxShadow !== 'none')
+            fail('#tags .tag', 'box-shadow', tagStyle.boxShadow, 'none')
+        }
+      }
+
+      if (route === 'search-open') {
+        const wrapper = first('#search-result-wrapper')
+        const search = first('#search')
+        const input = first('#search-input')
+        if (!wrapper) fail('#search-result-wrapper', 'presence', 'missing', 'required')
+        if (!input) fail('#search-input', 'presence', 'missing', 'required')
+        if (wrapper && wrapper.classList.contains('d-none'))
+          fail('#search-result-wrapper', 'opened state', 'hidden', 'visible after query')
+        if (!count('#search-results article'))
+          fail('#search-results article', 'count', '0', '>0 after query')
+        if (search) {
+          const searchStyle = style(search)
+          const radius = cssNumber(searchStyle.borderTopLeftRadius)
+          if (radius != null && radius > 16)
+            fail('#search', 'border-radius', `${radius}px`, '<=16px')
+          if (searchStyle.boxShadow !== 'none')
+            fail('#search', 'box-shadow', searchStyle.boxShadow, 'none')
+        }
+      }
+
       if (route === 'post') {
         const article = first('article.post-article')
         if (!article) {
@@ -300,6 +334,15 @@ async function main() {
               `${JSON.stringify({ route: route.name, viewport: viewport.name, url: routePath, failures: [failure] }, null, 2)}\n`,
             )
             throw new Error(formatFailure(failure))
+          }
+          if (route.name === 'search-open') {
+            await page.locator('#search-trigger').click().catch(() => {})
+            await page.locator('#search-input').fill('ROS')
+            await page.waitForFunction(() => {
+              const wrapper = document.querySelector('#search-result-wrapper')
+              const results = document.querySelector('#search-results')
+              return wrapper && !wrapper.classList.contains('d-none') && results && results.textContent.trim().length > 0
+            }, null, { timeout: 5000 })
           }
           await page.screenshot({ path: image, fullPage: true })
           const evidence = await collectEvidence(page, route.name, viewport.name, image)

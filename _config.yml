@@ -210,7 +210,13 @@ compress_html:
 exclude:
   - "*.gem"
   - "*.gemspec"
+  - DESIGN.md
+  - DESIGN_GUIDE.md
+  - WORKLOG.md
   - docs
+  - embedding_scripts.sh
+  - 마크다운파일변환기.py
+  - tests
   - tools
   - README.md
   - LICENSE
