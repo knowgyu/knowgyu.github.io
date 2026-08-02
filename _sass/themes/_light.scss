@@ -4,6 +4,14 @@
   --mask-bg: rgba(17, 24, 39, 0.22);
   --main-border-color: #e8edf3;
 
+  /* Editorial semantic tokens: theme files own palette decisions. */
+  --surface-color: #fafafa;
+  --surface-muted-color: #eef2f6;
+  --border-color: #d8e1eb;
+  --accent-strong-color: #24465f;
+  --accent-muted-color: rgba(54, 95, 125, 0.1);
+  --overlay-shadow: 0 8px 22px rgba(15, 23, 42, 0.045);
+
   /* Common color */
   --text-color: #1f2937;
   --text-muted-color: #5f6b7b;
@@ -61,19 +69,8 @@
   --accent-color: #365f7d;
   --intro-bg: linear-gradient(180deg, #fafafa 0%, #eef2f6 100%);
   --soft-shadow: 0 18px 40px rgba(15, 23, 42, 0.055);
-  --console-bg: #e7edf4;
-  --console-bg-strong: #fafafa;
-  --console-bg-muted: #dfe7f0;
-  --console-border: #ccd7e3;
-  --console-border-soft: #d8e1eb;
-  --console-accent: #365f7d;
-  --console-accent-strong: #24465f;
-  --console-accent-soft: rgba(54, 95, 125, 0.10);
-  --console-accent-faint: rgba(54, 95, 125, 0.055);
-  --console-muted-color: #536171;
-  --console-kbd-bg: linear-gradient(180deg, #fafafa, #e5ecf4);
-  --console-shadow: 0 16px 34px rgba(15, 23, 42, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  --console-shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.045);
+  --accent-color: #365f7d;
+  --text-muted-color: #536171;
 
   /* Posts */
   --toc-highlight: #365f7d;
@@ -93,7 +90,6 @@
   --dash-color: #d5dde6;
   --kbd-wrap-color: #d3dde7;
   --kbd-text-color: var(--text-color);
-  --kbd-bg-color: #eef3f7;
   --prompt-text-color: #31465d;
   --prompt-tip-bg: #eef3f7;
   --prompt-tip-icon-color: #365f7d;
@@ -112,7 +108,7 @@
 
   /* Categories */
   --categories-border: rgba(0, 0, 0, 0.125);
-  --categories-hover-bg: var(--console-accent-faint);
+  --categories-hover-bg: var(--accent-muted-color);
   --categories-icon-hover-color: #365f7d;
 
   /* Archive */
@@ -137,10 +133,10 @@
   }
 
   main[aria-label='Main Content'] {
-    background: var(--console-bg-strong);
-    border: 1px solid var(--console-border-soft);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     border-radius: 1.6rem;
-    box-shadow: var(--console-shadow-soft);
+    box-shadow: var(--overlay-shadow);
   }
 
   .dark {

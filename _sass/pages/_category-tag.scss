@@ -4,7 +4,7 @@
 
 .dash {
   margin: 0 0.5rem 0.85rem 0.5rem;
-  border-bottom: 1px solid var(--console-border-soft, var(--dash-color));
+  border-bottom: 1px solid var(--border-color, var(--dash-color));
 }
 
 #page-category,
@@ -12,14 +12,14 @@
   ul > li {
     line-height: 1.55rem;
     margin: 0.35rem 0;
-    border: 1px solid var(--console-border-soft, transparent);
+    border: 1px solid var(--border-color, transparent);
     border-radius: 0.85rem;
-    background: var(--console-bg-strong, transparent);
+    background: var(--surface-color, transparent);
     padding: 0.7rem 0.85rem;
 
     /* dot */
     &::before {
-      background: var(--console-accent, #999999);
+      background: var(--accent-color, #999999);
       width: 6px;
       height: 6px;
       border-radius: 50%;

@@ -85,6 +85,10 @@ pageviews:
 #
 theme_mode: light # [light | dark]
 
+# Disabled until an available backend is configured.
+chatbot:
+  enabled: false
+
 # The CDN endpoint for media resources.
 # Notice that once it is assigned, the CDN url
 # will be added to all media resources (site avatar, posts' images, audio and video files) paths starting with '/'

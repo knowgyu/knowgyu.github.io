@@ -1,15 +1,15 @@
 .chatbot-container {
-  --chatbot-surface: var(--console-bg-strong, var(--card-bg, #fafafa));
-  --chatbot-surface-muted: var(--console-bg, #e7edf4);
-  --chatbot-surface-soft: var(--console-bg-muted, #dfe7f0);
-  --chatbot-border: var(--console-border, rgba(76, 96, 112, 0.2));
-  --chatbot-border-soft: var(--console-border-soft, rgba(76, 96, 112, 0.14));
-  --chatbot-accent: var(--console-accent, #365f7d);
-  --chatbot-accent-strong: var(--console-accent-strong, #24465f);
-  --chatbot-accent-soft: var(--console-accent-soft, rgba(54, 95, 125, 0.1));
-  --chatbot-accent-faint: var(--console-accent-faint, rgba(54, 95, 125, 0.055));
-  --chatbot-muted: var(--console-muted-color, var(--text-muted-color, #536171));
-  --chatbot-shadow: var(--console-shadow, 0 18px 40px rgba(15, 23, 42, 0.1));
+  --chatbot-surface: var(--surface-color, var(--card-bg, #fafafa));
+  --chatbot-surface-muted: var(--surface-muted-color, #e7edf4);
+  --chatbot-surface-soft: var(--surface-muted-color, #dfe7f0);
+  --chatbot-border: var(--border-color, rgba(76, 96, 112, 0.2));
+  --chatbot-border-soft: var(--border-color, rgba(76, 96, 112, 0.14));
+  --chatbot-accent: var(--accent-color, #365f7d);
+  --chatbot-accent-strong: var(--accent-strong-color, #24465f);
+  --chatbot-accent-soft: var(--accent-muted-color, rgba(54, 95, 125, 0.1));
+  --chatbot-accent-faint: var(--accent-muted-color, rgba(54, 95, 125, 0.055));
+  --chatbot-muted: var(--text-muted-color, var(--text-muted-color, #536171));
+  --chatbot-shadow: var(--overlay-shadow, 0 18px 40px rgba(15, 23, 42, 0.1));
 
   position: fixed;
   right: 1.5rem;
