@@ -1,7 +1,79 @@
 @use '../abstracts/variables' as v;
 @use '../abstracts/mixins' as mx;
 @use '../abstracts/breakpoints' as bp;
-#topbar-wrapper { height: v.$topbar-height; margin-top: .75rem; padding: 0 .25rem; border-bottom: 1px solid var(--main-border-color); background: var(--topbar-bg); @include bp.lt(bp.get(lg)) { @include mx.slide(top .2s ease); left: 0; } }
-#topbar { color: var(--topbar-text-color); #breadcrumb { padding-left: .25rem; color: var(--text-muted-color); font-size: .9rem; a:hover { color: var(--link-hover-color); } span:not(:last-child)::after { content: '›'; padding: 0 .3rem; } @include bp.lt(bp.get(lg)) { display: none; } } }
-#topbar-title { display: none; @include bp.lt(bp.get(lg)) { display: block; width: 70%; text-align: center; font-size: 1rem; font-weight: 600; } }
-#sidebar-trigger, #search-trigger { display: none; @include bp.lt(bp.get(lg)) { display: block; } }
+
+#topbar-wrapper {
+  height: v.$topbar-height;
+  margin-top: 0.75rem;
+  padding: 0 0.25rem;
+  border-bottom: 1px solid var(--main-border-color);
+  background: transparent;
+
+  @include bp.lt(bp.get(lg)) {
+    @include mx.slide(top 0.2s ease);
+
+    left: 0;
+  }
+}
+
+#topbar {
+  min-width: 0;
+  color: var(--topbar-text-color);
+
+  #breadcrumb {
+    min-width: 0;
+    padding-left: 0.25rem;
+    overflow: hidden;
+    color: var(--text-muted-color);
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    a:hover {
+      color: var(--link-hover-color);
+    }
+
+    span:not(:last-child)::after {
+      content: '›';
+      padding: 0 0.3rem;
+    }
+
+    @include bp.lt(bp.get(lg)) {
+      display: none;
+    }
+  }
+}
+
+#topbar-title {
+  display: none;
+
+  @include bp.lt(bp.get(lg)) {
+    display: block;
+    width: 70%;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+#sidebar-trigger,
+#search-trigger {
+  display: none;
+
+  @include bp.lt(bp.get(lg)) {
+    display: block;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+#sidebar-trigger:focus-visible,
+#search-trigger:focus-visible,
+#search-cancel:focus-visible,
+#search-input:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}

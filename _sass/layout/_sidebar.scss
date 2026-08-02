@@ -18,5 +18,5 @@ $sidebar-display: 'sidebar-display';
   li.nav-item { width: 100%; a.nav-link { display: block; min-height: 0; padding: .55rem .7rem; border-left: 2px solid transparent; font-size: .9rem; } &.active a.nav-link { color: var(--sidebar-active-color); border-left-color: var(--accent-color); background: var(--sidebar-hover-bg); } }
   .sidebar-bottom { gap: .65rem; padding: 1rem 1.25rem; margin-top: auto; }
   .sidebar-bottom a, #mode-toggle { width: 1.75rem; height: 1.75rem; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--sidebar-btn-color); }
+  a:focus-visible, #mode-toggle:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
 }
-[#{$sidebar-display}] #main-wrapper { @include bp.lt(bp.get(lg)) { transform: translateX(v.$sidebar-width); } }

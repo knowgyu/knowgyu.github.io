@@ -63,7 +63,7 @@
   border-width: 1px;
   border-radius: v.$radius-lg;
   color: var(--text-color);
-  background: var(--card-bg);
+  background: var(--surface-color);
   margin-top: v.$topbar-height;
   min-width: 20rem;
   font-size: 1.05rem;
@@ -159,7 +159,7 @@
     display: flex;
     content: '';
     position: relative;
-    background: linear-gradient(transparent, var(--card-bg) 70%);
+    background: linear-gradient(transparent, var(--surface-color) 70%);
     height: $curtain-height;
   }
 

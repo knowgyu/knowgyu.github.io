@@ -232,6 +232,7 @@ main {
 /* it will be created by Liquid */
 .table-wrapper {
   overflow-x: auto;
+  max-width: 100%;
   margin-bottom: 1.5rem;
 
   > table {

@@ -4,15 +4,15 @@
     <a class="site-title d-block" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <p class="site-subtitle mb-0">{{ site.tagline }}</p>
   </header>
-  <nav class="flex-column flex-grow-1 w-100 ps-0">
+  <nav class="flex-column flex-grow-1 w-100 ps-0" aria-label="Primary navigation">
     <ul class="nav">
       <li class="nav-item{% if page.layout == 'home' %} active{% endif %}">
-        <a href="{{ '/' | relative_url }}" class="nav-link"><span>{{ site.data.locales[include.lang].tabs.home }}</span></a>
+        <a href="{{ '/' | relative_url }}" class="nav-link"{% if page.layout == 'home' %} aria-current="page"{% endif %}><span>{{ site.data.locales[include.lang].tabs.home }}</span></a>
       </li>
       {% for tab in site.tabs %}
         {% unless tab.hidden == true %}
           <li class="nav-item{% if tab.url == page.url %} active{% endif %}">
-            <a href="{{ tab.url | relative_url }}" class="nav-link">
+            <a href="{{ tab.url | relative_url }}" class="nav-link"{% if tab.url == page.url %} aria-current="page"{% endif %}>
               {% capture tab_name %}{{ tab.url | split: '/' }}{% endcapture %}
               <span>{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}</span>
             </a>

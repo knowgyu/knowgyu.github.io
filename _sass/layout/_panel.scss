@@ -18,9 +18,8 @@
     padding: 1.1rem 1rem 1rem 1.1rem;
     border: 1px solid var(--border-color, var(--main-border-color));
     border-left-width: 1px;
-    border-radius: 1.25rem;
-    background: var(--surface-color, var(--card-bg));
-    box-shadow: var(--overlay-shadow, var(--card-shadow));
+    border-radius: 8px;
+    background: var(--surface-color);
 
     &:not(:first-child) {
       margin-top: 1rem;

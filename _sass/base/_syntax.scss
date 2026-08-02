@@ -14,7 +14,8 @@
   @extend %code-snippet-bg;
 
   overflow: auto;
-  max-inline-size: 100%;
+  max-width: 100%;
+  box-shadow: none;
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
   border: 1px solid var(--language-border-color);
@@ -263,6 +264,11 @@ div {
 
     &:focus {
       outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
     }
 
     &:not([timeout]):hover {

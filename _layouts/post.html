@@ -128,7 +128,11 @@ script_includes:
   {% endif %}
 
   <div class="content">
-    {{ content }}
+    {% assign media_content = content
+      | replace: '<iframe', '<figure class="media-embed"><iframe'
+      | replace: '</iframe>', '</iframe><figcaption class="embed-fallback" data-media-fallback role="status">Embedded media · open directly if unavailable.</figcaption></figure>'
+    %}
+    {{ media_content }}
   </div>
 
   <div class="post-tail-wrapper text-muted">

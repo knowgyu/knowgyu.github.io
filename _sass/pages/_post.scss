@@ -19,18 +19,15 @@
   > header,
   > .content,
   > .post-tail-wrapper {
-    width: min(100%, 52rem);
+    width: min(100%, 50rem);
     margin-left: auto;
     margin-right: auto;
   }
 
   > header {
-    margin-bottom: 2.2rem;
-    padding: 1.45rem;
-    border: 1px solid var(--border-color, var(--main-border-color));
-    border-radius: 1.35rem;
-    background: var(--surface-color);
-    box-shadow: var(--overlay-shadow, none);
+    margin-bottom: 1.5rem;
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid var(--border-color, var(--main-border-color));
   }
 
   > .content {
@@ -39,13 +36,12 @@
 
   @include bp.lt(bp.get(lg)) {
     > header {
-      margin-bottom: 1.15rem;
-      padding: 0.95rem 1rem;
-      border-radius: 1.08rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.55rem;
     }
 
     > .content {
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
   }
 
@@ -53,7 +49,6 @@
     > header,
     > .content,
     > .post-tail-wrapper {
-      width: min(100%, 68rem);
       margin-left: 0;
       margin-right: auto;
     }
@@ -63,7 +58,6 @@
     > header,
     > .content,
     > .post-tail-wrapper {
-      width: min(100%, 74rem);
       margin-left: 0;
       margin-right: auto;
     }
@@ -158,9 +152,9 @@ header {
       }
     }
 
-      img {
-        border-radius: 1.2rem;
-      }
+    img {
+      border-radius: v.$radius-sm;
+    }
   }
 }
 
@@ -197,9 +191,9 @@ header {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.35rem;
-    border: 1px solid var(--border-color, var(--main-border-color));
-    border-radius: 999px;
-    background: var(--accent-muted-color, transparent);
+    border-bottom: 1px solid var(--border-color, var(--main-border-color));
+    border-radius: 0;
+    background: transparent;
     color: var(--text-muted-color, var(--text-muted-color));
     padding: 0.34rem 0.62rem;
 
@@ -210,7 +204,7 @@ header {
   }
 
   .post-taxonomy-label {
-    color: var(--text-muted-color, var(--text-muted-color));
+    color: var(--text-muted-color);
     font-size: 0.68rem;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -274,7 +268,7 @@ header {
 .share-mastodon {
   /* See: https://github.com/justinribeiro/share-to-mastodon#properties */
   --wc-stm-font-family: v.$font-family-base;
-  --wc-stm-dialog-background-color: var(--card-bg);
+  --wc-stm-dialog-background-color: var(--surface-color);
   --wc-stm-form-button-border: 1px solid var(--btn-border-color);
   --wc-stm-form-submit-background-color: var(--sidebar-btn-bg);
   --wc-stm-form-cancel-background-color: var(--sidebar-btn-bg);
@@ -620,6 +614,11 @@ header {
   }
 
   .card {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+
     h4 {
       @extend %text-clip;
     }
@@ -650,7 +649,7 @@ header {
 
 .content > p > img {
   @include bp.lte(bp.get(md)) {
-    max-width: calc(100% + 1rem);
+    max-width: 100%;
   }
 }
 
@@ -691,16 +690,16 @@ h4 {
   blockquote {
     border-left-color: var(--accent-color, var(--blockquote-border-color));
     background: var(--accent-muted-color, transparent);
-    border-radius: 0.85rem;
+    border-radius: v.$radius-sm;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
   }
 
   .table-wrapper {
     border: 1px solid var(--border-color, var(--main-border-color));
-    border-radius: 1rem;
-    background: var(--surface-color, var(--card-bg));
-    box-shadow: var(--overlay-shadow, none);
+    border-radius: v.$radius-sm;
+    background: transparent;
+    box-shadow: none;
     max-inline-size: 100%;
   }
 
@@ -718,9 +717,26 @@ h4 {
     margin: 1.25rem auto;
   }
 
+  .media-embed {
+    max-inline-size: 100%;
+    margin: 1.25rem auto;
+
+    .embed-fallback {
+      display: block;
+      margin-top: 0.45rem;
+      color: var(--text-muted-color);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  }
+
   @include bp.lt(bp.get(lg)) {
     iframe {
       width: 100%;
+      margin: 1rem 0;
+    }
+
+    .media-embed {
       margin: 1rem 0;
     }
   }

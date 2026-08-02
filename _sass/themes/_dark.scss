@@ -29,7 +29,6 @@
   --btn-border-color: rgba(255, 255, 255, 0.08);
   --btn-backtotop-color: var(--text-color);
   --btn-backtotop-border-color: rgba(255, 255, 255, 0.1);
-  --card-header-bg: #181c22;
   --checkbox-color: rgb(118, 135, 150);
   --checkbox-checked-color: var(--link-color);
   --img-bg: radial-gradient(circle, rgb(20, 24, 30) 0%, rgb(28, 33, 40) 100%);
@@ -65,10 +64,6 @@
   --btn-patinator-text-color: var(--text-color);
   --btn-paginator-hover-color: rgba(34, 41, 50, 0.96);
   --accent-color: #93bad8;
-  --intro-bg: var(--surface-muted-color);
-  --soft-shadow: none;
-  --accent-color: #93bad8;
-  --text-muted-color: #a6b2bf;
 
   /* Posts */
   --toc-highlight: #8ebeff;
@@ -80,12 +75,6 @@
   --footnote-target-bg: #253548;
   --btn-share-color: #99a6b3;
   --btn-share-hover-color: #d6e7ff;
-  --card-bg: #14181d;
-  --card-border-color: rgba(255, 255, 255, 0.07);
-  --card-border-strong-color: rgba(147, 186, 216, 0.25);
-  --card-hovor-bg: transparent;
-  --card-shadow: none;
-  --card-shadow-hover: none;
   --kbd-wrap-color: #42505f;
   --kbd-text-color: #e6edf4;
   --prompt-text-color: rgba(230, 237, 244, 0.86);
@@ -134,12 +123,12 @@
   /* Categories */
   .categories.card,
   .list-group-item {
-    background-color: var(--card-bg);
+    background-color: var(--surface-color);
   }
 
   .categories {
     .card-header {
-      background-color: var(--card-header-bg);
+      background-color: var(--surface-color);
     }
 
     .list-group-item {
@@ -149,7 +138,7 @@
       border-color: var(--categories-border);
 
       &:last-child {
-        border-bottom-color: var(--card-bg);
+        border-bottom-color: var(--surface-color);
       }
     }
   }

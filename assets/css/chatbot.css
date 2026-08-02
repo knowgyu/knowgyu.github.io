@@ -1,5 +1,5 @@
 .chatbot-container {
-  --chatbot-surface: var(--surface-color, var(--card-bg, #fafafa));
+  --chatbot-surface: var(--surface-color, #fafafa);
   --chatbot-surface-muted: var(--surface-muted-color, #e7edf4);
   --chatbot-surface-soft: var(--surface-muted-color, #dfe7f0);
   --chatbot-border: var(--border-color, rgba(76, 96, 112, 0.2));
