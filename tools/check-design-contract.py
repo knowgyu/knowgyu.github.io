@@ -39,6 +39,19 @@ if body and 'gradient(' in body.group('body'):
     errors.append(f'{root / "_sass/base/_base.scss"}: body gradient')
 if body and re.search(r'overflow-x\s*:\s*hidden', body.group('body')):
     errors.append(f'{root / "_sass/base/_base.scss"}: body overflow mask')
+
+# Lock the canvas/rail contrast and singular accent that define the Notion-like palette.
+for label, path, fragment in (
+    ('light Notion canvas', root / '_sass/themes/_light.scss', '--main-bg: #ffffff;'),
+    ('light warm rail', root / '_sass/themes/_light.scss', '--surface-muted-color: #f6f5f4;'),
+    ('light singular accent', root / '_sass/themes/_light.scss', '--accent-color: #0075de;'),
+    ('dark Notion canvas', root / '_sass/themes/_dark.scss', '--main-bg: #191919;'),
+    ('dark distinct rail', root / '_sass/themes/_dark.scss', '--surface-muted-color: #202020;'),
+    ('dark singular accent', root / '_sass/themes/_dark.scss', '--accent-color: #529cca;'),
+):
+    if fragment not in path.read_text():
+        errors.append(f'{label}: missing {fragment!r} in {path}')
+
 for f in (root / '_sass/themes').glob('*.scss'):
     s = f.read_text()
     for token in ('--sidebar-bg', '--intro-bg'):

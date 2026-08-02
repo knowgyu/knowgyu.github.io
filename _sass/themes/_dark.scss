@@ -2,36 +2,36 @@
   color-scheme: dark;
 
   /* Framework color */
-  --main-bg: #0b0d11;
+  --main-bg: #191919;
   --mask-bg: rgba(0, 0, 0, 0.62);
   --main-border-color: rgba(255, 255, 255, 0.08);
 
   /* Editorial semantic tokens: theme files own palette decisions. */
-  --surface-color: #171c24;
-  --surface-muted-color: #11161d;
-  --border-color: rgba(255, 255, 255, 0.095);
-  --accent-strong-color: #c5d9e8;
-  --accent-muted-color: rgba(147, 186, 216, 0.13);
+  --surface-color: #202020;
+  --surface-muted-color: #202020;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --accent-strong-color: #6eafe5;
+  --accent-muted-color: rgba(82, 156, 202, 0.18);
   --overlay-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
 
   /* Common color */
-  --text-color: #ecf2f8;
-  --text-muted-color: #9ba7b4;
+  --text-color: rgba(255, 255, 255, 0.81);
+  --text-muted-color: rgba(255, 255, 255, 0.50);
   --text-muted-highlight-color: #f3f7fb;
-  --heading-color: #ffffff;
-  --label-color: #b3c0cd;
+  --heading-color: rgba(255, 255, 255, 0.90);
+  --label-color: rgba(255, 255, 255, 0.50);
   --blockquote-border-color: rgba(94, 162, 255, 0.3);
   --blockquote-text-color: #b9c5d2;
-  --link-color: #9bc7e6;
-  --link-hover-color: #d4e8f7;
-  --link-underline-color: rgba(155, 199, 230, 0.26);
-  --button-bg: #171a1f;
-  --btn-border-color: rgba(255, 255, 255, 0.08);
+  --link-color: #529cca;
+  --link-hover-color: #79b8e1;
+  --link-underline-color: rgba(82, 156, 202, 0.34);
+  --button-bg: #202020;
+  --btn-border-color: rgba(255, 255, 255, 0.12);
   --btn-backtotop-color: var(--text-color);
   --btn-backtotop-border-color: rgba(255, 255, 255, 0.1);
   --checkbox-color: rgb(118, 135, 150);
   --checkbox-checked-color: var(--link-color);
-  --img-bg: radial-gradient(circle, rgb(20, 24, 30) 0%, rgb(28, 33, 40) 100%);
+  --img-bg: radial-gradient(circle, rgb(32, 32, 32) 0%, rgb(42, 42, 42) 100%);
   --shimmer-bg: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
@@ -41,36 +41,36 @@
 
   /* Sidebar */
   --site-title-color: #ffffff;
-  --site-subtitle-color: #9aa7b4;
+  --site-subtitle-color: rgba(255, 255, 255, 0.50);
   --sidebar-bg: var(--surface-muted-color);
-  --sidebar-border-color: rgba(255, 255, 255, 0.06);
-  --sidebar-divider-color: rgba(255, 255, 255, 0.06);
-  --sidebar-muted-color: #a0acb8;
-  --sidebar-active-color: #ffffff;
-  --sidebar-hover-bg: rgba(36, 44, 55, 0.96);
-  --sidebar-btn-bg: #1a1f26;
-  --sidebar-btn-color: #a3afbb;
+  --sidebar-border-color: rgba(255, 255, 255, 0.10);
+  --sidebar-divider-color: rgba(255, 255, 255, 0.08);
+  --sidebar-muted-color: rgba(255, 255, 255, 0.58);
+  --sidebar-active-color: rgba(255, 255, 255, 0.90);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-btn-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-btn-color: rgba(255, 255, 255, 0.58);
   --avatar-border-color: rgb(206, 206, 206, 0.9);
 
   /* Topbar */
-  --topbar-bg: rgba(19, 23, 28, 0.86);
+  --topbar-bg: rgba(25, 25, 25, 0.94);
   --topbar-text-color: var(--text-color);
   --search-border-color: rgba(255, 255, 255, 0.08);
   --search-icon-color: #7e8a97;
-  --input-focus-border-color: rgba(147, 186, 216, 0.30);
+  --input-focus-border-color: rgba(82, 156, 202, 0.48);
 
   /* Home page */
-  --post-list-text-color: #a3afbb;
+  --post-list-text-color: rgba(255, 255, 255, 0.50);
   --btn-patinator-text-color: var(--text-color);
-  --btn-paginator-hover-color: rgba(34, 41, 50, 0.96);
-  --accent-color: #93bad8;
+  --btn-paginator-hover-color: rgba(255, 255, 255, 0.08);
+  --accent-color: #529cca;
 
   /* Posts */
-  --toc-highlight: #8ebeff;
+  --toc-highlight: #529cca;
   --toc-popup-border-color: rgba(255, 255, 255, 0.08);
-  --tag-hover: #232b33;
+  --tag-hover: rgba(255, 255, 255, 0.08);
   --tb-odd-bg: #252526; /* odd rows of the posts' table */
-  --tb-even-bg: #1a1f26; /* even rows of the posts' table */
+  --tb-even-bg: #202020; /* even rows of the posts' table */
   --tb-border-color: rgba(255, 255, 255, 0.06);
   --footnote-target-bg: #253548;
   --btn-share-color: #99a6b3;
@@ -78,10 +78,10 @@
   --kbd-wrap-color: #42505f;
   --kbd-text-color: #e6edf4;
   --prompt-text-color: rgba(230, 237, 244, 0.86);
-  --prompt-tip-bg: #17263a;
-  --prompt-tip-icon-color: #8ebeff;
-  --prompt-info-bg: #192838;
-  --prompt-info-icon-color: #8ebeff;
+  --prompt-tip-bg: #252525;
+  --prompt-tip-icon-color: #529cca;
+  --prompt-info-bg: rgba(82, 156, 202, 0.16);
+  --prompt-info-icon-color: #529cca;
   --prompt-warning-bg: #3a2d12;
   --prompt-warning-icon-color: #f3b341;
   --prompt-danger-bg: #3a1e20;
@@ -95,25 +95,25 @@
 
   /* Categories */
   --categories-border: rgba(255, 255, 255, 0.08);
-  --categories-hover-bg: var(--accent-muted-color);
-  --categories-icon-hover-color: white;
+  --categories-hover-bg: rgba(255, 255, 255, 0.06);
+  --categories-icon-hover-color: #529cca;
 
   /* Archive */
-  --timeline-node-bg: #546678;
-  --timeline-color: #2a333c;
+  --timeline-node-bg: #787774;
+  --timeline-color: rgba(255, 255, 255, 0.12);
   --timeline-year-dot-color: var(--timeline-color);
 
   /* Code highlight colors */
   --language-border-color: rgba(255, 255, 255, 0.08);
-  --highlight-bg-color: #11161c;
-  --highlighter-rouge-color: #dbe8f6;
+  --highlight-bg-color: #202020;
+  --highlighter-rouge-color: rgba(255, 255, 255, 0.86);
   --highlight-lineno-color: #768391;
-  --inline-code-bg: rgba(147, 186, 216, 0.13);
+  --inline-code-bg: rgba(255, 255, 255, 0.08);
   --code-color: #dbe8f6;
   --code-header-text-color: #b2c0ce;
   --code-header-muted-color: #2a323b;
   --code-header-icon-color: #a2b1bf;
-  --clipboard-checked-color: #93bad8;
+  --clipboard-checked-color: #529cca;
   --filepath-text-color: #eff5fb;
 
   .light {
@@ -123,12 +123,12 @@
   /* Categories */
   .categories.card,
   .list-group-item {
-    background-color: var(--surface-color);
+    background-color: transparent;
   }
 
   .categories {
     .card-header {
-      background-color: var(--surface-color);
+      background-color: var(--surface-muted-color);
     }
 
     .list-group-item {
@@ -137,9 +137,7 @@
       padding-left: 2rem;
       border-color: var(--categories-border);
 
-      &:last-child {
-        border-bottom-color: var(--surface-color);
-      }
+      &:last-child { border-bottom-color: transparent; }
     }
   }
 

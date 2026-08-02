@@ -5,7 +5,7 @@
 
 ## Principles
 - Content before chrome; article titles, prose, code, tables, and metadata establish hierarchy.
-- Use one quiet blue accent for links, focus, selection, and semantic state.
+- Use one Notion-style blue accent for links and focus; selection and hover stay warm neutral.
 - Prefer flat editorial lists and whitespace over cards, gradients, blur, hover lift, or decorative elevation.
 - Preserve Jekyll/Chirpy routes, search, archives, categories, pagination, TOC, and light/dark behavior.
 
@@ -15,6 +15,12 @@
 - `_includes/topbar.html` owns breadcrumb, search, and mobile trigger only.
 - `_sass/themes` owns semantic color values; layout and page styles consume those tokens.
 - Shadows are reserved for overlays. Syntax/status colors are explicit exceptions.
+
+## Color grammar
+- Light mode uses a white reading canvas, warm-white (`#f6f5f4`) navigation chrome, near-black text, and low-alpha warm-gray dividers.
+- Dark mode uses a `#191919` reading canvas, a visibly separate `#202020` rail, soft-white text, and neutral gray interaction states.
+- `--main-bg`, `--sidebar-bg`, `--surface-color`, `--surface-muted-color`, `--border-color`, and `--accent-color` are the canonical visual roles. Page styles consume them instead of inventing route-specific palettes.
+- Blue is the only saturated chrome color. It is reserved for links, focus, disclosure icons, and the active-rail indicator; ordinary hover and selected fills are neutral.
 
 ## Responsive and accessibility
 The desktop rail is approximately 208px and neutral. Mobile uses the existing drawer and trigger. Reading remains single-column, zoomable, keyboard-focusable, and free of page-wide overflow at 360px.
