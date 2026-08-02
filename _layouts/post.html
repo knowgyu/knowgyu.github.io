@@ -3,9 +3,6 @@ layout: default
 refactor: true
 panel_includes:
   - toc
-tail_includes:
-  - related-posts
-  - post-nav
 script_includes:
   - comment
 ---
@@ -14,8 +11,17 @@ script_includes:
 
 {% include toc-status.html %}
 
-<article class="post-article px-1" data-toc="{{ enable_toc }}">
+<article class="post-article px-1" data-toc="{{ enable_toc }}" data-post-width-root>
   <header>
+    <div class="post-width-control" aria-label="본문 폭 선택">
+      <span class="post-width-control__label">본문 폭</span>
+      <div class="post-width-control__buttons" role="group" aria-label="본문 폭 선택">
+        <button type="button" data-post-width="760">760</button>
+        <button type="button" data-post-width="900">900</button>
+        <button type="button" data-post-width="1100">1100</button>
+      </div>
+    </div>
+
     <h1 data-toc-skip>{{ page.title }}</h1>
     {% if page.description %}
       <p class="post-desc fw-light mb-4">{{ page.description }}</p>
@@ -86,16 +92,6 @@ script_includes:
         </span>
 
         <div>
-          <!-- pageviews -->
-          {% if site.pageviews.provider and site.analytics[site.pageviews.provider].id %}
-            <span>
-              <em id="pageviews">
-                <i class="fas fa-spinner fa-spin small"></i>
-              </em>
-              {{ site.data.locales[lang].post.pageview_measure }}
-            </span>
-          {% endif %}
-
           <!-- read time -->
           {% include read-time.html content=content prompt=true lang=lang %}
         </div>
@@ -148,6 +144,8 @@ script_includes:
       </div>
     {% endif %}
 
+    {% include post-tail.html lang=lang %}
+
     <!-- tags -->
     {% if page.tags.size > 0 %}
       <div class="post-tags post-tags--context" hidden aria-hidden="true">
@@ -187,3 +185,37 @@ script_includes:
   </div>
   <!-- div.post-tail-wrapper -->
 </article>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-post-width-root]');
+    if (!root) return;
+
+    const widths = new Set(['760', '900', '1100']);
+    const key = 'knowgyu.postWidth';
+    const apply = (value) => {
+      const width = widths.has(value) ? value : '900';
+      root.dataset.postWidth = width;
+      root.style.setProperty('--post-content-width', `${width}px`);
+      root.querySelectorAll('[data-post-width]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.postWidth === width));
+      });
+    };
+
+    try {
+      apply(localStorage.getItem(key) || '900');
+    } catch {
+      apply('900');
+    }
+
+    root.querySelectorAll('[data-post-width]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const width = button.dataset.postWidth;
+        apply(width);
+        try {
+          localStorage.setItem(key, width);
+        } catch {}
+      });
+    });
+  })();
+</script>

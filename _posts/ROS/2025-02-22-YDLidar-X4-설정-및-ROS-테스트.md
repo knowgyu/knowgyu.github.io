@@ -1,7 +1,7 @@
 ---
 title: "YDLidar X4 설정 및 ROS 테스트"
 author: knowgyu
-description: " "
+description: "YDLidar X4 설정 및 ROS 테스트"
 date: 2025-01-13 17:03:58 +0900
 math: true
 categories: [Embedded System, ROS]

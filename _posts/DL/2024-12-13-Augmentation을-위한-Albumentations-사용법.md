@@ -1,7 +1,7 @@
 ---
 title: "Data Augmentation을 위해 Albumentations 사용해보기"
 author: knowgyu
-description: " "
+description: "Data Augmentation을 위해 Albume"
 date: 2023-11-13 16:01:17 +0900
 math: true
 categories: [AI & CV, Dataset]

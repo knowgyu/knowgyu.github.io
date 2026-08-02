@@ -1,7 +1,7 @@
 ---
 title: "[Error] Docker CLI Context 에러"
 author: knowgyu
-description: " "
+description: "[Error] Docker CLI Context 에"
 date: 2023-09-05 13:49:13 +0900
 math: true
 categories: [Computer Science, Docker]

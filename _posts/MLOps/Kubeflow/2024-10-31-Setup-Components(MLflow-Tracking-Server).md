@@ -1,7 +1,7 @@
 ---
 title: "Setup Components(MLflow Tracking Server)"
 author: knowgyu
-description: " "
+description: "MLflow 서버 설정"
 date: 2023-11-16 14:03:20 +0900
 math: true
 categories: [AI & CV, Kubeflow]

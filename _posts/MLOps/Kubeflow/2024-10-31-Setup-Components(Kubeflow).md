@@ -1,7 +1,7 @@
 ---
 title: "Setup Components(Kubeflow)"
 author: knowgyu
-description: " "
+description: "Components(Kubeflow) 정리"
 date: 2023-11-16 14:03:07 +0900
 math: true
 categories: [AI & CV, Kubeflow]

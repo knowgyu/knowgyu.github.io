@@ -1,7 +1,7 @@
 ---
 title: "Misc. MetalLB Settings"
 author: knowgyu
-description: " "
+description: "Misc. MetalLB Settings 정리"
 date: 2023-11-26 05:46:15 +0900
 math: true
 categories: [AI & CV, Kubeflow]

@@ -1,7 +1,7 @@
 ---
 title: "Setup Kubernetes"
 author: knowgyu
-description: " "
+description: "Kubernetes 정리"
 date: 2023-11-19 14:02:58 +0900
 math: true
 categories: [AI & CV, Kubeflow]

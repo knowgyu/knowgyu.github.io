@@ -1,7 +1,7 @@
 ---
 title: "Pipeline for Train YOLOv8 on a Custom Dataset"
 author: knowgyu
-description: " "
+description: "YOLOv8 학습 파이프라인"
 date: 2023-12-09 09:42:45 +0900
 math: true
 categories: [AI & CV, Kubeflow]

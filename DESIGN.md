@@ -5,12 +5,14 @@
 
 ## Principles
 - Content before chrome; article titles, prose, code, tables, and metadata establish hierarchy.
-- Use one Notion-style blue accent for links and focus; selection and hover stay warm neutral.
+- Use one calm blue accent for links, focus, disclosure, and active navigation; selection and hover stay warm neutral.
 - Prefer flat editorial lists and whitespace over cards, gradients, blur, hover lift, or decorative elevation.
-- Preserve Jekyll/Chirpy routes, search, archives, categories, pagination, TOC, and light/dark behavior.
+- Preserve Jekyll/Chirpy content, search, archives, categories, feeds, sitemap, sticky TOC, and light/dark behavior.
+- `index.html` owns `/` as a curated Home gateway. `_tabs/posts.md` owns `/posts/` as `전체 글` with fixed 15-item catalog behavior. Legacy `/pageN/` pages are unsupported UI surface and must not be linked as the primary catalog.
 
 ## Ownership
 - `_data/locales` and `_tabs` own labels and route order.
+- `_data/taxonomy.yml` owns curated sidebar category labels and ordering when present; raw category values remain the fallback.
 - `_includes/sidebar.html` owns desktop rail and mobile drawer navigation.
 - `_includes/topbar.html` owns breadcrumb, search, and mobile trigger only.
 - `_sass/themes` owns semantic color values; layout and page styles consume those tokens.
@@ -23,7 +25,7 @@
 - Blue is the only saturated chrome color. It is reserved for links, focus, disclosure icons, and the active-rail indicator; ordinary hover and selected fills are neutral.
 
 ## Responsive and accessibility
-The desktop rail is approximately 208px and neutral. Mobile uses the existing drawer and trigger. Reading remains single-column, zoomable, keyboard-focusable, and free of page-wide overflow at 360px.
+The desktop rail is approximately 208px and neutral. Mobile uses the existing drawer and trigger. Reading remains single-column, zoomable, keyboard-focusable, and free of page-wide overflow at 360px. Article width controls, when present, are limited to 760px, 900px, and 1100px with 900px as the default.
 
 ## Forbidden patterns
-No unavailable chatbot by default, a disabled viewport-scaling directive, decorative layout gradients, glass blur, large surface shadows, or new legacy console-prefixed tokens. Do not add dependencies or rewrite post content/front matter.
+No unavailable chatbot by default, a disabled viewport-scaling directive, decorative layout gradients, glass blur, large surface shadows, duplicate search runtime IDs, sidebar search proxy, visible view counters, visible theme-demo footer copy, new dependencies, or new legacy console-prefixed tokens. Do not rewrite post bodies; front matter changes must stay limited to approved taxonomy, publication, and description contracts.

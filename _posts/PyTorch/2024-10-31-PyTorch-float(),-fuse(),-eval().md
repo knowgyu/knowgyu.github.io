@@ -1,7 +1,7 @@
 ---
 title: "[PyTorch] float(), fuse(), eval()"
 author: knowgyu
-description: " "
+description: "PyTorch 함수 정리"
 date: 2023-11-15 12:09:49 +0900
 math: true
 categories: [AI & CV, PyTorch]

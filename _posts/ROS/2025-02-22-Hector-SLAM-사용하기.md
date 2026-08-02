@@ -1,7 +1,7 @@
 ---
 title: "Hector SLAM 사용하기"
 author: knowgyu
-description: " "
+description: "Hector SLAM 사용하기"
 date: 2025-01-22 19:39:09 +0900
 math: true
 categories: [Embedded System, ROS]

@@ -1,24 +1,93 @@
 <!-- Editorial navigation rail; the same site.tabs collection drives desktop and mobile. -->
+{% assign current_top = '' %}
+{% assign current_sub = '' %}
+{% if page.layout == 'post' and page.categories.size > 0 %}
+  {% assign current_top = page.categories[0] %}
+  {% assign current_sub = page.categories[1] %}
+{% elsif page.layout == 'category' %}
+  {% assign current_sub = page.title %}
+  {% for branch in site.data.taxonomy %}
+    {% if branch.name == page.title %}
+      {% assign current_top = branch.name %}
+      {% assign current_sub = '' %}
+    {% else %}
+      {% for child in branch.children %}
+        {% if child.name == page.title %}
+          {% assign current_top = branch.name %}
+          {% assign current_sub = child.name %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 <aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
   <header class="profile-wrapper">
     <a class="site-title d-block" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <p class="site-subtitle mb-0">{{ site.tagline }}</p>
   </header>
-  <nav class="flex-column flex-grow-1 w-100 ps-0" aria-label="Primary navigation">
-    <ul class="nav">
+  <nav class="sidebar-nav flex-column flex-grow-1 w-100 ps-0" aria-label="Primary navigation">
+    <ul class="nav primary-links">
       <li class="nav-item{% if page.layout == 'home' %} active{% endif %}">
         <a href="{{ '/' | relative_url }}" class="nav-link"{% if page.layout == 'home' %} aria-current="page"{% endif %}><span>{{ site.data.locales[include.lang].tabs.home }}</span></a>
       </li>
       {% for tab in site.tabs %}
         {% unless tab.hidden == true %}
+          {% if tab.url == '/categories/' or tab.url == '/archives/' or tab.url == '/tags/' %}
+            {% continue %}
+          {% endif %}
           <li class="nav-item{% if tab.url == page.url %} active{% endif %}">
             <a href="{{ tab.url | relative_url }}" class="nav-link"{% if tab.url == page.url %} aria-current="page"{% endif %}>
               {% capture tab_name %}{{ tab.url | split: '/' }}{% endcapture %}
-              <span>{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}</span>
+              <span>{% if tab.url == '/posts/' %}전체 글{% else %}{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}{% endif %}</span>
             </a>
           </li>
         {% endunless %}
       {% endfor %}
+    </ul>
+
+    <div class="taxonomy-tree" aria-label="Topics">
+      {% for branch in site.data.taxonomy %}
+        {% assign branch_posts = site.categories[branch.name] | default: empty %}
+        {% assign branch_count = branch_posts | size %}
+        {% if branch_count > 0 %}
+          {% assign expanded = false %}
+          {% if current_top == branch.name %}{% assign expanded = true %}{% endif %}
+          {% assign tree_id = 'sidebar-taxonomy-' | append: forloop.index %}
+          {% capture branch_url %}/categories/{{ branch.name | slugify | url_encode }}/{% endcapture %}
+          <div class="taxonomy-branch{% if expanded %} active{% endif %}">
+            <div class="taxonomy-heading">
+              <button type="button" class="taxonomy-toggle" aria-controls="{{ tree_id }}" aria-expanded="{% if expanded %}true{% else %}false{% endif %}">
+                <span class="visually-hidden">{{ branch.label | default: branch.name }} 열기</span>
+              </button>
+              <a class="taxonomy-link{% if current_top == branch.name and current_sub == '' %} current{% endif %}" href="{{ branch_url | relative_url }}"{% if current_top == branch.name and current_sub == '' %} aria-current="page"{% endif %}>{{ branch.label | default: branch.name }}</a>
+              <span class="taxonomy-count">{{ branch_count }}</span>
+            </div>
+            <ul id="{{ tree_id }}"{% unless expanded %} hidden{% endunless %}>
+              {% for child in branch.children %}
+                {% assign child_posts = site.categories[child.name] | default: empty %}
+                {% assign child_count = child_posts | size %}
+                {% if child_count > 0 %}
+                  {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
+                  <li>
+                    <a class="taxonomy-link{% if current_sub == child.name %} current{% endif %}" href="{{ child_url | relative_url }}"{% if current_sub == child.name %} aria-current="page"{% endif %}>{{ child.label | default: child.name }}</a>
+                    <span class="taxonomy-count">{{ child_count }}</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <ul class="nav utility-links">
+      <li class="nav-item{% if page.url == '/categories/' %} active{% endif %}">
+        <a href="{{ '/categories/' | relative_url }}" class="nav-link"{% if page.url == '/categories/' %} aria-current="page"{% endif %}><span>Categories</span></a>
+      </li>
+      <li class="nav-item{% if page.url == '/archives/' %} active{% endif %}">
+        <a href="{{ '/archives/' | relative_url }}" class="nav-link"{% if page.url == '/archives/' %} aria-current="page"{% endif %}><span>Archives</span></a>
+      </li>
     </ul>
   </nav>
   <div class="sidebar-bottom d-flex flex-wrap align-items-center w-100">
@@ -30,3 +99,13 @@
     {% endfor %}
   </div>
 </aside>
+<script>
+  document.querySelectorAll('#sidebar .taxonomy-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const list = document.getElementById(button.getAttribute('aria-controls'));
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!expanded));
+      if (list) list.hidden = expanded;
+    });
+  });
+</script>

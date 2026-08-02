@@ -1,7 +1,7 @@
 ---
 title: "Component-Write"
 author: knowgyu
-description: " "
+description: "컴포넌트 작성"
 date: 2023-12-01 08:05:24 +0900
 math: true
 categories: [AI & CV, Kubeflow]

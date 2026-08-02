@@ -1,7 +1,7 @@
 ---
 title: "Ubuntu 표준 시간대 설정하기(ntp)"
 author: knowgyu
-description: " "
+description: "Ubuntu 표준 시간대 설정하기(ntp)"
 date: 2025-01-23 11:43:05 +0900
 math: true
 categories: [Computer Science, Ubuntu]

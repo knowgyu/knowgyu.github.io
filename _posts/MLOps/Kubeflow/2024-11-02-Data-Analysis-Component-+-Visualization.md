@@ -1,7 +1,7 @@
 ---
 title: "Data Analysis Component + Visualization"
 author: knowgyu
-description: " "
+description: "기술 학습 기록"
 date: 2023-12-09 09:43:01 +0900
 math: true
 categories: [AI & CV, Kubeflow]

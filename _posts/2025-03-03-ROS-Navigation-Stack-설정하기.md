@@ -1,7 +1,7 @@
 ---
 title: "ROS Navigation Stack 설정하기"
 author: knowgyu
-description: " "
+description: "ROS Navigation Stack 설정하기"
 date: 2025-02-03 10:30:37 +0900
 math: true
 categories: [Embedded System, ROS]

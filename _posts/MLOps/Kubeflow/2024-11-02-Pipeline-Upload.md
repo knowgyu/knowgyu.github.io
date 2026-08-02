@@ -1,7 +1,7 @@
 ---
 title: "Pipeline-Upload"
 author: knowgyu
-description: " "
+description: "파이프라인 업로드"
 date: 2023-11-27 07:14:47 +0900
 math: true
 categories: [AI & CV, Kubeflow]

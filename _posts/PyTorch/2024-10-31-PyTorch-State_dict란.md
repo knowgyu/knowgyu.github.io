@@ -1,7 +1,7 @@
 ---
 title: "[PyTorch] State_dict란?"
 author: knowgyu
-description: " "
+description: "[PyTorch] state_dict 정리"
 date: 2023-11-15 12:08:32 +0900
 math: true
 categories: [AI & CV, PyTorch]

@@ -1,7 +1,7 @@
 ---
 title: "PID Controller"
 author: knowgyu
-description: " "
+description: "PID Controller 정리"
 date: 2022-10-25 07:24:20 +0900
 math: true
 categories: [Embedded System, Control Engineering]

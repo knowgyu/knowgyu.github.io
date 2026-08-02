@@ -1,7 +1,7 @@
 ---
 title: "Grounding DINO를 활용한 Object Detection 데이터 오토 라벨링"
 author: knowgyu
-description: " "
+description: "Grounding DINO를 활용한 Object D"
 date: 2023-10-18 15:49:06 +0900
 math: true
 categories: [AI & CV, Dataset]

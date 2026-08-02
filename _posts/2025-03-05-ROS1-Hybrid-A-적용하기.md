@@ -1,7 +1,7 @@
 ---
 title: "ROS1 Hybrid A* Global Planner 사용하기"
 author: knowgyu
-description: " "
+description: "ROS 하이브리드 경로 계획"
 date: 2025-02-12 13:46:04 +0900
 math: true
 categories: [Embedded System, ROS]

@@ -1,7 +1,7 @@
 ---
 title: "PV Mount & HyperParameter Tuning"
 author: knowgyu
-description: " "
+description: "PV 마운트와 튜닝"
 date: 2023-12-05 08:14:07 +0900
 math: true
 categories: [AI & CV, Kubeflow]

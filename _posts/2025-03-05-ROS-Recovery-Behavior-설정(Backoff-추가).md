@@ -1,7 +1,7 @@
 ---
 title: "ROS Recovery Behavior 설정(Backoff 추가)"
 author: knowgyu
-description: " "
+description: "ROS Recovery Behavior 설정(Bac"
 date: 2025-02-05 12:04:57 +0900
 math: true
 categories: [Embedded System, ROS]

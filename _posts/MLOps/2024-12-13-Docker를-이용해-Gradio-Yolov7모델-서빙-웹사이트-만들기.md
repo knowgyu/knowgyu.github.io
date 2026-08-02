@@ -1,7 +1,7 @@
 ---
 title: "Docker를 이용해 Gradio Yolov7모델 서빙 웹사이트 만들기"
 author: knowgyu
-description: " "
+description: "Docker를 이용해 Gradio Yolov7모델"
 date: 2023-10-13 10:34:32 +0900
 math: true
 categories: [AI & CV, Gradio를 활용한 웹 기반 서빙]

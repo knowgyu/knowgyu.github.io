@@ -5,49 +5,33 @@ refactor: true
 
 {% include lang.html %}
 
-{% assign all_pinned = site.posts | where: 'pin', 'true' %}
-{% assign all_normal = site.posts | where_exp: 'item', 'item.pin != true and item.hidden != true' %}
-{% assign posts = '' | split: '' %}
+{% assign latest_posts = site.posts | where_exp: 'item', 'item.hidden != true' %}
 
-<!-- Get pinned posts on current page -->
+<section class="home-intro" aria-labelledby="home-title">
+  <p class="home-kicker">Illustrated technical notes</p>
+  <h1 id="home-title">로보틱스와 AI를 구현하며 남긴 기록</h1>
+  <p>
+    ROS 자율주행, 임베디드 시스템, 컴퓨터 비전, MLOps를 직접 다루며 배운 내용을 짧고 찾기 쉽게 정리합니다.
+  </p>
+  <a class="home-primary-link" href="{{ '/posts/' | relative_url }}">전체 글 보기</a>
+</section>
 
-{% assign visible_start = paginator.page | minus: 1 | times: paginator.per_page %}
-{% assign visible_end = visible_start | plus: paginator.per_page %}
+<section class="home-featured" aria-labelledby="featured-title">
+  <h2 id="featured-title">작업 흐름</h2>
+  <ul>
+    <li><a href="{{ '/categories/ros/' | relative_url }}">ROS 자율주행 실험</a></li>
+    <li><a href="{{ '/categories/kubeflow/' | relative_url }}">Kubeflow와 MLOps 메모</a></li>
+    <li><a href="{{ '/categories/project/' | relative_url }}">임베디드 프로젝트 기록</a></li>
+  </ul>
+</section>
 
-{% if all_pinned.size > visible_start %}
-  {% if all_pinned.size > visible_end %}
-    {% assign pinned_size = paginator.per_page %}
-  {% else %}
-    {% assign pinned_size = all_pinned.size | minus: visible_start %}
-  {% endif %}
-
-  {% for i in (visible_start..all_pinned.size) limit: pinned_size %}
-    {% assign posts = posts | push: all_pinned[i] %}
-  {% endfor %}
-{% else %}
-  {% assign pinned_size = 0 %}
-{% endif %}
-
-<!-- Get normal posts on current page -->
-
-{% assign normal_size = paginator.posts | size | minus: pinned_size %}
-
-{% if normal_size > 0 %}
-  {% if pinned_size > 0 %}
-    {% assign normal_start = 0 %}
-  {% else %}
-    {% assign normal_start = visible_start | minus: all_pinned.size %}
-  {% endif %}
-
-  {% assign normal_end = normal_start | plus: normal_size | minus: 1 %}
-
-  {% for i in (normal_start..normal_end) %}
-    {% assign posts = posts | push: all_normal[i] %}
-  {% endfor %}
-{% endif %}
-
-<div id="post-list" class="flex-grow-1 px-xl-1">
-  {% for post in posts %}
+<section class="home-latest" aria-labelledby="latest-title">
+  <div class="section-heading">
+    <h2 id="latest-title">최근 글</h2>
+    <a href="{{ '/posts/' | relative_url }}">전체 글</a>
+  </div>
+  <div id="post-list" class="flex-grow-1 px-xl-1">
+    {% for post in latest_posts limit: 5 %}
     <article class="post-row">
       <a href="{{ post.url | relative_url }}" class="post-preview">
         <h1 class="post-title">{{ post.title }}</h1>
@@ -60,9 +44,6 @@ refactor: true
         </div>
       </a>
     </article>
-  {% endfor %}
-</div>
-
-{% if paginator.total_pages > 1 %}
-  {% include post-paginator.html %}
-{% endif %}
+    {% endfor %}
+  </div>
+</section>

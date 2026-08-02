@@ -55,6 +55,8 @@ main() {
   fi
 
   python3 tools/check-design-contract.py
+  python3 tools/check-tistory-content-baseline.py --strict
+  git diff --check
 
   read_baseurl
 
@@ -68,6 +70,7 @@ main() {
     --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
 
   python3 tools/check-design-contract.py
+  python3 tools/check-tistory-content-baseline.py --strict
 }
 
 while (($#)); do

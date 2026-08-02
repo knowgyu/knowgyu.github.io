@@ -1,7 +1,7 @@
 ---
 title: "Gradio를 활용한 Yolov7 모델 서빙 웹사이트 만들기"
 author: knowgyu
-description: " "
+description: "Gradio를 활용한 Yolov7 모델 서빙 웹사이"
 date: 2023-10-12 08:36:26 +0900
 math: true
 categories: [AI & CV, Gradio를 활용한 웹 기반 서빙]

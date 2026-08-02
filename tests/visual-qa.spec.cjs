@@ -4,6 +4,7 @@ const { chromium } = require('playwright')
 
 const ROUTES = [
   { name: 'home', path: '/' },
+  { name: 'posts-catalog', path: '/posts/' },
   { name: 'categories', path: '/categories/' },
   { name: 'archives', path: '/archives/' },
   { name: 'tags', path: '/tags/' },
@@ -141,6 +142,41 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         }
       }
 
+      if (route === 'posts-catalog') {
+        const catalog = first('[data-posts-catalog]')
+        const items = [...document.querySelectorAll('[data-catalog-item]')]
+        if (!catalog) fail('[data-posts-catalog]', 'presence', 'missing', 'required')
+        if (!items.length) fail('[data-catalog-item]', 'count', '0', '>0')
+        if (count('.posts-catalog .highlight'))
+          fail('.posts-catalog .highlight', 'count', count('.posts-catalog .highlight'), '0 code-block wrappers')
+        if (!hasText('.catalog-title'))
+          fail('.catalog-title', 'text', 'empty', 'non-empty')
+
+        const visibleItems = items.filter((item) => !item.hidden).length
+        if (visibleItems !== Math.min(15, items.length))
+          fail('[data-catalog-item]:not([hidden])', 'count', visibleItems, `first page ${Math.min(15, items.length)}`)
+
+        const pager = first('[data-posts-pager]')
+        if (items.length > 15) {
+          const next = first('[data-page-next]')
+          const prev = first('[data-page-prev]')
+          const status = first('[data-page-status]')
+          if (!pager) fail('[data-posts-pager]', 'presence', 'missing', 'required when item count > 15')
+          if (!next || next.disabled) fail('[data-page-next]', 'enabled', next ? String(next.disabled) : 'missing', 'enabled')
+          if (!prev || !prev.disabled) fail('[data-page-prev]', 'disabled', prev ? String(prev.disabled) : 'missing', 'disabled on first page')
+          if (!status?.textContent.trim().startsWith('1 / '))
+            fail('[data-page-status]', 'text', status?.textContent.trim() || 'empty', 'starts with 1 /')
+          next?.click()
+          if (status && !status.textContent.trim().startsWith('2 / '))
+            fail('[data-page-status]', 'text after next', status.textContent.trim(), 'starts with 2 /')
+          if (prev?.disabled)
+            fail('[data-page-prev]', 'disabled after next', String(prev.disabled), 'false')
+          const secondPageVisible = items.filter((item) => !item.hidden).length
+          if (!secondPageVisible || secondPageVisible > 15)
+            fail('[data-catalog-item]:not([hidden])', 'count after next', secondPageVisible, '1-15')
+        }
+      }
+
       if (route === 'categories') {
         if (!count('#main-wrapper .categories'))
           fail('.categories', 'count', '0', '>0')
@@ -216,6 +252,12 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
             fail('article.post-article > header h1', 'text', 'empty', 'non-empty')
           if (!hasText('article.post-article > .content'))
             fail('article.post-article > .content', 'text', 'empty', 'non-empty')
+          if (count('.post-tail-section') !== 2)
+            fail('.post-tail-section', 'count', count('.post-tail-section'), '2')
+          if (!count('.post-tail-section--sequence .post-tail-list li'))
+            fail('.post-tail-section--sequence .post-tail-list li', 'count', '0', '>0')
+          if (!count('.post-tail-section--latest .post-tail-list li'))
+            fail('.post-tail-section--latest .post-tail-list li', 'count', '0', '>0')
 
           const header = first('article.post-article > header')
           const headerStyle = style(header)
@@ -228,8 +270,8 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           const content = first('article.post-article > .content')
           if (isDesktop && content) {
             const width = rect(content)?.width
-            if (width == null || width < 720 || width > 860)
-              fail('article.post-article > .content', 'width', `${width ?? 'missing'}px`, '720px-860px')
+            if (width == null || width < 760 || width > 940)
+              fail('article.post-article > .content', 'width', `${width ?? 'missing'}px`, '760px-940px')
           }
 
           for (const selector of ['.highlight', '.table-wrapper']) {

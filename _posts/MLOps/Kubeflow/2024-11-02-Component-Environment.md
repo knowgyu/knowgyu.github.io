@@ -1,7 +1,7 @@
 ---
 title: "Component-Environment"
 author: knowgyu
-description: " "
+description: "컴포넌트 환경 구성"
 date: 2023-12-02 08:05:40 +0900
 math: true
 categories: [AI & CV, Kubeflow]

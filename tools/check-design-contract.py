@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small drift guard for the human-first editorial contract."""
+"""Small drift guard for the Tistory-like editorial shell contract."""
 from pathlib import Path
 import re, sys
 root = Path(__file__).resolve().parents[1]
@@ -48,12 +48,12 @@ if body and 'gradient(' in body.group('body'):
 if body and re.search(r'overflow-x\s*:\s*hidden', body.group('body')):
     errors.append(f'{root / "_sass/base/_base.scss"}: body overflow mask')
 
-# Lock the canvas/rail contrast and singular accent that define the Notion-like palette.
+# Lock the canvas/rail contrast and singular accent that define the authored shell.
 for label, path, fragment in (
-    ('light Notion canvas', root / '_sass/themes/_light.scss', '--main-bg: #ffffff;'),
+    ('light reading canvas', root / '_sass/themes/_light.scss', '--main-bg: #ffffff;'),
     ('light warm rail', root / '_sass/themes/_light.scss', '--surface-muted-color: #f6f5f4;'),
     ('light singular accent', root / '_sass/themes/_light.scss', '--accent-color: #0075de;'),
-    ('dark Notion canvas', root / '_sass/themes/_dark.scss', '--main-bg: #191919;'),
+    ('dark reading canvas', root / '_sass/themes/_dark.scss', '--main-bg: #191919;'),
     ('dark distinct rail', root / '_sass/themes/_dark.scss', '--surface-muted-color: #202020;'),
     ('dark singular accent', root / '_sass/themes/_dark.scss', '--accent-color: #529cca;'),
 ):

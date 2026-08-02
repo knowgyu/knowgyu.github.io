@@ -1,7 +1,7 @@
 ---
 title: "Pipeline-Write"
 author: knowgyu
-description: " "
+description: "파이프라인 작성"
 date: 2023-12-01 08:05:33 +0900
 math: true
 categories: [AI & CV, Kubeflow]

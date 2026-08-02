@@ -1,7 +1,7 @@
 ---
 title: "ROS Motor Controller 패키지 생성"
 author: knowgyu
-description: " "
+description: "ROS Motor Controller 패키지 생성"
 date: 2025-01-28 10:00:36 +0900
 math: true
 categories: [Embedded System, ROS]

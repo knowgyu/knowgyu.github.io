@@ -1,7 +1,7 @@
 ---
 title: "Kubeflow Pipeline을 활용한 YOLO 학습 파이프라인 시작하기"
 author: knowgyu
-description: " "
+description: "Kubeflow Pipeline을 활용한 YOLO"
 date: 2023-11-23 03:52:04 +0900
 math: true
 categories: [AI & CV, Kubeflow]
