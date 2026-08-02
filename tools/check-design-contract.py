@@ -12,8 +12,21 @@ for p in (p for directory in source_roots for p in directory.rglob('*')):
     if not p.is_file() or p.name == 'check-design-contract.py': continue
     try: s=p.read_text()
     except UnicodeDecodeError: continue
+    definitions = []
+    depth = 0
+    for line in s.splitlines():
+        if depth <= 1:
+            definitions.extend(re.findall(r'--([a-z][\w-]*)\s*:', line))
+        depth += line.count('{') - line.count('}')
+    for token in sorted(set(definitions)):
+        if definitions.count(token) > 1:
+            errors.append(f'{p}: duplicate --{token} definition')
+    for token in definitions:
+        if token.startswith('card-'):
+            errors.append(f'{p}: legacy --{token} token')
     if 'user-scalable=no' in s: errors.append(f'{p}: user-scalable=no')
     if re.search(r'--console-[\w-]+', s): errors.append(f'{p}: obsolete --console-* token')
+    if '--card-hovor-bg' in s: errors.append(f'{p}: misspelled --card-hovor-bg token')
 for p in (root/'_sass/layout', root/'_sass/pages'):
     for f in p.glob('*.scss'):
         s=f.read_text()
@@ -24,6 +37,8 @@ base = (root / '_sass/base/_base.scss').read_text()
 body = re.search(r'body\s*\{(?P<body>.*?)\n\}', base, re.S)
 if body and 'gradient(' in body.group('body'):
     errors.append(f'{root / "_sass/base/_base.scss"}: body gradient')
+if body and re.search(r'overflow-x\s*:\s*hidden', body.group('body')):
+    errors.append(f'{root / "_sass/base/_base.scss"}: body overflow mask')
 for f in (root / '_sass/themes').glob('*.scss'):
     s = f.read_text()
     for token in ('--sidebar-bg', '--intro-bg'):
