@@ -7,6 +7,16 @@ layout: compress
 
 {% include lang.html %}
 
+{% assign _has_panel = false %}
+{% if layout.panel_includes %}
+  {% assign _has_panel = true %}
+  {% if layout.panel_includes contains 'toc' %}
+    {% unless site.toc and page.toc %}
+      {% assign _has_panel = false %}
+    {% endunless %}
+  {% endif %}
+{% endif %}
+
 {% if site.theme_mode %}
   {% capture prefer_mode %}data-mode="{{ site.theme_mode }}"{% endcapture %}
 {% endif %}
@@ -27,7 +37,7 @@ layout: compress
         {% include topbar.html lang=lang %}
 
         <div class="row flex-grow-1">
-          <main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4">
+          <main aria-label="Main Content" class="col-12{% if _has_panel %} col-lg-11 col-xl-9{% else %} col-lg-12{% endif %} px-md-4">
             {% if layout.refactor or layout.layout == 'default' %}
               {% include refactor-content.html content=content lang=lang %}
             {% else %}
@@ -35,13 +45,15 @@ layout: compress
             {% endif %}
           </main>
 
-          <!-- panel -->
-          <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted">
-            {% for _include in layout.panel_includes %}
-              {% assign _include_path = _include | append: '.html' %}
-              {% include {{ _include_path }} lang=lang %}
-            {% endfor %}
-          </aside>
+          {% if _has_panel %}
+            <!-- panel -->
+            <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted">
+              {% for _include in layout.panel_includes %}
+                {% assign _include_path = _include | append: '.html' %}
+                {% include {{ _include_path }} lang=lang %}
+              {% endfor %}
+            </aside>
+          {% endif %}
         </div>
 
         <div class="row">

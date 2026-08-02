@@ -43,7 +43,7 @@
   /* Sidebar */
   --site-title-color: #ffffff;
   --site-subtitle-color: #9aa7b4;
-  --sidebar-bg: linear-gradient(180deg, #14171c 0%, #12161b 100%);
+  --sidebar-bg: var(--surface-muted-color);
   --sidebar-border-color: rgba(255, 255, 255, 0.06);
   --sidebar-divider-color: rgba(255, 255, 255, 0.06);
   --sidebar-muted-color: #a0acb8;
@@ -65,8 +65,8 @@
   --btn-patinator-text-color: var(--text-color);
   --btn-paginator-hover-color: rgba(34, 41, 50, 0.96);
   --accent-color: #93bad8;
-  --intro-bg: linear-gradient(180deg, #171c24 0%, #12171f 100%);
-  --soft-shadow: 0 18px 44px rgba(0, 0, 0, 0.30);
+  --intro-bg: var(--surface-muted-color);
+  --soft-shadow: none;
   --accent-color: #93bad8;
   --text-muted-color: #a6b2bf;
 
@@ -84,8 +84,8 @@
   --card-border-color: rgba(255, 255, 255, 0.07);
   --card-border-strong-color: rgba(147, 186, 216, 0.25);
   --card-hovor-bg: transparent;
-  --card-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-  --card-shadow-hover: 0 20px 36px rgba(0, 0, 0, 0.28);
+  --card-shadow: none;
+  --card-shadow-hover: none;
   --kbd-wrap-color: #42505f;
   --kbd-text-color: #e6edf4;
   --prompt-text-color: rgba(230, 237, 244, 0.86);
@@ -131,13 +131,6 @@
     display: none;
   }
 
-  main[aria-label='Main Content'] {
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 1.6rem;
-    box-shadow: var(--overlay-shadow);
-  }
-
   /* Categories */
   .categories.card,
   .list-group-item {
@@ -161,16 +154,6 @@
     }
   }
 
-  #archives li:nth-child(odd) {
-    background-image: linear-gradient(
-      to left,
-      rgb(26, 26, 30),
-      rgb(39, 39, 45),
-      rgb(39, 39, 45),
-      rgb(39, 39, 45),
-      rgb(26, 26, 30)
-    );
-  }
 
   /* stylelint-disable-next-line selector-id-pattern */
   #disqus_thread {

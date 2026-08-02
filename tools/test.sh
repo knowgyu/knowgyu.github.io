@@ -54,6 +54,8 @@ main() {
     rm -rf "$SITE_DIR"
   fi
 
+  python3 tools/check-design-contract.py
+
   read_baseurl
 
   # build

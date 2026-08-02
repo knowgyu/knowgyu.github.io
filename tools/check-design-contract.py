@@ -5,8 +5,11 @@ import re, sys
 root = Path(__file__).resolve().parents[1]
 errors=[]
 if not (root/'DESIGN.md').exists(): errors.append('DESIGN.md is missing')
-for p in root.rglob('*'):
-    if not p.is_file() or '.git' in p.parts or p.name == 'check-design-contract.py': continue
+# Inspect authored web sources only; generated sites, vendor bundles, and research
+# notes may legitimately quote the patterns this guard is meant to prevent.
+source_roots = [root / name for name in ('_includes', '_layouts', '_sass', 'assets')]
+for p in (p for directory in source_roots for p in directory.rglob('*')):
+    if not p.is_file() or p.name == 'check-design-contract.py': continue
     try: s=p.read_text()
     except UnicodeDecodeError: continue
     if 'user-scalable=no' in s: errors.append(f'{p}: user-scalable=no')
@@ -15,6 +18,29 @@ for p in (root/'_sass/layout', root/'_sass/pages'):
     for f in p.glob('*.scss'):
         s=f.read_text()
         if 'gradient(' in s: errors.append(f'{f}: layout/page gradient')
+
+# Keep decorative effects out of the page shell; image/syntax/status effects remain local.
+base = (root / '_sass/base/_base.scss').read_text()
+body = re.search(r'body\s*\{(?P<body>.*?)\n\}', base, re.S)
+if body and 'gradient(' in body.group('body'):
+    errors.append(f'{root / "_sass/base/_base.scss"}: body gradient')
+for f in (root / '_sass/themes').glob('*.scss'):
+    s = f.read_text()
+    for token in ('--sidebar-bg', '--intro-bg'):
+        match = re.search(rf'{re.escape(token)}\s*:\s*([^;]+)', s)
+        if match and 'gradient(' in match.group(1):
+            errors.append(f'{f}: {token} gradient')
+    for token in ('--soft-shadow', '--card-shadow', '--card-shadow-hover'):
+        match = re.search(rf'{re.escape(token)}\s*:\s*([^;]+)', s)
+        if match and match.group(1).strip() != 'none':
+            errors.append(f'{f}: {token} must be none')
+for directory in (root / '_sass/base', root / '_sass/layout', root / '_sass/pages'):
+    for f in directory.glob('*.scss'):
+        if f.name == '_syntax.scss':
+            continue
+        s = f.read_text()
+        if re.search(r'box-shadow\s*:\s*var\(--card-shadow(?:-hover)?\b', s):
+            errors.append(f'{f}: non-overlay card shadow')
 if errors:
     print('\n'.join(errors)); sys.exit(1)
 print('design contract: PASS')
