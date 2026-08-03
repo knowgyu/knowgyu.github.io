@@ -185,6 +185,14 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           if (!link.querySelector('i'))
             fail('.home-featured a i', 'presence', 'missing', 'required')
         }
+        const hero = first('.home-hero')
+        if (!hero) fail('.home-hero', 'presence', 'missing', 'required')
+        if (isDesktop) {
+          const introBox = rect(first('.home-intro'))
+          const featuredBox = rect(first('.home-featured'))
+          if (!introBox || !featuredBox || featuredBox.left <= introBox.left + introBox.width)
+            fail('.home-hero', 'desktop composition', 'stacked', 'intro and category guide in separate columns')
+        }
         assertTextFits('.home-featured a span')
 
         if (!count('#post-list .post-preview'))

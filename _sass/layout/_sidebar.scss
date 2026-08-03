@@ -13,9 +13,9 @@ $sidebar-compact-width: 4rem;
   &::-webkit-scrollbar { display: none; }
   @include bp.lt(bp.get(lg)) { @include mx.slide; transform: translateX(-#{v.$sidebar-width}); [#{$sidebar-display}] & { transform: translateX(0); } }
   a { color: var(--sidebar-muted-color); &:hover { color: var(--sidebar-active-color); } }
-  .profile-wrapper { margin: 2rem 1.25rem 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--sidebar-divider-color); }
-  .profile-avatar { display: block; width: 3.5rem; height: 3.5rem; margin-bottom: .8rem; border: 1px solid var(--sidebar-divider-color); border-radius: 50%; object-fit: cover; }
-  .site-title { color: var(--site-title-color); font-size: 1.35rem; font-weight: 800; }
+  .profile-wrapper { display: grid; grid-template-columns: 3rem minmax(0, 1fr); column-gap: .75rem; align-items: center; margin: 2rem 1.25rem 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--sidebar-divider-color); }
+  .profile-avatar { grid-row: 1 / span 2; width: 3rem; height: 3rem; border: 1px solid var(--sidebar-divider-color); border-radius: 50%; object-fit: cover; }
+  .site-title { color: var(--site-title-color); font-size: 1.2rem; font-weight: 800; }
   .site-subtitle { color: var(--site-subtitle-color); font-size: .82rem; }
   .sidebar-nav { overflow-y: auto; scrollbar-width: thin; }
   ul { margin: 0 1rem; }

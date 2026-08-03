@@ -7,39 +7,42 @@ refactor: true
 
 {% assign latest_posts = site.posts | where_exp: 'item', 'item.hidden != true' %}
 
-<section class="home-intro" aria-labelledby="home-title">
-  <p class="home-kicker">Illustrated technical notes</p>
-  <h1 id="home-title">로보틱스와 AI를 구현하며 남긴 기록</h1>
-  <p>
-    ROS 자율주행, 임베디드 시스템, 컴퓨터 비전, MLOps를 직접 다루며 배운 내용을 짧고 찾기 쉽게 정리합니다.
-  </p>
-  <a class="home-primary-link" href="{{ '/posts/' | relative_url }}">전체 글 보기</a>
-</section>
+<div class="home-hero">
+  <section class="home-intro" aria-labelledby="home-title">
+    <p class="home-kicker">Illustrated technical notes</p>
+    <h1 id="home-title">로보틱스와 AI를 구현하며 남긴 기록</h1>
+    <p>
+      ROS 자율주행, 임베디드 시스템, 컴퓨터 비전, MLOps를 직접 다루며 배운 내용을 짧고 찾기 쉽게 정리합니다.
+    </p>
+    <a class="home-primary-link" href="{{ '/posts/' | relative_url }}">전체 글 보기</a>
+  </section>
 
-<section class="home-featured" aria-labelledby="featured-title">
-  <h2 id="featured-title">주요 카테고리</h2>
-  <ul>
-    {% assign featured_categories = 'ROS,Kubeflow,Project' | split: ',' %}
-    {% for featured in featured_categories %}
-      {% for branch in site.data.taxonomy %}
-        {% for child in branch.children %}
-          {% if child.name == featured %}
-            {% assign branch_label = branch.label | default: branch.name %}
-            {% assign child_label = child.label | default: child.name %}
-            {% assign child_icon = child.icon | default: branch.icon | default: 'far fa-folder' %}
-            {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
-            <li>
-              <a href="{{ child_url | relative_url | escape }}">
-                <i class="{{ child_icon | escape }} fa-fw" aria-hidden="true"></i>
-                <span>{{ branch_label | escape }} › {{ child_label | escape }}</span>
-              </a>
-            </li>
-          {% endif %}
+  <section class="home-featured" aria-labelledby="featured-title">
+    <p class="home-featured-kicker">먼저 보기</p>
+    <h2 id="featured-title">주요 카테고리</h2>
+    <ul>
+      {% assign featured_categories = 'ROS,Kubeflow,Project' | split: ',' %}
+      {% for featured in featured_categories %}
+        {% for branch in site.data.taxonomy %}
+          {% for child in branch.children %}
+            {% if child.name == featured %}
+              {% assign branch_label = branch.label | default: branch.name %}
+              {% assign child_label = child.label | default: child.name %}
+              {% assign child_icon = child.icon | default: branch.icon | default: 'far fa-folder' %}
+              {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
+              <li>
+                <a href="{{ child_url | relative_url | escape }}">
+                  <i class="{{ child_icon | escape }} fa-fw" aria-hidden="true"></i>
+                  <span>{{ branch_label | escape }} › {{ child_label | escape }}</span>
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
         {% endfor %}
       {% endfor %}
-    {% endfor %}
-  </ul>
-</section>
+    </ul>
+  </section>
+</div>
 
 <section class="home-latest" aria-labelledby="latest-title">
   <div class="section-heading">
@@ -51,7 +54,8 @@ refactor: true
     <article class="post-row">
       <a href="{{ post.url | relative_url }}" class="post-preview">
         <h1 class="post-title">{{ post.title }}</h1>
-        {% assign description = post.description | default: post.excerpt | strip_html | strip %}
+        {% capture description %}{% include post-description.html post=post full_text=true %}{% endcapture %}
+        {% assign description = description | strip %}
         {% if description != empty %}<p class="post-excerpt">{{ description | truncatewords: 30 }}</p>{% endif %}
         <div class="post-meta post-card-meta">
           <time>{% include datetime.html date=post.date lang=lang %}</time>
