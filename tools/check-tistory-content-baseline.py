@@ -12,8 +12,11 @@ POSTS = ROOT / "_posts"
 SIDEBAR = ROOT / "_includes" / "sidebar.html"
 HOME = ROOT / "_layouts" / "home.html"
 POSTS_TAB = ROOT / "_tabs" / "posts.md"
+CATEGORY_LAYOUT = ROOT / "_layouts" / "category.html"
 TAXONOMY = ROOT / "_data" / "taxonomy.yml"
 POST_TAIL = ROOT / "_includes" / "post-tail.html"
+POST_ROW = ROOT / "_includes" / "post-row.html"
+POST_LAYOUT = ROOT / "_layouts" / "post.html"
 SITE = ROOT / "_site"
 EMOJI = re.compile(
     "[\U0001f300-\U0001faff\U00002700-\U000027bf\U00002600-\U000026ff]"
@@ -222,15 +225,21 @@ def main() -> int:
     sidebar = SIDEBAR.read_text(encoding="utf-8") if SIDEBAR.exists() else ""
     home = HOME.read_text(encoding="utf-8") if HOME.exists() else ""
     posts_tab = POSTS_TAB.read_text(encoding="utf-8") if POSTS_TAB.exists() else ""
+    category_layout = CATEGORY_LAYOUT.read_text(encoding="utf-8") if CATEGORY_LAYOUT.exists() else ""
     taxonomy = TAXONOMY.read_text(encoding="utf-8") if TAXONOMY.exists() else ""
     post_tail = POST_TAIL.read_text(encoding="utf-8") if POST_TAIL.exists() else ""
+    post_row = POST_ROW.read_text(encoding="utf-8") if POST_ROW.exists() else ""
+    post_layout = POST_LAYOUT.read_text(encoding="utf-8") if POST_LAYOUT.exists() else ""
 
     for label, path, text in (
         ("sidebar", SIDEBAR, sidebar),
         ("home", HOME, home),
         ("posts tab", POSTS_TAB, posts_tab),
+        ("category layout", CATEGORY_LAYOUT, category_layout),
         ("taxonomy", TAXONOMY, taxonomy),
         ("post tail", POST_TAIL, post_tail),
+        ("post row", POST_ROW, post_row),
+        ("post layout", POST_LAYOUT, post_layout),
     ):
         if not text:
             structural_errors.append(f"{label}: missing {path.relative_to(ROOT)}")
@@ -241,22 +250,42 @@ def main() -> int:
         structural_errors.append("sidebar: taxonomy disclosure tree missing")
     if "taxonomy-toggle" not in sidebar or "aria-expanded" not in sidebar:
         structural_errors.append("sidebar: accessible taxonomy buttons missing")
+    if "sidebar-collapse-toggle" not in sidebar or "knowgyu:sidebar-collapsed" not in sidebar:
+        structural_errors.append("sidebar: persisted collapse control missing")
+    if "taxonomy-icon" not in sidebar or "branch.icon" not in sidebar or "child.icon" not in sidebar:
+        structural_errors.append("sidebar: taxonomy icon metadata missing")
+    if "aria-expanded=\"true\"" not in sidebar or "{% unless expanded %} hidden{% endunless %}" in sidebar:
+        structural_errors.append("sidebar: taxonomy roots must be expanded by default")
     if "전체 글" not in sidebar or "/posts/" not in sidebar:
         structural_errors.append("sidebar: posts route missing")
     if "paginator" in home or "post-paginator" in home:
         structural_errors.append("home: still depends on paginator")
     if "전체 글 보기" not in home or "latest_posts limit: 5" not in home:
         structural_errors.append("home: curated gateway/latest block missing")
+    if "주요 카테고리" not in home or "작업 흐름" in home or "featured_categories" not in home:
+        structural_errors.append("home: taxonomy-sourced major category paths missing")
     if "permalink:" in posts_tab:
         structural_errors.append("posts tab: should use Chirpy tab default permalink")
     if "data-catalog-item" not in posts_tab or "forloop.index > 15" not in posts_tab:
         structural_errors.append("posts tab: fixed 15-item catalog missing")
-    if "| escape" not in posts_tab:
+    if "| escape" not in posts_tab and "| escape" not in post_row:
         structural_errors.append("posts tab: catalog output must escape titles and categories")
+    if "{% include post-row.html" not in posts_tab or "{% include post-row.html" not in category_layout:
+        structural_errors.append("post rows: posts tab and category layout must share post-row include")
+    if "data-post-row" not in post_row or "data-post-title" not in post_row or "data-post-date" not in post_row:
+        structural_errors.append("post row: semantic row fields missing")
+    if 'class="dash' in category_layout or "<ul class=\"content" in category_layout:
+        structural_errors.append("category layout: dashed category list grammar remains")
     if "15/30" in posts_tab or "density" in posts_tab.lower():
         structural_errors.append("posts tab: density selector leaked in")
+    if "좁게" not in post_layout or "기본" not in post_layout or "넓게" not in post_layout:
+        structural_errors.append("post layout: readable width labels missing")
+    if ">760</button>" in post_layout or ">900</button>" in post_layout or ">1100</button>" in post_layout:
+        structural_errors.append("post layout: raw width labels still visible")
     if "Embedded System" not in taxonomy or "AI & CV" not in taxonomy or "Computer Science" not in taxonomy:
         structural_errors.append("taxonomy: top-level owners missing")
+    if "icon:" not in taxonomy:
+        structural_errors.append("taxonomy: Font Awesome icon metadata missing")
     if (
         "post-tail-section--sequence" not in post_tail
         or "post-tail-section--latest" not in post_tail
@@ -275,12 +304,19 @@ def main() -> int:
         posts_index = SITE / "posts" / "index.html"
         posts_index_text = posts_index.read_text(encoding="utf-8") if posts_index.exists() else ""
         if posts_index_text:
-            if 'class="catalog-item"' not in posts_index_text:
+            if 'catalog-item' not in posts_index_text:
                 structural_errors.append("site output: posts catalog items rendered as escaped markdown")
             if 'class="language-plaintext highlighter-rouge"' in posts_index_text:
                 structural_errors.append("site output: posts catalog rendered as a code block")
+            if "data-post-row" not in posts_index_text:
+                structural_errors.append("site output: shared posts row marker missing")
         else:
             structural_errors.append("site output: missing _site/posts/index.html")
+
+        category_ros = SITE / "categories" / "ros" / "index.html"
+        category_ros_text = category_ros.read_text(encoding="utf-8") if category_ros.exists() else ""
+        if category_ros_text and "data-post-row" not in category_ros_text:
+            structural_errors.append("site output: category detail shared row marker missing")
 
         post_pages = sorted((SITE / "posts").glob("*/index.html")) if (SITE / "posts").exists() else []
         sample_post = next((path for path in post_pages if path.parent.name != "index"), None)

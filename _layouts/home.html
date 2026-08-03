@@ -17,11 +17,27 @@ refactor: true
 </section>
 
 <section class="home-featured" aria-labelledby="featured-title">
-  <h2 id="featured-title">작업 흐름</h2>
+  <h2 id="featured-title">주요 카테고리</h2>
   <ul>
-    <li><a href="{{ '/categories/ros/' | relative_url }}">ROS 자율주행 실험</a></li>
-    <li><a href="{{ '/categories/kubeflow/' | relative_url }}">Kubeflow와 MLOps 메모</a></li>
-    <li><a href="{{ '/categories/project/' | relative_url }}">임베디드 프로젝트 기록</a></li>
+    {% assign featured_categories = 'ROS,Kubeflow,Project' | split: ',' %}
+    {% for featured in featured_categories %}
+      {% for branch in site.data.taxonomy %}
+        {% for child in branch.children %}
+          {% if child.name == featured %}
+            {% assign branch_label = branch.label | default: branch.name %}
+            {% assign child_label = child.label | default: child.name %}
+            {% assign child_icon = child.icon | default: branch.icon | default: 'far fa-folder' %}
+            {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
+            <li>
+              <a href="{{ child_url | relative_url | escape }}">
+                <i class="{{ child_icon | escape }} fa-fw" aria-hidden="true"></i>
+                <span>{{ branch_label | escape }} › {{ child_label | escape }}</span>
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
   </ul>
 </section>
 

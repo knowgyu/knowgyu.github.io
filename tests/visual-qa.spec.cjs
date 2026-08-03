@@ -6,6 +6,7 @@ const ROUTES = [
   { name: 'home', path: '/' },
   { name: 'posts-catalog', path: '/posts/' },
   { name: 'categories', path: '/categories/' },
+  { name: 'category-ros', path: '/categories/ros/' },
   { name: 'archives', path: '/archives/' },
   { name: 'tags', path: '/tags/' },
   { name: 'search-open', path: '/' },
@@ -74,6 +75,28 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
       const first = (selector) => document.querySelector(selector)
       const count = (selector) => document.querySelectorAll(selector).length
       const hasText = (selector) => Boolean(first(selector)?.textContent.trim())
+      const visible = (element) =>
+        Boolean(element && !element.hidden && style(element)?.display !== 'none' && element.getClientRects().length)
+      const assertTextFits = (selector) => {
+        for (const element of document.querySelectorAll(selector)) {
+          if (!visible(element)) continue
+          if (!element.textContent.trim()) fail(selector, 'text', 'empty', 'non-empty')
+          if (element.scrollWidth > element.clientWidth + 2)
+            fail(selector, 'scrollWidth-clientWidth', `${element.scrollWidth - element.clientWidth}px`, '<=2px')
+          const box = rect(element)
+          if (box && box.height <= 0) fail(selector, 'height', `${box.height}px`, '>0')
+        }
+      }
+      const assertReadableTaxonomyLabels = () => {
+        for (const label of document.querySelectorAll('#sidebar .taxonomy-label')) {
+          if (!visible(label)) continue
+          const text = label.textContent.trim()
+          const box = rect(label)
+          const lineWidth = Math.max(0, ...[...label.getClientRects()].map((line) => line.width))
+          if (text.length >= 5 && box && lineWidth < 32)
+            fail('#sidebar .taxonomy-label', 'line width', `${Math.round(lineWidth)}px for ${text}`, '>=32px')
+        }
+      }
       const isDesktop = innerWidth >= 1024
 
       if (!body) fail('body', 'presence', 'missing', 'required')
@@ -92,8 +115,31 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
       const sidebar = first('#sidebar')
       if (isDesktop && sidebar) {
         const width = rect(sidebar)?.width
-        if (width == null || width < 202 || width > 214)
-          fail('#sidebar', 'width', `${width ?? 'missing'}px`, '202px-214px')
+        if (width == null || width < 256 || width > 272)
+          fail('#sidebar', 'width', `${width ?? 'missing'}px`, '256px-272px')
+        if (!first('#sidebar .sidebar-collapse-toggle'))
+          fail('#sidebar .sidebar-collapse-toggle', 'presence', 'missing', 'required')
+        for (const toggle of document.querySelectorAll('#sidebar .taxonomy-toggle')) {
+          if (toggle.textContent.trim())
+            fail('#sidebar .taxonomy-toggle', 'visible text', toggle.textContent.trim(), 'empty')
+          if (toggle.getAttribute('aria-expanded') !== 'true')
+            fail('#sidebar .taxonomy-toggle', 'aria-expanded', toggle.getAttribute('aria-expanded'), 'true by default')
+          const list = document.getElementById(toggle.getAttribute('aria-controls'))
+          if (!list || list.hidden)
+            fail('#sidebar .taxonomy-toggle', 'controlled list', list ? 'hidden' : 'missing', 'visible by default')
+        }
+        for (const link of document.querySelectorAll('#sidebar .taxonomy-link')) {
+          const linkRect = rect(link)
+          if (!link.textContent.trim())
+            fail('#sidebar .taxonomy-link', 'text', 'empty', 'non-empty')
+          if (!link.querySelector('.taxonomy-icon'))
+            fail('#sidebar .taxonomy-link .taxonomy-icon', 'presence', 'missing', 'required')
+          if (link.scrollWidth > link.clientWidth + 1)
+            fail('#sidebar .taxonomy-link', 'scrollWidth-clientWidth', `${link.scrollWidth - link.clientWidth}px`, '<=1px')
+          if (linkRect && linkRect.right > innerWidth + 2)
+            fail('#sidebar .taxonomy-link', 'right edge', `${linkRect.right}px`, '<=viewport')
+        }
+        assertReadableTaxonomyLabels()
         const active = first('#sidebar .nav-item.active a.nav-link')
         if (active) {
           const activeRect = rect(active)
@@ -115,6 +161,21 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
       }
 
       if (route === 'home') {
+        if (!hasText('#featured-title') || first('#featured-title')?.textContent.trim() !== '주요 카테고리')
+          fail('#featured-title', 'text', first('#featured-title')?.textContent.trim() || 'empty', '주요 카테고리')
+        if (document.body.textContent.includes('작업 흐름'))
+          fail('body', 'text', '작업 흐름', 'absent')
+        const featuredLinks = [...document.querySelectorAll('.home-featured li a')]
+        if (featuredLinks.length < 3)
+          fail('.home-featured a', 'count', featuredLinks.length, '>=3')
+        for (const link of featuredLinks.slice(0, 3)) {
+          if (!link.textContent.includes('›'))
+            fail('.home-featured a', 'category path', link.textContent.trim(), 'two-level path with ›')
+          if (!link.querySelector('i'))
+            fail('.home-featured a i', 'presence', 'missing', 'required')
+        }
+        assertTextFits('.home-featured a span')
+
         if (!count('#post-list .post-preview'))
           fail('#post-list .post-preview', 'count', '0', '>0')
         if (!hasText('#post-list .post-title'))
@@ -140,6 +201,28 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           if (excerpt && !excerpt.textContent.trim())
             fail('#post-list .post-excerpt', 'text', 'empty', 'absent or non-empty')
         }
+      }
+
+      if (route === 'posts-catalog' || route === 'category-ros') {
+        const rows = [...document.querySelectorAll('[data-post-row]')].filter(visible)
+        if (!rows.length) fail('[data-post-row]', 'count', '0', '>0')
+        for (const row of rows) {
+          const title = row.querySelector('[data-post-title]')
+          const date = row.querySelector('[data-post-date]')
+          const categories = row.querySelector('[data-post-categories]')
+          if (!title?.textContent.trim()) fail('[data-post-title]', 'text', 'empty', 'non-empty')
+          if (!date?.textContent.trim()) fail('[data-post-date]', 'text', 'empty', 'non-empty')
+          if (categories) {
+            const levels = categories.textContent.split('/').filter((part) => part.trim()).length
+            if (levels > 2) fail('[data-post-categories]', 'levels', levels, '<=2')
+          }
+          const rowBox = rect(row.querySelector('a'))
+          const metaBox = rect(row.querySelector('.post-row-meta'))
+          if (isDesktop && rowBox && metaBox && metaBox.right > rowBox.right + 2)
+            fail('.post-row-meta', 'right edge', `${metaBox.right}px`, `<=${rowBox.right}px`)
+        }
+        assertTextFits('[data-post-title]')
+        assertTextFits('[data-post-categories]')
       }
 
       if (route === 'posts-catalog') {
@@ -195,6 +278,13 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           if (countNode && style(countNode).display === 'block')
             fail('.categories .card-header .text-muted.small', 'display', 'block', 'inline or inline-block')
         }
+      }
+
+      if (route === 'category-ros') {
+        if (!hasText('#page-category h1'))
+          fail('#page-category h1', 'text', 'empty', 'non-empty')
+        if (count('#page-category .dash'))
+          fail('#page-category .dash', 'count', count('#page-category .dash'), '0')
       }
 
       if (route === 'archives') {
@@ -286,6 +376,21 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
             }
           }
 
+          const widthButtons = [...document.querySelectorAll('.post-width-control button[data-post-width]')]
+          const labels = widthButtons.map((button) => button.textContent.trim())
+          const expectedLabels = ['좁게', '기본', '넓게']
+          if (labels.join('|') !== expectedLabels.join('|'))
+            fail('[data-post-width]', 'labels', labels.join('|'), expectedLabels.join('|'))
+          const expectedNames = ['760', '900', '1100']
+          widthButtons.forEach((button, index) => {
+            const name = button.getAttribute('aria-label') || ''
+            if (!name.includes(expectedNames[index]))
+              fail('[data-post-width]', 'aria-label', name || 'missing', `contains ${expectedNames[index]}`)
+          })
+          const selectedDefault = first('.post-width-control button[data-post-width="900"]')
+          if (selectedDefault?.getAttribute('aria-pressed') !== 'true')
+            fail('[data-post-width="900"]', 'aria-pressed', selectedDefault?.getAttribute('aria-pressed'), 'true by default')
+
           for (const frame of document.querySelectorAll('iframe[src*="youtube"], iframe[src*="youtu.be"]')) {
             const media = frame.closest('[data-media], .media-embed, .embed, figure') || frame.parentElement
             const fallback = media?.querySelector('[data-media-fallback], .media-fallback, .embed-fallback, [role="status"]')
@@ -319,6 +424,111 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
     },
     { route: routeName, viewportName: viewport, screenshotPath: screenshot },
   )
+}
+
+async function checkPostWidthPersistence(page, routeName, viewportName, screenshot) {
+  if (routeName !== 'post' || viewportName !== 'desktop') return []
+  const failures = []
+  const fail = (selector, property, observed, budget) =>
+    failures.push({
+      route: routeName,
+      viewport: `${page.viewportSize()?.width}x${page.viewportSize()?.height}`,
+      selector,
+      property,
+      observed: String(observed),
+      budget,
+      screenshot,
+    })
+  const readState = () =>
+    page.evaluate(() => ({
+      stored: localStorage.getItem('knowgyu.postWidth'),
+      applied: document.querySelector('[data-post-width-root]')?.style.getPropertyValue('--post-content-width'),
+      pressed: document.querySelector('.post-width-control button[aria-pressed="true"]')?.dataset.postWidth,
+    }))
+
+  for (const width of ['760', '900', '1100']) {
+    const button = page.locator(`.post-width-control button[data-post-width="${width}"]`)
+    if (!(await button.count())) {
+      fail(`[data-post-width="${width}"]`, 'presence', 'missing', 'required')
+      continue
+    }
+    await button.click()
+    let state = await readState()
+    if (state.stored !== width) fail('localStorage knowgyu.postWidth', 'value after click', state.stored, width)
+    if (state.applied !== `${width}px`) fail('[data-post-width-root]', '--post-content-width after click', state.applied || 'missing', `${width}px`)
+    if (state.pressed !== width) fail('[data-post-width]', 'aria-pressed after click', state.pressed || 'missing', width)
+
+    await page.reload({ waitUntil: 'networkidle' })
+    state = await readState()
+    if (state.stored !== width) fail('localStorage knowgyu.postWidth', 'value after reload', state.stored, width)
+    if (state.applied !== `${width}px`) fail('[data-post-width-root]', '--post-content-width after reload', state.applied || 'missing', `${width}px`)
+    if (state.pressed !== width) fail('[data-post-width]', 'aria-pressed after reload', state.pressed || 'missing', width)
+  }
+
+  return failures
+}
+
+async function checkSidebarCollapse(page, routeName, viewportName, screenshot) {
+  if (viewportName !== 'desktop') return []
+  const failures = []
+  const fail = (selector, property, observed, budget) =>
+    failures.push({
+      route: routeName,
+      viewport: `${page.viewportSize()?.width}x${page.viewportSize()?.height}`,
+      selector,
+      property,
+      observed: String(observed),
+      budget,
+      screenshot,
+    })
+
+  const button = page.locator('#sidebar .sidebar-collapse-toggle')
+  if (!(await button.count())) {
+    fail('#sidebar .sidebar-collapse-toggle', 'presence', 'missing', 'required')
+    return failures
+  }
+
+  const before = await page.locator('#main-wrapper').boundingBox()
+  await button.click()
+  await button.evaluate((element) => element.blur())
+  await page.mouse.move(500, 500)
+  const stateScreenshot = (state) => screenshot.replace(/\.png$/, `-sidebar-${state}.png`)
+  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width <= 80, null, { timeout: 1000 }).catch(() => {})
+  const collapsed = await page.evaluate(() => ({
+    pressed: document.querySelector('#sidebar .sidebar-collapse-toggle')?.getAttribute('aria-pressed'),
+    stored: localStorage.getItem('knowgyu:sidebar-collapsed'),
+    width: document.querySelector('#sidebar')?.getBoundingClientRect().width,
+  }))
+  await page.screenshot({ path: stateScreenshot('collapsed') })
+  const after = await page.locator('#main-wrapper').boundingBox()
+  if (collapsed.pressed !== 'true') fail('#sidebar .sidebar-collapse-toggle', 'aria-pressed', collapsed.pressed, 'true')
+  if (collapsed.stored !== 'true') fail('localStorage knowgyu:sidebar-collapsed', 'value', collapsed.stored, 'true')
+  if (collapsed.width == null || collapsed.width > 80) fail('#sidebar', 'collapsed width', `${collapsed.width ?? 'missing'}px`, '<=80px')
+  if (before && after && Math.abs(before.x - after.x) > 1) fail('#main-wrapper', 'x after collapse', `${after.x}px`, `${before.x}px +/-1`)
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.mouse.move(500, 500)
+  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width <= 80, null, { timeout: 1000 }).catch(() => {})
+  const restored = await page.evaluate(() => ({
+    pressed: document.querySelector('#sidebar .sidebar-collapse-toggle')?.getAttribute('aria-pressed'),
+    stored: localStorage.getItem('knowgyu:sidebar-collapsed'),
+    width: document.querySelector('#sidebar')?.getBoundingClientRect().width,
+  }))
+  if (restored.pressed !== 'true') fail('#sidebar .sidebar-collapse-toggle', 'aria-pressed after reload', restored.pressed, 'true')
+  if (restored.stored !== 'true') fail('localStorage knowgyu:sidebar-collapsed', 'value after reload', restored.stored, 'true')
+  if (restored.width == null || restored.width > 80) fail('#sidebar', 'collapsed width after reload', `${restored.width ?? 'missing'}px`, '<=80px')
+
+  await page.locator('#sidebar').hover()
+  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width >= 256, null, { timeout: 1000 }).catch(() => {})
+  const hoverWidth = await page.locator('#sidebar').evaluate((element) => element.getBoundingClientRect().width)
+  await page.screenshot({ path: stateScreenshot('hover') })
+  if (hoverWidth < 256 || hoverWidth > 272) fail('#sidebar:hover', 'width', `${hoverWidth}px`, '256px-272px')
+  await button.focus()
+  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width >= 256, null, { timeout: 1000 }).catch(() => {})
+  const focusWidth = await page.locator('#sidebar').evaluate((element) => element.getBoundingClientRect().width)
+  await page.screenshot({ path: stateScreenshot('focus') })
+  if (focusWidth < 256 || focusWidth > 272) fail('#sidebar:focus-within', 'width', `${focusWidth}px`, '256px-272px')
+
+  return failures
 }
 
 async function resolvePostPath(page, baseURL, fallback) {
@@ -388,6 +598,10 @@ async function main() {
           }
           await page.screenshot({ path: image, fullPage: true })
           const evidence = await collectEvidence(page, route.name, viewport.name, image)
+          if (route.name === 'home' && mode === 'light')
+            evidence.failures.push(...await checkSidebarCollapse(page, route.name, viewport.name, image))
+          if (route.name === 'post' && mode === 'light')
+            evidence.failures.push(...await checkPostWidthPersistence(page, route.name, viewport.name, image))
           fs.writeFileSync(evidencePath(route.name, mode, viewport.name), `${JSON.stringify(evidence, null, 2)}\n`)
           if (evidence.failures.length) throw new Error(evidence.failures.map(formatFailure).join('\n'))
           console.log(`PASS ${label}`)

@@ -1,0 +1,14 @@
+{% assign row_post = include.post %}
+<article class="{{ include.class }} editorial-post-row" data-post-row {{ include.attrs }}{% if include.hidden %} hidden{% endif %}>
+  <a href="{{ row_post.url | relative_url | escape }}">
+    <span class="catalog-title post-row-title" data-post-title>{{ row_post.title | escape }}</span>
+    <span class="catalog-meta post-row-meta">
+      <time class="post-row-date" data-post-date datetime="{{ row_post.date | date_to_xmlschema | escape }}">{{ row_post.date | date: "%Y-%m-%d" }}</time>
+      {% if row_post.categories.size > 0 %}
+        <span class="post-row-category-path" data-post-categories>
+          {% for category in row_post.categories limit: 2 %}{{ category | escape }}{% unless forloop.last %} / {% endunless %}{% endfor %}
+        </span>
+      {% endif %}
+    </span>
+  </a>
+</article>

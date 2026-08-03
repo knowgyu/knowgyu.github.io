@@ -8,20 +8,13 @@ order: 1
 <section class="posts-catalog" aria-labelledby="posts-catalog-title" markdown="0">
   <p class="catalog-kicker">All posts</p>
   <h2 id="posts-catalog-title">전체 글</h2>
-  <div class="catalog-list" data-posts-catalog>
+  <div class="catalog-list post-row-list" data-posts-catalog>
 {% assign catalog_posts = site.posts | where_exp: 'item', 'item.hidden != true' %}
 {% for post in catalog_posts %}
-<article class="catalog-item" data-catalog-item{% if forloop.index > 15 %} hidden{% endif %}>
-<a href="{{ post.url | relative_url | escape }}">
-<span class="catalog-title">{{ post.title | escape }}</span>
-<span class="catalog-meta">
-<time datetime="{{ post.date | date_to_xmlschema | escape }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-{% if post.categories.size > 0 %}
-<span>{% for category in post.categories limit: 2 %}{{ category | escape }}{% unless forloop.last %} / {% endunless %}{% endfor %}</span>
-{% endif %}
-</span>
-</a>
-</article>
+{% capture catalog_attrs %}data-catalog-item{% endcapture %}
+{% assign catalog_hidden = false %}
+{% if forloop.index > 15 %}{% assign catalog_hidden = true %}{% endif %}
+{% include post-row.html post=post class='catalog-item' attrs=catalog_attrs hidden=catalog_hidden %}
 {% endfor %}
   </div>
 

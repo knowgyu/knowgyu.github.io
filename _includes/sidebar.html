@@ -29,7 +29,10 @@
   <nav class="sidebar-nav flex-column flex-grow-1 w-100 ps-0" aria-label="Primary navigation">
     <ul class="nav primary-links">
       <li class="nav-item{% if page.layout == 'home' %} active{% endif %}">
-        <a href="{{ '/' | relative_url }}" class="nav-link"{% if page.layout == 'home' %} aria-current="page"{% endif %}><span>{{ site.data.locales[include.lang].tabs.home }}</span></a>
+        <a href="{{ '/' | relative_url }}" class="nav-link"{% if page.layout == 'home' %} aria-current="page"{% endif %}>
+          <i class="fas fa-home fa-fw sidebar-nav-icon" aria-hidden="true"></i>
+          <span class="sidebar-label">{{ site.data.locales[include.lang].tabs.home }}</span>
+        </a>
       </li>
       {% for tab in site.tabs %}
         {% unless tab.hidden == true %}
@@ -39,7 +42,8 @@
           <li class="nav-item{% if tab.url == page.url %} active{% endif %}">
             <a href="{{ tab.url | relative_url }}" class="nav-link"{% if tab.url == page.url %} aria-current="page"{% endif %}>
               {% capture tab_name %}{{ tab.url | split: '/' }}{% endcapture %}
-              <span>{% if tab.url == '/posts/' %}전체 글{% else %}{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}{% endif %}</span>
+              <i class="{% if tab.url == '/posts/' %}fas fa-list-ul{% else %}far fa-file-alt{% endif %} fa-fw sidebar-nav-icon" aria-hidden="true"></i>
+              <span class="sidebar-label">{% if tab.url == '/posts/' %}전체 글{% else %}{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}{% endif %}</span>
             </a>
           </li>
         {% endunless %}
@@ -51,26 +55,32 @@
         {% assign branch_posts = site.categories[branch.name] | default: empty %}
         {% assign branch_count = branch_posts | size %}
         {% if branch_count > 0 %}
-          {% assign expanded = false %}
-          {% if current_top == branch.name %}{% assign expanded = true %}{% endif %}
+          {% assign branch_label = branch.label | default: branch.name %}
+          {% assign branch_icon = branch.icon | default: 'far fa-folder' %}
           {% assign tree_id = 'sidebar-taxonomy-' | append: forloop.index %}
           {% capture branch_url %}/categories/{{ branch.name | slugify | url_encode }}/{% endcapture %}
-          <div class="taxonomy-branch{% if expanded %} active{% endif %}">
+          <div class="taxonomy-branch{% if current_top == branch.name %} active{% endif %}">
             <div class="taxonomy-heading">
-              <button type="button" class="taxonomy-toggle" aria-controls="{{ tree_id }}" aria-expanded="{% if expanded %}true{% else %}false{% endif %}">
-                <span class="visually-hidden">{{ branch.label | default: branch.name }} 열기</span>
-              </button>
-              <a class="taxonomy-link{% if current_top == branch.name and current_sub == '' %} current{% endif %}" href="{{ branch_url | relative_url }}"{% if current_top == branch.name and current_sub == '' %} aria-current="page"{% endif %}>{{ branch.label | default: branch.name }}</a>
+              <button type="button" class="taxonomy-toggle" aria-controls="{{ tree_id | escape }}" aria-expanded="true" aria-label="{{ branch_label | append: ' 접기/펼치기' | escape }}"></button>
+              <a class="taxonomy-link{% if current_top == branch.name and current_sub == '' %} current{% endif %}" href="{{ branch_url | relative_url | escape }}"{% if current_top == branch.name and current_sub == '' %} aria-current="page"{% endif %}>
+                <i class="{{ branch_icon | escape }} fa-fw taxonomy-icon" aria-hidden="true"></i>
+                <span class="taxonomy-label">{{ branch_label | escape }}</span>
+              </a>
               <span class="taxonomy-count">{{ branch_count }}</span>
             </div>
-            <ul id="{{ tree_id }}"{% unless expanded %} hidden{% endunless %}>
+            <ul id="{{ tree_id | escape }}">
               {% for child in branch.children %}
                 {% assign child_posts = site.categories[child.name] | default: empty %}
                 {% assign child_count = child_posts | size %}
                 {% if child_count > 0 %}
+                  {% assign child_label = child.label | default: child.name %}
+                  {% assign child_icon = child.icon | default: 'far fa-folder' %}
                   {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
                   <li>
-                    <a class="taxonomy-link{% if current_sub == child.name %} current{% endif %}" href="{{ child_url | relative_url }}"{% if current_sub == child.name %} aria-current="page"{% endif %}>{{ child.label | default: child.name }}</a>
+                    <a class="taxonomy-link{% if current_sub == child.name %} current{% endif %}" href="{{ child_url | relative_url | escape }}"{% if current_sub == child.name %} aria-current="page"{% endif %}>
+                      <i class="{{ child_icon | escape }} fa-fw taxonomy-icon" aria-hidden="true"></i>
+                      <span class="taxonomy-label">{{ child_label | escape }}</span>
+                    </a>
                     <span class="taxonomy-count">{{ child_count }}</span>
                   </li>
                 {% endif %}
@@ -83,29 +93,77 @@
 
     <ul class="nav utility-links">
       <li class="nav-item{% if page.url == '/categories/' %} active{% endif %}">
-        <a href="{{ '/categories/' | relative_url }}" class="nav-link"{% if page.url == '/categories/' %} aria-current="page"{% endif %}><span>Categories</span></a>
+        <a href="{{ '/categories/' | relative_url }}" class="nav-link"{% if page.url == '/categories/' %} aria-current="page"{% endif %}>
+          <i class="far fa-folder-open fa-fw sidebar-nav-icon" aria-hidden="true"></i>
+          <span class="sidebar-label">Categories</span>
+        </a>
       </li>
       <li class="nav-item{% if page.url == '/archives/' %} active{% endif %}">
-        <a href="{{ '/archives/' | relative_url }}" class="nav-link"{% if page.url == '/archives/' %} aria-current="page"{% endif %}><span>Archives</span></a>
+        <a href="{{ '/archives/' | relative_url }}" class="nav-link"{% if page.url == '/archives/' %} aria-current="page"{% endif %}>
+          <i class="fas fa-archive fa-fw sidebar-nav-icon" aria-hidden="true"></i>
+          <span class="sidebar-label">Archives</span>
+        </a>
       </li>
     </ul>
   </nav>
+  <button type="button" class="sidebar-collapse-toggle" aria-label="사이드바 접기" aria-pressed="false">
+    <i class="fas fa-angle-double-left" aria-hidden="true"></i>
+    <span>접기</span>
+  </button>
   <div class="sidebar-bottom d-flex flex-wrap align-items-center w-100">
     {% unless site.theme_mode %}<button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle"><i class="fas fa-adjust"></i></button>{% endunless %}
     {% for entry in site.data.contact %}
       {% assign url = entry.url %}
       {% if entry.type == 'rss' %}{% assign url = '/feed.xml' | relative_url %}{% endif %}
-      {% if url %}<a href="{{ url }}" aria-label="{{ entry.type }}"{% unless entry.noblank %} target="_blank" rel="noopener noreferrer"{% endunless %}><i class="{{ entry.icon }}"></i></a>{% endif %}
+      {% if url %}<a href="{{ url | escape }}" aria-label="{{ entry.type | escape }}"{% unless entry.noblank %} target="_blank" rel="noopener noreferrer"{% endunless %}><i class="{{ entry.icon | escape }}"></i></a>{% endif %}
     {% endfor %}
   </div>
 </aside>
 <script>
-  document.querySelectorAll('#sidebar .taxonomy-toggle').forEach((button) => {
-    button.addEventListener('click', () => {
-      const list = document.getElementById(button.getAttribute('aria-controls'));
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', String(!expanded));
-      if (list) list.hidden = expanded;
+  (() => {
+    const root = document.documentElement;
+    const key = 'knowgyu:sidebar-collapsed';
+    const sidebar = document.getElementById('sidebar');
+    const collapseButton = sidebar?.querySelector('.sidebar-collapse-toggle');
+    const readCollapsed = () => {
+      try {
+        return localStorage.getItem(key) === 'true';
+      } catch {
+        return false;
+      }
+    };
+    const writeCollapsed = (collapsed) => {
+      try {
+        localStorage.setItem(key, String(collapsed));
+      } catch {}
+    };
+    const applyCollapsed = (collapsed) => {
+      root.classList.toggle('sidebar-compact', collapsed);
+      collapseButton?.setAttribute('aria-pressed', String(collapsed));
+      collapseButton?.setAttribute('aria-label', collapsed ? '사이드바 펼치기' : '사이드바 접기');
+      const icon = collapseButton?.querySelector('i');
+      const label = collapseButton?.querySelector('span');
+      icon?.classList.toggle('fa-angle-double-left', !collapsed);
+      icon?.classList.toggle('fa-angle-double-right', collapsed);
+      if (label) label.textContent = collapsed ? '펼치기' : '접기';
+    };
+
+    document.querySelectorAll('#sidebar .taxonomy-toggle').forEach((button) => {
+      button.addEventListener('click', () => {
+        const list = document.getElementById(button.getAttribute('aria-controls'));
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        if (list) list.hidden = expanded;
+      });
     });
-  });
+
+    if (collapseButton) {
+      applyCollapsed(readCollapsed());
+      collapseButton.addEventListener('click', () => {
+        const collapsed = !root.classList.contains('sidebar-compact');
+        writeCollapsed(collapsed);
+        applyCollapsed(collapsed);
+      });
+    }
+  })();
 </script>
