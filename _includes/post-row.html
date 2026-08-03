@@ -1,4 +1,6 @@
 {% assign row_post = include.post %}
+{% capture row_excerpt %}{% include post-description.html post=row_post full_text=true %}{% endcapture %}
+{% assign row_excerpt = row_excerpt | strip %}
 <article class="{{ include.class }} editorial-post-row" data-post-row {{ include.attrs }}{% if include.hidden %} hidden{% endif %}>
   <a href="{{ row_post.url | relative_url | escape }}">
     <span class="catalog-title post-row-title" data-post-title>{{ row_post.title | escape }}</span>
@@ -10,5 +12,6 @@
         </span>
       {% endif %}
     </span>
+    {% if row_excerpt != empty %}<span class="post-row-excerpt">{{ row_excerpt | truncate: 160 | escape }}</span>{% endif %}
   </a>
 </article>

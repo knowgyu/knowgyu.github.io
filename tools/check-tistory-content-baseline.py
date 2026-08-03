@@ -252,6 +252,12 @@ def main() -> int:
         structural_errors.append("sidebar: accessible taxonomy buttons missing")
     if "sidebar-collapse-toggle" not in sidebar or "knowgyu:sidebar-collapsed" not in sidebar:
         structural_errors.append("sidebar: persisted collapse control missing")
+    if "profile-avatar" not in sidebar or "site.avatar" not in sidebar:
+        structural_errors.append("sidebar: configured profile avatar missing")
+    if "knowgyu:sidebar-scroll" not in sidebar or "restoreScroll" not in sidebar:
+        structural_errors.append("sidebar: category navigation scroll persistence missing")
+    if "Categories</span>" in sidebar:
+        structural_errors.append("sidebar: redundant Categories navigation remains")
     if "taxonomy-icon" not in sidebar or "branch.icon" not in sidebar or "child.icon" not in sidebar:
         structural_errors.append("sidebar: taxonomy icon metadata missing")
     if "aria-expanded=\"true\"" not in sidebar or "{% unless expanded %} hidden{% endunless %}" in sidebar:
@@ -274,6 +280,8 @@ def main() -> int:
         structural_errors.append("post rows: posts tab and category layout must share post-row include")
     if "data-post-row" not in post_row or "data-post-title" not in post_row or "data-post-date" not in post_row:
         structural_errors.append("post row: semantic row fields missing")
+    if "post-row-excerpt" not in post_row or "post-description.html" not in post_row:
+        structural_errors.append("post row: body preview missing")
     if 'class="dash' in category_layout or "<ul class=\"content" in category_layout:
         structural_errors.append("category layout: dashed category list grammar remains")
     if "15/30" in posts_tab or "density" in posts_tab.lower():

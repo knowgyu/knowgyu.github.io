@@ -119,6 +119,11 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           fail('#sidebar', 'width', `${width ?? 'missing'}px`, '256px-272px')
         if (!first('#sidebar .sidebar-collapse-toggle'))
           fail('#sidebar .sidebar-collapse-toggle', 'presence', 'missing', 'required')
+        const avatar = first('#sidebar .profile-avatar')
+        if (!avatar || !avatar.getAttribute('src') || avatar.naturalWidth <= 0)
+          fail('#sidebar .profile-avatar', 'image', avatar ? 'not loaded' : 'missing', 'loaded profile image')
+        if (count('#sidebar .utility-links a[href*="/categories/"]'))
+          fail('#sidebar .utility-links a[href*="/categories/"]', 'count', count('#sidebar .utility-links a[href*="/categories/"]'), '0')
         for (const toggle of document.querySelectorAll('#sidebar .taxonomy-toggle')) {
           if (toggle.textContent.trim())
             fail('#sidebar .taxonomy-toggle', 'visible text', toggle.textContent.trim(), 'empty')
@@ -216,8 +221,10 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
           const title = row.querySelector('[data-post-title]')
           const date = row.querySelector('[data-post-date]')
           const categories = row.querySelector('[data-post-categories]')
+          const excerpt = row.querySelector('.post-row-excerpt')
           if (!title?.textContent.trim()) fail('[data-post-title]', 'text', 'empty', 'non-empty')
           if (!date?.textContent.trim()) fail('[data-post-date]', 'text', 'empty', 'non-empty')
+          if (!excerpt?.textContent.trim()) fail('.post-row-excerpt', 'text', excerpt ? 'empty' : 'missing', 'non-empty body preview')
           if (categories) {
             const levels = categories.textContent.split('/').filter((part) => part.trim()).length
             if (levels > 2) fail('[data-post-categories]', 'levels', levels, '<=2')
@@ -537,6 +544,30 @@ async function checkSidebarCollapse(page, routeName, viewportName, screenshot) {
   return failures
 }
 
+async function checkSidebarScrollPersistence(page, routeName, viewportName, screenshot) {
+  if (routeName !== 'home' || viewportName !== 'desktop') return []
+  const failures = []
+  const fail = (selector, property, observed, budget) =>
+    failures.push({ route: routeName, viewport: `${page.viewportSize()?.width}x${page.viewportSize()?.height}`, selector, property, observed: String(observed), budget, screenshot })
+  const target = page.locator('#sidebar .taxonomy-tree a[href*="/categories/ros/"]').first()
+  if (!(await target.count())) {
+    fail('#sidebar .taxonomy-tree a[href*="/categories/ros/"]', 'presence', 'missing', 'required')
+    return failures
+  }
+  await page.locator('#sidebar .sidebar-nav').evaluate((element) => {
+    element.scrollTop = Math.min(160, Math.max(40, element.scrollHeight - element.clientHeight))
+    element.dispatchEvent(new Event('scroll'))
+  })
+  await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle' }), target.click()])
+  const restored = await page.locator('#sidebar .sidebar-nav').evaluate((element) => ({
+    scrollTop: element.scrollTop,
+    stored: localStorage.getItem('knowgyu:sidebar-scroll'),
+  }))
+  if (restored.scrollTop < 32) fail('#sidebar .sidebar-nav', 'scrollTop after category navigation', restored.scrollTop, '>=32px')
+  if (Number(restored.stored) < 32) fail('localStorage knowgyu:sidebar-scroll', 'stored scroll position', restored.stored, '>=32px')
+  return failures
+}
+
 async function resolvePostPath(page, baseURL, fallback) {
   const response = await page.goto(new URL('/', baseURL).href, { waitUntil: 'domcontentloaded' })
   if (!response?.ok()) return fallback
@@ -604,6 +635,8 @@ async function main() {
           }
           await page.screenshot({ path: image, fullPage: true })
           const evidence = await collectEvidence(page, route.name, viewport.name, image)
+          if (route.name === 'home' && mode === 'light')
+            evidence.failures.push(...await checkSidebarScrollPersistence(page, route.name, viewport.name, image))
           if (route.name === 'home' && mode === 'light')
             evidence.failures.push(...await checkSidebarCollapse(page, route.name, viewport.name, image))
           if (route.name === 'post' && mode === 'light')

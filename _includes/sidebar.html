@@ -23,6 +23,9 @@
 
 <aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
   <header class="profile-wrapper">
+    {% if site.avatar %}
+      <img class="profile-avatar" src="{{ site.avatar | relative_url | escape }}" alt="{{ site.title | escape }} 프로필">
+    {% endif %}
     <a class="site-title d-block" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <p class="site-subtitle mb-0">{{ site.tagline }}</p>
   </header>
@@ -92,12 +95,6 @@
     </div>
 
     <ul class="nav utility-links">
-      <li class="nav-item{% if page.url == '/categories/' %} active{% endif %}">
-        <a href="{{ '/categories/' | relative_url }}" class="nav-link"{% if page.url == '/categories/' %} aria-current="page"{% endif %}>
-          <i class="far fa-folder-open fa-fw sidebar-nav-icon" aria-hidden="true"></i>
-          <span class="sidebar-label">Categories</span>
-        </a>
-      </li>
       <li class="nav-item{% if page.url == '/archives/' %} active{% endif %}">
         <a href="{{ '/archives/' | relative_url }}" class="nav-link"{% if page.url == '/archives/' %} aria-current="page"{% endif %}>
           <i class="fas fa-archive fa-fw sidebar-nav-icon" aria-hidden="true"></i>
@@ -123,7 +120,9 @@
   (() => {
     const root = document.documentElement;
     const key = 'knowgyu:sidebar-collapsed';
+    const scrollKey = 'knowgyu:sidebar-scroll';
     const sidebar = document.getElementById('sidebar');
+    const sidebarNav = sidebar?.querySelector('.sidebar-nav');
     const collapseButton = sidebar?.querySelector('.sidebar-collapse-toggle');
     const readCollapsed = () => {
       try {
@@ -135,6 +134,16 @@
     const writeCollapsed = (collapsed) => {
       try {
         localStorage.setItem(key, String(collapsed));
+      } catch {}
+    };
+    const saveScroll = () => {
+      try {
+        localStorage.setItem(scrollKey, String(sidebarNav?.scrollTop || 0));
+      } catch {}
+    };
+    const restoreScroll = () => {
+      try {
+        sidebarNav?.scrollTo({ top: Number(localStorage.getItem(scrollKey)) || 0 });
       } catch {}
     };
     const applyCollapsed = (collapsed) => {
@@ -156,6 +165,11 @@
         if (list) list.hidden = expanded;
       });
     });
+
+    sidebarNav?.addEventListener('scroll', saveScroll, { passive: true });
+    sidebarNav?.addEventListener('click', saveScroll);
+    window.addEventListener('pagehide', saveScroll);
+    requestAnimationFrame(restoreScroll);
 
     if (collapseButton) {
       applyCollapsed(readCollapsed());
