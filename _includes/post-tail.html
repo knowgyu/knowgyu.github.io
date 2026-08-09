@@ -33,17 +33,30 @@
   {% assign start_index = 0 %}
 {% endif %}
 {% assign end_index = current_index | plus: 2 %}
-{% assign shown_urls = '' %}
+{% assign last_index = primary_posts | size | minus: 1 %}
+{% if end_index > last_index %}
+  {% assign end_index = last_index %}
+{% endif %}
+{% assign window_size = end_index | minus: start_index | plus: 1 %}
+{% if window_size < 5 %}
+  {% assign missing_count = 5 | minus: window_size %}
+  {% assign start_index = start_index | minus: missing_count %}
+  {% if start_index < 0 %}
+    {% assign start_index = 0 %}
+  {% endif %}
+  {% assign end_index = start_index | plus: 4 %}
+  {% if end_index > last_index %}
+    {% assign end_index = last_index %}
+  {% endif %}
+{% endif %}
 
 <section class="post-tail-section post-tail-section--sequence" aria-labelledby="post-tail-sequence">
-  <h2 id="post-tail-sequence">{{ primary_label }} 흐름</h2>
+  <h2 id="post-tail-sequence">{{ primary_label }} 글</h2>
   <ol class="post-tail-list">
     {% for post in primary_posts %}
       {% if forloop.index0 < start_index or forloop.index0 > end_index %}
         {% continue %}
       {% endif %}
-      {% capture url_token %}|{{ post.url }}|{% endcapture %}
-      {% assign shown_urls = shown_urls | append: url_token %}
       <li{% if post.url == page.url %} class="is-current"{% endif %}>
         {% if post.url == page.url %}
           <span aria-current="page">{{ post.title }}</span>
@@ -52,27 +65,6 @@
         {% endif %}
         {% include datetime.html date=post.date lang=include.lang %}
       </li>
-    {% endfor %}
-  </ol>
-</section>
-
-<section class="post-tail-section post-tail-section--latest" aria-labelledby="post-tail-latest">
-  <h2 id="post-tail-latest">최근 글</h2>
-  <ol class="post-tail-list">
-    {% assign latest_count = 0 %}
-    {% for post in site.posts %}
-      {% capture url_token %}|{{ post.url }}|{% endcapture %}
-      {% if post.url == page.url or shown_urls contains url_token %}
-        {% continue %}
-      {% endif %}
-      <li>
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        {% include datetime.html date=post.date lang=include.lang %}
-      </li>
-      {% assign latest_count = latest_count | plus: 1 %}
-      {% if latest_count == 5 %}
-        {% break %}
-      {% endif %}
     {% endfor %}
   </ol>
 </section>

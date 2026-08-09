@@ -5,6 +5,7 @@ const { chromium } = require('playwright')
 const ROUTES = [
   { name: 'home', path: '/' },
   { name: 'posts-catalog', path: '/posts/' },
+  { name: 'projects', path: '/projects/' },
   { name: 'categories', path: '/categories/' },
   { name: 'category-ros', path: '/categories/ros/' },
   { name: 'archives', path: '/archives/' },
@@ -13,6 +14,17 @@ const ROUTES = [
   {
     name: 'post',
     path: '/posts/ROS1-하이퍼파라미터-튜닝-및-마무리/',
+    match: /하이퍼파라미터/,
+  },
+  {
+    name: 'post-code-heavy',
+    path: '/posts/Pipeline-for-Train-YOLOv8-on-a-Custom-Dataset/',
+    match: /YOLOv8|Pipeline/,
+  },
+  {
+    name: 'post-list-heavy',
+    path: '/posts/PV-Mount-&-HyperParameter-Tuning/',
+    match: /PV|HyperParameter|마운트/,
   },
 ]
 const MODES = ['light', 'dark']
@@ -35,6 +47,7 @@ const selected = (value, all) =>
   process.env[value]
     ? all.filter((entry) => process.env[value].split(',').includes(entry.name || entry))
     : all
+const isPostRoute = (name) => name === 'post' || name === 'post-code-heavy' || name === 'post-list-heavy'
 
 function formatFailure(failure) {
   return [
@@ -117,8 +130,10 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         const width = rect(sidebar)?.width
         if (width == null || width < 256 || width > 272)
           fail('#sidebar', 'width', `${width ?? 'missing'}px`, '256px-272px')
-        if (!first('#sidebar .sidebar-collapse-toggle'))
-          fail('#sidebar .sidebar-collapse-toggle', 'presence', 'missing', 'required')
+        if (first('#sidebar .sidebar-collapse-toggle'))
+          fail('#sidebar .sidebar-collapse-toggle', 'presence', 'present', 'absent')
+        if (document.documentElement.classList.contains('sidebar-compact') || localStorage.getItem('knowgyu:sidebar-collapsed'))
+          fail('sidebar compact state', 'state', 'present', 'absent')
         const avatar = first('#sidebar .profile-avatar')
         if (!avatar || !avatar.getAttribute('src') || avatar.naturalWidth <= 0)
           fail('#sidebar .profile-avatar', 'image', avatar ? 'not loaded' : 'missing', 'loaded profile image')
@@ -179,12 +194,24 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         const featuredLinks = [...document.querySelectorAll('.home-featured li a')]
         if (featuredLinks.length < 3)
           fail('.home-featured a', 'count', featuredLinks.length, '>=3')
+        let topicalFeatured = 0
         for (const link of featuredLinks.slice(0, 3)) {
-          if (!link.textContent.includes('›'))
-            fail('.home-featured a', 'category path', link.textContent.trim(), 'two-level path with ›')
+          const href = link.getAttribute('href') || ''
+          if (href.includes('/projects/')) {
+            if (!link.textContent.trim())
+              fail('.home-featured a[href*="/projects/"]', 'text', 'empty', 'non-empty')
+          } else {
+            topicalFeatured += 1
+            if (!href.includes('/categories/'))
+              fail('.home-featured a', 'href', href || 'missing', 'category or projects route')
+            if (!link.textContent.includes('›'))
+              fail('.home-featured a', 'category path', link.textContent.trim(), 'two-level path with ›')
+          }
           if (!link.querySelector('i'))
             fail('.home-featured a i', 'presence', 'missing', 'required')
         }
+        if (!topicalFeatured)
+          fail('.home-featured a[href*="/categories/"]', 'count', '0', '>0')
         const hero = first('.home-hero')
         if (!hero) fail('.home-hero', 'presence', 'missing', 'required')
         if (isDesktop) {
@@ -301,6 +328,39 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         }
       }
 
+      if (route === 'projects') {
+        if (!hasText('#main-wrapper h1, #main-wrapper h2'))
+          fail('#main-wrapper h1, #main-wrapper h2', 'text', 'empty', 'non-empty project heading')
+        if (!document.body.textContent.match(/project|프로젝트/i))
+          fail('body', 'text', 'missing project label', 'mentions project surface')
+        const projectLinks = [...document.querySelectorAll('#main-wrapper a[href*="/posts/"]')].filter(visible)
+        if (!projectLinks.length)
+          fail('#main-wrapper a[href*="/posts/"]', 'count', '0', '>0 project posts')
+        const projectGroups = [...document.querySelectorAll('#main-wrapper .project-group')].filter(visible)
+        if (!projectGroups.length)
+          fail('#main-wrapper .project-group', 'count', '0', '>0 project groups')
+        for (const group of projectGroups) {
+          const title = group.querySelector('h2, h3, [data-project-title]')
+          const rows = [...group.querySelectorAll('[data-post-row]')].filter(visible)
+          const latest = rows[0]
+          if (!title?.textContent.trim())
+            fail('.project-group h2, .project-group h3, [data-project-title]', 'text', 'empty', 'non-empty group title')
+          if (!rows.length)
+            fail('.project-group [data-post-row]', 'count', '0', '>0 project posts')
+          if (latest && !latest.querySelector('[data-post-title]')?.textContent.trim())
+            fail('.project-group [data-post-row]:first-child [data-post-title]', 'text', 'empty', 'latest post title')
+          if (latest && !latest.querySelector('[data-post-date]')?.textContent.trim())
+            fail('.project-group [data-post-row]:first-child [data-post-date]', 'text', 'empty', 'latest post date')
+        }
+        if (count('#main-wrapper .taxonomy-tree') || count('#main-wrapper .categories'))
+          fail('#main-wrapper .taxonomy-tree, #main-wrapper .categories', 'count', count('#main-wrapper .taxonomy-tree') + count('#main-wrapper .categories'), '0 duplicate category tree')
+        if (document.body.textContent.includes('Embedded / Project') || document.body.textContent.includes('Embedded System / Project'))
+          fail('body', 'category proxy', 'Project category path visible', 'metadata-driven project grouping')
+        if (!count('a[href*="/projects/"]'))
+          fail('a[href*="/projects/"]', 'count', '0', '>0 route navigation link')
+        assertTextFits('#main-wrapper h1, #main-wrapper h2')
+      }
+
       if (route === 'category-ros') {
         if (!hasText('#page-category h1'))
           fail('#page-category h1', 'text', 'empty', 'non-empty')
@@ -354,7 +414,7 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         }
       }
 
-      if (route === 'post') {
+      if (route === 'post' || route === 'post-code-heavy' || route === 'post-list-heavy') {
         const article = first('article.post-article')
         if (!article) {
           fail('article.post-article', 'presence', 'missing', 'required')
@@ -363,12 +423,20 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
             fail('article.post-article > header h1', 'text', 'empty', 'non-empty')
           if (!hasText('article.post-article > .content'))
             fail('article.post-article > .content', 'text', 'empty', 'non-empty')
-          if (count('.post-tail-section') !== 2)
-            fail('.post-tail-section', 'count', count('.post-tail-section'), '2')
+          if (count('.post-tail-section') !== 1)
+            fail('.post-tail-section', 'count', count('.post-tail-section'), '1 contextual section')
           if (!count('.post-tail-section--sequence .post-tail-list li'))
             fail('.post-tail-section--sequence .post-tail-list li', 'count', '0', '>0')
-          if (!count('.post-tail-section--latest .post-tail-list li'))
-            fail('.post-tail-section--latest .post-tail-list li', 'count', '0', '>0')
+          if (count('.post-tail-section--sequence .post-tail-list li') > 5)
+            fail('.post-tail-section--sequence .post-tail-list li', 'count', count('.post-tail-section--sequence .post-tail-list li'), '<=5')
+          if (!first('.post-tail-section--sequence [aria-current="page"]'))
+            fail('.post-tail-section--sequence [aria-current="page"]', 'presence', 'missing', 'required')
+          if (count('.post-tail-section--latest') || article.textContent.includes('최근 글'))
+            fail('.post-tail-section--latest', 'presence', 'present', 'absent')
+          if (first('.post-tail-section--sequence h2')?.textContent.includes('흐름'))
+            fail('.post-tail-section--sequence h2', 'text', first('.post-tail-section--sequence h2').textContent.trim(), 'no 흐름 suffix')
+          if (!first('[data-article-end], .article-end, .post-article-end'))
+            fail('[data-article-end], .article-end, .post-article-end', 'presence', 'missing', 'visible boundary')
 
           const header = first('article.post-article > header')
           const headerStyle = style(header)
@@ -384,8 +452,29 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
             if (width == null || width < 760 || width > 940)
               fail('article.post-article > .content', 'width', `${width ?? 'missing'}px`, '760px-940px')
           }
+          if (!isDesktop && content) {
+            const width = rect(content)?.width
+            if (width == null || width > innerWidth)
+              fail('article.post-article > .content', 'mobile width', `${width ?? 'missing'}px`, '<=viewport')
+          }
 
-          for (const selector of ['.highlight', '.table-wrapper']) {
+          for (const selector of ['article.post-article > .content li', 'article.post-article > .content p']) {
+            for (const element of document.querySelectorAll(selector)) {
+              if (!visible(element)) continue
+              const elementStyle = style(element)
+              const lineHeight = cssNumber(elementStyle.lineHeight)
+              const fontSize = cssNumber(elementStyle.fontSize)
+              if (fontSize != null && fontSize < 15)
+                fail(selector, 'font-size', `${fontSize}px`, '>=15px')
+              if (lineHeight != null && fontSize != null && lineHeight / fontSize < 1.45)
+                fail(selector, 'line-height', `${lineHeight / fontSize}`, '>=1.45')
+              const box = rect(element)
+              if (box && box.right > innerWidth + 2)
+                fail(selector, 'right edge', `${box.right}px`, '<=viewport')
+            }
+          }
+
+          for (const selector of ['.highlight', '.table-wrapper', 'pre.highlight']) {
             for (const element of document.querySelectorAll(selector)) {
               const elementStyle = style(element)
               if (!['auto', 'scroll'].includes(elementStyle.overflowX))
@@ -394,6 +483,9 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
                 fail(selector, 'max-width', elementStyle.maxWidth, '<=100%')
               if (elementStyle.boxShadow !== 'none')
                 fail(selector, 'box-shadow', elementStyle.boxShadow, 'none')
+              const box = rect(element)
+              if (box && box.right > innerWidth + 2)
+                fail(selector, 'right edge', `${box.right}px`, '<=viewport')
             }
           }
 
@@ -448,7 +540,7 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
 }
 
 async function checkPostWidthPersistence(page, routeName, viewportName, screenshot) {
-  if (routeName !== 'post' || viewportName !== 'desktop') return []
+  if (!isPostRoute(routeName) || viewportName !== 'desktop') return []
   const failures = []
   const fail = (selector, property, observed, budget) =>
     failures.push({
@@ -489,100 +581,11 @@ async function checkPostWidthPersistence(page, routeName, viewportName, screensh
   return failures
 }
 
-async function checkSidebarCollapse(page, routeName, viewportName, screenshot) {
-  if (viewportName !== 'desktop') return []
-  const failures = []
-  const fail = (selector, property, observed, budget) =>
-    failures.push({
-      route: routeName,
-      viewport: `${page.viewportSize()?.width}x${page.viewportSize()?.height}`,
-      selector,
-      property,
-      observed: String(observed),
-      budget,
-      screenshot,
-    })
-
-  const button = page.locator('#sidebar .sidebar-collapse-toggle')
-  if (!(await button.count())) {
-    fail('#sidebar .sidebar-collapse-toggle', 'presence', 'missing', 'required')
-    return failures
-  }
-
-  const before = await page.locator('#main-wrapper').boundingBox()
-  await button.click()
-  await button.evaluate((element) => element.blur())
-  await page.mouse.move(500, 500)
-  const stateScreenshot = (state) => screenshot.replace(/\.png$/, `-sidebar-${state}.png`)
-  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width <= 80, null, { timeout: 1000 }).catch(() => {})
-  const collapsed = await page.evaluate(() => ({
-    pressed: document.querySelector('#sidebar .sidebar-collapse-toggle')?.getAttribute('aria-pressed'),
-    stored: localStorage.getItem('knowgyu:sidebar-collapsed'),
-    width: document.querySelector('#sidebar')?.getBoundingClientRect().width,
-  }))
-  await page.screenshot({ path: stateScreenshot('collapsed') })
-  const after = await page.locator('#main-wrapper').boundingBox()
-  if (collapsed.pressed !== 'true') fail('#sidebar .sidebar-collapse-toggle', 'aria-pressed', collapsed.pressed, 'true')
-  if (collapsed.stored !== 'true') fail('localStorage knowgyu:sidebar-collapsed', 'value', collapsed.stored, 'true')
-  if (collapsed.width == null || collapsed.width > 80) fail('#sidebar', 'collapsed width', `${collapsed.width ?? 'missing'}px`, '<=80px')
-  if (before && after && Math.abs(before.x - after.x) > 1) fail('#main-wrapper', 'x after collapse', `${after.x}px`, `${before.x}px +/-1`)
-  await page.reload({ waitUntil: 'networkidle' })
-  await page.mouse.move(500, 500)
-  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width <= 80, null, { timeout: 1000 }).catch(() => {})
-  const restored = await page.evaluate(() => ({
-    pressed: document.querySelector('#sidebar .sidebar-collapse-toggle')?.getAttribute('aria-pressed'),
-    stored: localStorage.getItem('knowgyu:sidebar-collapsed'),
-    width: document.querySelector('#sidebar')?.getBoundingClientRect().width,
-  }))
-  if (restored.pressed !== 'true') fail('#sidebar .sidebar-collapse-toggle', 'aria-pressed after reload', restored.pressed, 'true')
-  if (restored.stored !== 'true') fail('localStorage knowgyu:sidebar-collapsed', 'value after reload', restored.stored, 'true')
-  if (restored.width == null || restored.width > 80) fail('#sidebar', 'collapsed width after reload', `${restored.width ?? 'missing'}px`, '<=80px')
-
-  await page.locator('#sidebar').hover()
-  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width >= 256, null, { timeout: 1000 }).catch(() => {})
-  const hoverWidth = await page.locator('#sidebar').evaluate((element) => element.getBoundingClientRect().width)
-  await page.screenshot({ path: stateScreenshot('hover') })
-  if (hoverWidth < 256 || hoverWidth > 272) fail('#sidebar:hover', 'width', `${hoverWidth}px`, '256px-272px')
-  await button.focus()
-  await page.waitForFunction(() => document.querySelector('#sidebar')?.getBoundingClientRect().width >= 256, null, { timeout: 1000 }).catch(() => {})
-  const focusWidth = await page.locator('#sidebar').evaluate((element) => element.getBoundingClientRect().width)
-  await page.screenshot({ path: stateScreenshot('focus') })
-  if (focusWidth < 256 || focusWidth > 272) fail('#sidebar:focus-within', 'width', `${focusWidth}px`, '256px-272px')
-
-  return failures
-}
-
-async function checkSidebarScrollPersistence(page, routeName, viewportName, screenshot) {
-  if (routeName !== 'home' || viewportName !== 'desktop') return []
-  const failures = []
-  const fail = (selector, property, observed, budget) =>
-    failures.push({ route: routeName, viewport: `${page.viewportSize()?.width}x${page.viewportSize()?.height}`, selector, property, observed: String(observed), budget, screenshot })
-  const target = page.locator('#sidebar .taxonomy-tree a[href*="/categories/ros/"]').first()
-  if (!(await target.count())) {
-    fail('#sidebar .taxonomy-tree a[href*="/categories/ros/"]', 'presence', 'missing', 'required')
-    return failures
-  }
-  await page.locator('#sidebar .sidebar-nav').evaluate((element) => {
-    element.scrollTop = Math.min(160, Math.max(40, element.scrollHeight - element.clientHeight))
-    element.dispatchEvent(new Event('scroll'))
-  })
-  await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle' }), target.click()])
-  const restored = await page.locator('#sidebar .sidebar-nav').evaluate((element) => ({
-    scrollTop: element.scrollTop,
-    stored: localStorage.getItem('knowgyu:sidebar-scroll'),
-  }))
-  if (restored.scrollTop < 32) fail('#sidebar .sidebar-nav', 'scrollTop after category navigation', restored.scrollTop, '>=32px')
-  if (Number(restored.stored) < 32) fail('localStorage knowgyu:sidebar-scroll', 'stored scroll position', restored.stored, '>=32px')
-  return failures
-}
-
-async function resolvePostPath(page, baseURL, fallback) {
-  const response = await page.goto(new URL('/', baseURL).href, { waitUntil: 'domcontentloaded' })
+async function resolvePostPath(page, baseURL, route) {
+  const fallback = route.path
+  const response = await page.goto(new URL('/posts/', baseURL).href, { waitUntil: 'domcontentloaded' })
   if (!response?.ok()) return fallback
-  const link = page
-    .locator('#post-list a.post-preview')
-    .filter({ hasText: /하이퍼파라미터/ })
-    .first()
+  const link = page.locator('a[href*="/posts/"]').filter({ hasText: route.match || /하이퍼파라미터/ }).first()
   if (await link.count()) return (await link.getAttribute('href')) || fallback
   return fallback
 }
@@ -604,8 +607,8 @@ async function main() {
         const page = await context.newPage()
         let routePath = route.path
         try {
-          if (route.name === 'post' && process.env.POST_PATH) routePath = process.env.POST_PATH
-          if (route.name === 'post' && !process.env.POST_PATH) routePath = await resolvePostPath(page, baseURL, route.path)
+          if (isPostRoute(route.name) && process.env.POST_PATH) routePath = process.env.POST_PATH
+          if (isPostRoute(route.name) && !process.env.POST_PATH) routePath = await resolvePostPath(page, baseURL, route)
 
           let navigationError
           const response = await page
@@ -643,11 +646,7 @@ async function main() {
           }
           await page.screenshot({ path: image, fullPage: true })
           const evidence = await collectEvidence(page, route.name, viewport.name, image)
-          if (route.name === 'home' && mode === 'light')
-            evidence.failures.push(...await checkSidebarScrollPersistence(page, route.name, viewport.name, image))
-          if (route.name === 'home' && mode === 'light')
-            evidence.failures.push(...await checkSidebarCollapse(page, route.name, viewport.name, image))
-          if (route.name === 'post' && mode === 'light')
+          if (isPostRoute(route.name) && mode === 'light')
             evidence.failures.push(...await checkPostWidthPersistence(page, route.name, viewport.name, image))
           fs.writeFileSync(evidencePath(route.name, mode, viewport.name), `${JSON.stringify(evidence, null, 2)}\n`)
           if (evidence.failures.length) throw new Error(evidence.failures.map(formatFailure).join('\n'))

@@ -4,6 +4,18 @@ from pathlib import Path
 import re, sys
 root = Path(__file__).resolve().parents[1]
 errors=[]
+
+def hex_color(text, token):
+    match = re.search(rf'{re.escape(token)}\s*:\s*(#[0-9a-fA-F]{{6}})', text)
+    return match.group(1) if match else ''
+
+def contrast(a, b):
+    def lum(hex_value):
+        parts = [int(hex_value[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+        channels = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in parts]
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+    x, y = sorted((lum(a), lum(b)), reverse=True)
+    return (x + 0.05) / (y + 0.05)
 forbidden_site_paths = [
     root / '_site' / 'DESIGN.md',
     root / '_site' / 'DESIGN_GUIDE.md',
@@ -33,6 +45,8 @@ for p in (p for directory in source_roots for p in directory.rglob('*')):
         if token.startswith('card-'):
             errors.append(f'{p}: legacy --{token} token')
     if 'user-scalable=no' in s: errors.append(f'{p}: user-scalable=no')
+    if 'sidebar-collapse-toggle' in s or 'knowgyu:sidebar-collapsed' in s or 'sidebar-compact' in s:
+        errors.append(f'{p}: sidebar compact/collapse state must be removed')
     if re.search(r'--console-[\w-]+', s): errors.append(f'{p}: obsolete --console-* token')
     if '--card-hovor-bg' in s: errors.append(f'{p}: misspelled --card-hovor-bg token')
 for p in (root/'_sass/layout', root/'_sass/pages'):
@@ -50,7 +64,6 @@ if body and re.search(r'overflow-x\s*:\s*hidden', body.group('body')):
 
 # Lock the canvas/rail contrast and singular accent that define the authored shell.
 for label, path, fragment in (
-    ('light reading canvas', root / '_sass/themes/_light.scss', '--main-bg: #ffffff;'),
     ('light warm rail', root / '_sass/themes/_light.scss', '--surface-muted-color: #f6f5f4;'),
     ('light singular accent', root / '_sass/themes/_light.scss', '--accent-color: #0075de;'),
     ('dark reading canvas', root / '_sass/themes/_dark.scss', '--main-bg: #191919;'),
@@ -59,6 +72,16 @@ for label, path, fragment in (
 ):
     if fragment not in path.read_text():
         errors.append(f'{label}: missing {fragment!r} in {path}')
+
+light_theme = (root / '_sass/themes/_light.scss').read_text()
+light_main = hex_color(light_theme, '--main-bg')
+light_text = hex_color(light_theme, '--text-color')
+if not light_main:
+    errors.append(f'{root / "_sass/themes/_light.scss"}: --main-bg hex token missing')
+elif light_main.lower() not in {'#ffffff', '#fbfaf8', '#faf9f6', '#f8f7f4', '#f7f5ef'}:
+    errors.append(f'{root / "_sass/themes/_light.scss"}: --main-bg must stay white or approved warm off-white')
+if light_main and light_text and contrast(light_main, light_text) < 4.5:
+    errors.append(f'{root / "_sass/themes/_light.scss"}: --main-bg/--text-color contrast below 4.5:1')
 
 for f in (root / '_sass/themes').glob('*.scss'):
     s = f.read_text()

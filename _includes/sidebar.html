@@ -1,12 +1,13 @@
 <!-- Editorial navigation rail; the same site.tabs collection drives desktop and mobile. -->
 {% assign current_top = '' %}
 {% assign current_sub = '' %}
+{% assign taxonomy_topics = site.data.taxonomy.topics | default: site.data.taxonomy.taxonomy | default: site.data.taxonomy %}
 {% if page.layout == 'post' and page.categories.size > 0 %}
   {% assign current_top = page.categories[0] %}
   {% assign current_sub = page.categories[1] %}
 {% elsif page.layout == 'category' %}
   {% assign current_sub = page.title %}
-  {% for branch in site.data.taxonomy %}
+  {% for branch in taxonomy_topics %}
     {% if branch.name == page.title %}
       {% assign current_top = branch.name %}
       {% assign current_sub = '' %}
@@ -45,7 +46,8 @@
           <li class="nav-item{% if tab.url == page.url %} active{% endif %}">
             <a href="{{ tab.url | relative_url }}" class="nav-link"{% if tab.url == page.url %} aria-current="page"{% endif %}>
               {% capture tab_name %}{{ tab.url | split: '/' }}{% endcapture %}
-              <i class="{% if tab.url == '/posts/' %}fas fa-list-ul{% else %}far fa-file-alt{% endif %} fa-fw sidebar-nav-icon" aria-hidden="true"></i>
+              {% assign tab_icon = tab.icon | default: 'far fa-file-alt' %}
+              <i class="{% if tab.url == '/posts/' %}fas fa-list-ul{% else %}{{ tab_icon }}{% endif %} fa-fw sidebar-nav-icon" aria-hidden="true"></i>
               <span class="sidebar-label">{% if tab.url == '/posts/' %}전체 글{% else %}{{ site.data.locales[include.lang].tabs.[tab_name] | default: tab.title }}{% endif %}</span>
             </a>
           </li>
@@ -54,7 +56,7 @@
     </ul>
 
     <div class="taxonomy-tree" aria-label="Topics">
-      {% for branch in site.data.taxonomy %}
+      {% for branch in taxonomy_topics %}
         {% assign branch_posts = site.categories[branch.name] | default: empty %}
         {% assign branch_count = branch_posts | size %}
         {% if branch_count > 0 %}
@@ -103,10 +105,6 @@
       </li>
     </ul>
   </nav>
-  <button type="button" class="sidebar-collapse-toggle" aria-label="사이드바 접기" aria-pressed="false">
-    <i class="fas fa-angle-double-left" aria-hidden="true"></i>
-    <span>접기</span>
-  </button>
   <div class="sidebar-bottom d-flex flex-wrap align-items-center w-100">
     {% unless site.theme_mode %}<button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle"><i class="fas fa-adjust"></i></button>{% endunless %}
     {% for entry in site.data.contact %}
@@ -118,45 +116,6 @@
 </aside>
 <script>
   (() => {
-    const root = document.documentElement;
-    const key = 'knowgyu:sidebar-collapsed';
-    const scrollKey = 'knowgyu:sidebar-scroll';
-    const sidebar = document.getElementById('sidebar');
-    const sidebarNav = sidebar?.querySelector('.sidebar-nav');
-    const collapseButton = sidebar?.querySelector('.sidebar-collapse-toggle');
-    const readCollapsed = () => {
-      try {
-        return localStorage.getItem(key) === 'true';
-      } catch {
-        return false;
-      }
-    };
-    const writeCollapsed = (collapsed) => {
-      try {
-        localStorage.setItem(key, String(collapsed));
-      } catch {}
-    };
-    const saveScroll = () => {
-      try {
-        localStorage.setItem(scrollKey, String(sidebarNav?.scrollTop || 0));
-      } catch {}
-    };
-    const restoreScroll = () => {
-      try {
-        sidebarNav?.scrollTo({ top: Number(localStorage.getItem(scrollKey)) || 0 });
-      } catch {}
-    };
-    const applyCollapsed = (collapsed) => {
-      root.classList.toggle('sidebar-compact', collapsed);
-      collapseButton?.setAttribute('aria-pressed', String(collapsed));
-      collapseButton?.setAttribute('aria-label', collapsed ? '사이드바 펼치기' : '사이드바 접기');
-      const icon = collapseButton?.querySelector('i');
-      const label = collapseButton?.querySelector('span');
-      icon?.classList.toggle('fa-angle-double-left', !collapsed);
-      icon?.classList.toggle('fa-angle-double-right', collapsed);
-      if (label) label.textContent = collapsed ? '펼치기' : '접기';
-    };
-
     document.querySelectorAll('#sidebar .taxonomy-toggle').forEach((button) => {
       button.addEventListener('click', () => {
         const list = document.getElementById(button.getAttribute('aria-controls'));
@@ -165,19 +124,5 @@
         if (list) list.hidden = expanded;
       });
     });
-
-    sidebarNav?.addEventListener('scroll', saveScroll, { passive: true });
-    sidebarNav?.addEventListener('click', saveScroll);
-    window.addEventListener('pagehide', saveScroll);
-    requestAnimationFrame(restoreScroll);
-
-    if (collapseButton) {
-      applyCollapsed(readCollapsed());
-      collapseButton.addEventListener('click', () => {
-        const collapsed = !root.classList.contains('sidebar-compact');
-        writeCollapsed(collapsed);
-        applyCollapsed(collapsed);
-      });
-    }
   })();
 </script>

@@ -3,13 +3,11 @@
 @use '../abstracts/breakpoints' as bp;
 
 $sidebar-display: 'sidebar-display';
-$sidebar-compact-width: 4rem;
 #sidebar {
   @include mx.pl-pr(0);
   position: fixed; inset: 0 auto 0 0; z-index: 10; width: v.$sidebar-width;
   overflow-y: auto; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border-color);
   scrollbar-width: none;
-  transition: width .16s ease;
   &::-webkit-scrollbar { display: none; }
   @include bp.lt(bp.get(lg)) { @include mx.slide; transform: translateX(-#{v.$sidebar-width}); [#{$sidebar-display}] & { transform: translateX(0); } }
   a { color: var(--sidebar-muted-color); &:hover { color: var(--sidebar-active-color); } }
@@ -37,36 +35,9 @@ $sidebar-compact-width: 4rem;
   .taxonomy-count { flex: 0 0 auto; color: var(--sidebar-btn-color); font-size: .72rem; }
   .taxonomy-tree ul { margin: .1rem 0 .35rem 1rem; padding: 0; list-style: none; }
   .taxonomy-tree li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: flex-start; column-gap: .35rem; padding: .32rem .55rem .32rem .75rem; font-size: .8rem; }
-  .taxonomy-tree a:focus-visible, .taxonomy-toggle:focus-visible, .sidebar-collapse-toggle:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+  .taxonomy-tree a:focus-visible, .taxonomy-toggle:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
   .utility-links { margin-top: .4rem; padding-top: .4rem; border-top: 1px solid var(--sidebar-divider-color); }
-  .sidebar-collapse-toggle { display: none; align-items: center; justify-content: center; gap: .4rem; width: calc(100% - 2rem); min-height: 2.25rem; margin: .65rem 1rem 0; border: 1px solid var(--sidebar-divider-color); border-radius: 4px; color: var(--sidebar-muted-color); background: transparent; font-size: .8rem; }
   .sidebar-bottom { gap: .65rem; padding: 1rem 1.25rem; margin-top: auto; }
   .sidebar-bottom a, #mode-toggle { width: 1.75rem; height: 1.75rem; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--sidebar-btn-color); }
   a:focus-visible, #mode-toggle:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
-
-  @include bp.lg {
-    .sidebar-collapse-toggle { display: inline-flex; }
-
-    html.sidebar-compact &:not(:hover):not(:focus-within) {
-      width: $sidebar-compact-width;
-
-      .profile-wrapper { margin-inline: .65rem; }
-      .profile-avatar, .site-title, .site-subtitle, .sidebar-label, .taxonomy-label, .taxonomy-count, .sidebar-collapse-toggle span {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
-      }
-      ul, .taxonomy-tree { margin-inline: .45rem; }
-      li.nav-item a.nav-link, .taxonomy-heading, .taxonomy-tree li { justify-content: center; padding-inline: .45rem; }
-      .taxonomy-heading, .taxonomy-tree li { grid-template-columns: 1.1rem; }
-      .taxonomy-link { justify-content: center; }
-      .taxonomy-toggle { display: none; }
-      .taxonomy-tree ul { margin-left: 0; }
-      .sidebar-collapse-toggle { width: calc(100% - .9rem); margin-inline: .45rem; }
-      .sidebar-bottom { justify-content: center; padding-inline: .45rem; }
-    }
-  }
 }

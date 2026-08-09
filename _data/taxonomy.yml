@@ -1,55 +1,65 @@
-- name: Embedded System
-  label: Embedded
-  icon: fas fa-microchip
-  children:
-    - name: ROS
-      icon: fas fa-robot
-    - name: Project
-      label: Projects
-      icon: fas fa-project-diagram
-    - name: Control Engineering
-      label: Control
-      icon: fas fa-sliders-h
-    - name: 임베디드 OS 개발 프로젝트
-      label: RTOS
-      icon: fas fa-memory
-    - name: 임베디드 엔지니어 교과서
-      label: 임베교과서
-      icon: fas fa-book
-- name: AI & CV
-  label: AI / CV
-  icon: fas fa-brain
-  children:
-    - name: Kubeflow
-      icon: fas fa-cubes
-    - name: PyTorch
-      icon: fas fa-fire
-    - name: Dataset
-      icon: fas fa-database
-    - name: Gradio를 활용한 웹 기반 서빙
-      label: Gradio Serving
-      icon: fas fa-window-maximize
-    - name: Computer Vision
-      label: Vision Projects
-      icon: fas fa-eye
-    - name: Setup
-      icon: fas fa-wrench
-- name: Computer Science
-  label: CS
-  icon: fas fa-laptop-code
-  children:
-    - name: Problem Solving
-      label: PS
-      icon: fas fa-puzzle-piece
-    - name: Algorithm & Data structure
-      label: Algorithm
-      icon: fas fa-code-branch
-    - name: 혼자 공부하는 컴퓨터구조+운영체제
-      label: 컴구/운영체제
-      icon: fas fa-book-open
-    - name: Docker
-      icon: fab fa-docker
-    - name: Git
-      icon: fab fa-git-alt
-    - name: Ubuntu
-      icon: fab fa-ubuntu
+taxonomy:
+  - name: Embedded System
+    label: Embedded
+    icon: fas fa-microchip
+    children:
+      - name: ROS
+        icon: fas fa-robot
+      - name: Control Engineering
+        label: Control
+        icon: fas fa-sliders-h
+      - name: 임베디드 OS 개발 프로젝트
+        label: RTOS
+        icon: fas fa-memory
+      - name: 임베디드 엔지니어 교과서
+        label: 임베교과서
+        icon: fas fa-book
+  - name: AI & CV
+    label: AI / CV
+    icon: fas fa-brain
+    children:
+      - name: Kubeflow
+        icon: fas fa-cubes
+      - name: PyTorch
+        icon: fas fa-fire
+      - name: Dataset
+        icon: fas fa-database
+      - name: Gradio를 활용한 웹 기반 서빙
+        label: Gradio Serving
+        icon: fas fa-window-maximize
+      - name: Computer Vision
+        label: Vision Projects
+        icon: fas fa-eye
+      - name: Setup
+        icon: fas fa-wrench
+  - name: Computer Science
+    label: CS
+    icon: fas fa-laptop-code
+    children:
+      - name: Problem Solving
+        label: PS
+        icon: fas fa-puzzle-piece
+      - name: Algorithm & Data structure
+        label: Algorithm
+        icon: fas fa-code-branch
+      - name: 혼자 공부하는 컴퓨터구조+운영체제
+        label: 컴구/운영체제
+        icon: fas fa-book-open
+      - name: Docker
+        icon: fab fa-docker
+      - name: Git
+        icon: fab fa-git-alt
+      - name: Ubuntu
+        icon: fab fa-ubuntu
+  - name: Notes
+    icon: far fa-sticky-note
+    children: []
+featured:
+  - type: category
+    name: ROS
+  - type: category
+    name: Kubeflow
+  - type: project
+    label: Projects
+    icon: fas fa-project-diagram
+    url: /projects/

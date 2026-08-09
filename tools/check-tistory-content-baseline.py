@@ -12,11 +12,13 @@ POSTS = ROOT / "_posts"
 SIDEBAR = ROOT / "_includes" / "sidebar.html"
 HOME = ROOT / "_layouts" / "home.html"
 POSTS_TAB = ROOT / "_tabs" / "posts.md"
+PROJECTS_TAB = ROOT / "_tabs" / "projects.md"
 CATEGORY_LAYOUT = ROOT / "_layouts" / "category.html"
 TAXONOMY = ROOT / "_data" / "taxonomy.yml"
 POST_TAIL = ROOT / "_includes" / "post-tail.html"
 POST_ROW = ROOT / "_includes" / "post-row.html"
 POST_LAYOUT = ROOT / "_layouts" / "post.html"
+PROJECT_STUB = ROOT / "categories" / "project.md"
 SITE = ROOT / "_site"
 EMOJI = re.compile(
     "[\U0001f300-\U0001faff\U00002700-\U000027bf\U00002600-\U000026ff]"
@@ -25,6 +27,12 @@ ENDING_PUNCTUATION = re.compile(r"[.!?,;:。！？、]+$")
 PLACEHOLDERS = {"", " ", "...", "todo", "tbd", "placeholder"}
 PRIVATE_POST = POSTS / "얘이제내려2000-11-30-First-Posting.md"
 PRIVATE_TOKENS = ("얘이제내려", "First-Posting", "안녕하세요 !")
+SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+VALID_KINDS = {"technical-note", "project-log", "reflection"}
+LEGACY_PROJECT_POSTS = {
+    Path("_posts/Embedded/2024-12-10-Aruco-마커를-활용한-자율주행-RC카.md"),
+    Path("_posts/Embedded/2024-12-16-아두이노-초음파-SLAM.md"),
+}
 
 
 def parse_front_matter(path: Path) -> dict[str, str]:
@@ -59,6 +67,104 @@ def inline_list(value: str | None) -> list[str]:
     if value.startswith("[") and value.endswith("]"):
         value = value[1:-1]
     return [item.strip().strip("\"'") for item in value.split(",") if item.strip()]
+
+
+def is_listish(value: str) -> bool:
+    value = value.strip()
+    return value.startswith(("[", "{")) or value.startswith("- ")
+
+
+def parse_taxonomy(text: str) -> tuple[list[dict[str, object]], list[dict[str, str]]]:
+    roots: list[dict[str, object]] = []
+    featured: list[dict[str, str]] = []
+    section = "taxonomy"
+    current_root: dict[str, object] | None = None
+    current_child: dict[str, str] | None = None
+    current_featured: dict[str, str] | None = None
+
+    for raw_line in text.splitlines():
+        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
+            continue
+        stripped = raw_line.strip()
+        indent = len(raw_line) - len(raw_line.lstrip(" "))
+        if indent == 0 and stripped.rstrip(":") in {"taxonomy", "topics", "featured", "featured_categories", "home_featured"}:
+            section = stripped.rstrip(":")
+            if section == "topics":
+                section = "taxonomy"
+            if section == "home_featured":
+                section = "featured"
+            current_root = None
+            current_child = None
+            current_featured = None
+            continue
+
+        if stripped.startswith("- "):
+            body = stripped[2:]
+            if section in {"featured", "featured_categories"}:
+                current_featured = {}
+                featured.append(current_featured)
+                if ":" in body:
+                    key, value = body.split(":", 1)
+                    current_featured[key.strip()] = scalar(value)
+                elif body:
+                    current_featured["name"] = scalar(body)
+                continue
+            if indent <= 2:
+                current_root = {"children": []}
+                roots.append(current_root)
+                current_child = None
+                if ":" in body:
+                    key, value = body.split(":", 1)
+                    current_root[key.strip()] = scalar(value)
+            else:
+                current_child = {}
+                if current_root is not None:
+                    current_root.setdefault("children", []).append(current_child)
+                if ":" in body:
+                    key, value = body.split(":", 1)
+                    current_child[key.strip()] = scalar(value)
+            continue
+
+        if ":" not in stripped:
+            continue
+        key, value = stripped.split(":", 1)
+        if section in {"featured", "featured_categories"} and current_featured is not None:
+            current_featured[key.strip()] = scalar(value)
+        elif current_child is not None and indent >= 4:
+            current_child[key.strip()] = scalar(value)
+        elif current_root is not None:
+            if key.strip() == "children":
+                current_root.setdefault("children", [])
+            else:
+                current_root[key.strip()] = scalar(value)
+
+    return roots, featured
+
+
+def taxonomy_paths(roots: list[dict[str, object]]) -> tuple[set[str], set[tuple[str, ...]]]:
+    root_names = {str(root.get("name", "")).strip() for root in roots if root.get("name")}
+    paths: set[tuple[str, ...]] = {(name,) for name in root_names}
+    for root in roots:
+        root_name = str(root.get("name", "")).strip()
+        for child in root.get("children", []):
+            child_name = str(child.get("name", "")).strip()
+            if root_name and child_name:
+                paths.add((root_name, child_name))
+    return root_names, paths
+
+
+def has_published_category(posts: list[Path], category: str) -> bool:
+    for post in posts:
+        fm = parse_front_matter(post)
+        if scalar(fm.get("published")).lower() == "false":
+            continue
+        if category in inline_list(fm.get("categories")):
+            return True
+    return False
+
+
+def has_any_token(text: str, tokens: tuple[str, ...]) -> bool:
+    return any(token in text for token in tokens)
 
 
 def fallback_description(text: str, categories: list[str]) -> str:
@@ -185,6 +291,9 @@ def main() -> int:
     args = parser.parse_args()
 
     posts = sorted(POSTS.rglob("*.md"))
+    taxonomy = TAXONOMY.read_text(encoding="utf-8") if TAXONOMY.exists() else ""
+    roots, featured = parse_taxonomy(taxonomy)
+    root_names, valid_category_paths = taxonomy_paths(roots)
     if args.fix:
         changed = sum(1 for post in posts if normalize_post(post))
         print(f"content baseline fix: changed={changed}")
@@ -220,21 +329,38 @@ def main() -> int:
             findings.append(f"{rel}: missing public categories")
         if len(categories) > 2:
             findings.append(f"{rel}: category depth {len(categories)} exceeds 2")
+        if "Project" in categories:
+            findings.append(f"{rel}: Project must not be a public category")
+        if categories and tuple(categories) not in valid_category_paths:
+            findings.append(f"{rel}: category path does not resolve in taxonomy")
+        for key in ("project", "series"):
+            raw = fm.get(key)
+            value = scalar(raw)
+            if raw is not None and (is_listish(raw) or not value or not SLUG.fullmatch(value)):
+                findings.append(f"{rel}: {key} must be one lowercase-hyphenated scalar")
+        raw_kind = fm.get("kind", "")
+        kind = scalar(raw_kind)
+        if kind and (is_listish(raw_kind) or kind not in VALID_KINDS):
+            findings.append(f"{rel}: kind must be one of {', '.join(sorted(VALID_KINDS))}")
+        if rel in LEGACY_PROJECT_POSTS and not scalar(fm.get("project")):
+            findings.append(f"{rel}: migrated project post missing project metadata")
 
     structural_errors: list[str] = []
     sidebar = SIDEBAR.read_text(encoding="utf-8") if SIDEBAR.exists() else ""
     home = HOME.read_text(encoding="utf-8") if HOME.exists() else ""
     posts_tab = POSTS_TAB.read_text(encoding="utf-8") if POSTS_TAB.exists() else ""
+    projects_tab = PROJECTS_TAB.read_text(encoding="utf-8") if PROJECTS_TAB.exists() else ""
     category_layout = CATEGORY_LAYOUT.read_text(encoding="utf-8") if CATEGORY_LAYOUT.exists() else ""
-    taxonomy = TAXONOMY.read_text(encoding="utf-8") if TAXONOMY.exists() else ""
     post_tail = POST_TAIL.read_text(encoding="utf-8") if POST_TAIL.exists() else ""
     post_row = POST_ROW.read_text(encoding="utf-8") if POST_ROW.exists() else ""
     post_layout = POST_LAYOUT.read_text(encoding="utf-8") if POST_LAYOUT.exists() else ""
+    project_stub = PROJECT_STUB.read_text(encoding="utf-8") if PROJECT_STUB.exists() else ""
 
     for label, path, text in (
         ("sidebar", SIDEBAR, sidebar),
         ("home", HOME, home),
         ("posts tab", POSTS_TAB, posts_tab),
+        ("projects tab", PROJECTS_TAB, projects_tab),
         ("category layout", CATEGORY_LAYOUT, category_layout),
         ("taxonomy", TAXONOMY, taxonomy),
         ("post tail", POST_TAIL, post_tail),
@@ -250,12 +376,10 @@ def main() -> int:
         structural_errors.append("sidebar: taxonomy disclosure tree missing")
     if "taxonomy-toggle" not in sidebar or "aria-expanded" not in sidebar:
         structural_errors.append("sidebar: accessible taxonomy buttons missing")
-    if "sidebar-collapse-toggle" not in sidebar or "knowgyu:sidebar-collapsed" not in sidebar:
-        structural_errors.append("sidebar: persisted collapse control missing")
+    if "sidebar-collapse-toggle" in sidebar or "knowgyu:sidebar-collapsed" in sidebar:
+        structural_errors.append("sidebar: desktop collapse state/button must be removed")
     if "profile-avatar" not in sidebar or "site.avatar" not in sidebar:
         structural_errors.append("sidebar: configured profile avatar missing")
-    if "knowgyu:sidebar-scroll" not in sidebar or "restoreScroll" not in sidebar:
-        structural_errors.append("sidebar: category navigation scroll persistence missing")
     if "Categories</span>" in sidebar:
         structural_errors.append("sidebar: redundant Categories navigation remains")
     if "taxonomy-icon" not in sidebar or "branch.icon" not in sidebar or "child.icon" not in sidebar:
@@ -268,7 +392,7 @@ def main() -> int:
         structural_errors.append("home: still depends on paginator")
     if "전체 글 보기" not in home or "latest_posts limit: 5" not in home:
         structural_errors.append("home: curated gateway/latest block missing")
-    if "주요 카테고리" not in home or "작업 흐름" in home or "featured_categories" not in home:
+    if "주요 카테고리" not in home or "작업 흐름" in home or "site.data.taxonomy" not in home:
         structural_errors.append("home: taxonomy-sourced major category paths missing")
     if "permalink:" in posts_tab:
         structural_errors.append("posts tab: should use Chirpy tab default permalink")
@@ -294,12 +418,73 @@ def main() -> int:
         structural_errors.append("taxonomy: top-level owners missing")
     if "icon:" not in taxonomy:
         structural_errors.append("taxonomy: Font Awesome icon metadata missing")
-    if (
-        "post-tail-section--sequence" not in post_tail
-        or "post-tail-section--latest" not in post_tail
-        or "latest_count == 5" not in post_tail
+    if not root_names:
+        structural_errors.append("taxonomy: parseable root branches missing")
+    if "Notes" not in root_names:
+        structural_errors.append("taxonomy: broad Notes root branch missing")
+    if "Etc" in root_names or any(
+        str(child.get("name", "")).strip() == "Etc"
+        for root in roots
+        for child in root.get("children", [])
     ):
-        structural_errors.append("post tail: sequence/latest two-section shell missing")
+        structural_errors.append("taxonomy: Notes must not be modeled as an Etc bucket")
+    for root in roots:
+        children = root.get("children", [])
+        if any(str(child.get("name", "")).strip() == "Project" for child in children):
+            structural_errors.append("taxonomy: Project must not remain a category child")
+        for child in children:
+            if child.get("children"):
+                structural_errors.append(f"taxonomy: child {child.get('name')} exceeds max depth two")
+    if "featured_categories" not in taxonomy and "featured:" not in taxonomy:
+        structural_errors.append("taxonomy: data-driven featured config missing")
+    else:
+        for item in featured:
+            name = item.get("name") or item.get("category") or item.get("target")
+            url = item.get("url") or item.get("href")
+            item_type = item.get("type", "")
+            if url:
+                if url != "/projects/":
+                    structural_errors.append(f"taxonomy: featured route {url} does not resolve")
+            elif item_type == "project":
+                structural_errors.append("taxonomy: featured project entry must resolve to /projects/")
+            elif name and (name,) not in valid_category_paths and all(name not in path for path in valid_category_paths):
+                structural_errors.append(f"taxonomy: featured category {name} does not resolve")
+            elif not name:
+                structural_errors.append("taxonomy: featured entry missing category or route target")
+    if "{% assign featured_categories = " in home or "ROS,Kubeflow,Project" in home:
+        structural_errors.append("home: featured links are still hardcoded")
+    if "site.data.taxonomy" not in home:
+        structural_errors.append("home: featured links must resolve from taxonomy data")
+    site_home = (SITE / "index.html").read_text(encoding="utf-8") if (SITE / "index.html").exists() else ""
+    if not has_published_category(posts, "Notes") and (
+        re.search(r"/categories/notes/", sidebar, re.IGNORECASE)
+        or re.search(r">\s*Notes\s*<", sidebar)
+        or re.search(r"/categories/notes/", site_home, re.IGNORECASE)
+    ):
+        structural_errors.append("notes: empty Notes root should stay out of rendered navigation")
+    if "project" not in projects_tab.lower():
+        structural_errors.append("projects route: /projects/ tab must be metadata-driven")
+    if "site.categories['Project']" in projects_tab or 'site.categories["Project"]' in projects_tab:
+        structural_errors.append("projects route: must not browse via Project category")
+    if "for post in site.posts" not in projects_tab and "project:" not in projects_tab and "post.project" not in projects_tab:
+        structural_errors.append("projects route: project metadata grouping missing")
+    if project_stub:
+        if "/projects/" not in project_stub:
+            structural_errors.append("legacy Project category: compatibility stub must link to /projects/")
+        if "site.categories" in project_stub or "data-post-row" in project_stub:
+            structural_errors.append("legacy Project category: stub must not list project posts")
+    elif (SITE / "categories" / "project" / "index.html").exists():
+        structural_errors.append("legacy Project category: source stub missing for built compatibility route")
+    if "post-tail-section--sequence" not in post_tail or "<ol" not in post_tail:
+        structural_errors.append("post tail: numbered contextual navigator missing")
+    if "aria-current=\"page\"" not in post_tail:
+        structural_errors.append("post tail: current article marker missing")
+    if has_any_token(post_tail, ("post-tail-section--latest", "latest_count", "최근 글")):
+        structural_errors.append("post tail: unrelated latest section remains")
+    if "흐름" in post_tail:
+        structural_errors.append("post tail: contextual heading must not use 흐름 suffix")
+    if not has_any_token(post_tail + post_layout, ("article-end", "post-article-end", "data-article-end")):
+        structural_errors.append("post layout: visible article end boundary missing")
 
     if SITE.exists():
         feed = SITE / "feed.xml"
@@ -331,12 +516,9 @@ def main() -> int:
         sample_text = sample_post.read_text(encoding="utf-8") if sample_post else ""
         if not sample_text:
             structural_errors.append("site output: missing built sample post")
-        elif (
-            sample_text.count("post-tail-section") < 2
-            or "post-tail-section--sequence" not in sample_text
-            or "post-tail-section--latest" not in sample_text
-        ):
-            structural_errors.append("site output: post tail two-section shell missing")
+        else:
+            if "post-tail-section--sequence" not in sample_text:
+                structural_errors.append("site output: contextual post tail missing")
 
     print(f"content baseline: posts={len(posts)} published={published} unpublished={unpublished}")
     if structural_errors:

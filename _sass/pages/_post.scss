@@ -20,6 +20,7 @@
 
   > header,
   > .content,
+  > .post-article-end,
   > .post-tail-wrapper {
     width: min(100%, var(--post-content-width));
     margin-left: auto;
@@ -34,6 +35,8 @@
 
   > .content {
     margin-top: 1.65rem;
+    font-size: 1.02rem;
+    line-height: 1.82;
   }
 
   @include bp.lt(bp.get(lg)) {
@@ -50,6 +53,7 @@
   @include bp.xl {
     > header,
     > .content,
+    > .post-article-end,
     > .post-tail-wrapper {
       margin-left: 0;
       margin-right: auto;
@@ -59,6 +63,7 @@
   @include bp.xxl {
     > header,
     > .content,
+    > .post-article-end,
     > .post-tail-wrapper {
       margin-left: 0;
       margin-right: auto;
@@ -204,11 +209,16 @@ header {
   }
 }
 
+.post-article-end {
+  margin-top: 4rem;
+  border-top: 2px solid var(--border-color, var(--main-border-color));
+}
+
 .post-tail-wrapper {
   @extend %text-sm;
 
-  margin-top: 5rem;
-  padding-top: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1.35rem;
   border-top: 1px solid var(--border-color, var(--main-border-color));
   border-bottom: 1px solid var(--border-color, var(--main-border-color));
 
@@ -777,6 +787,30 @@ h4 {
     border-radius: v.$radius-sm;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
+  }
+
+  > p {
+    margin-bottom: 1.15rem;
+  }
+
+  > ul,
+  > ol {
+    padding-left: 1.45rem;
+    margin-bottom: 1.35rem;
+  }
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  code.highlighter-rouge {
+    border: 1px solid var(--language-border-color);
+    font-weight: 600;
+  }
+
+  div[class^='language-'],
+  .highlight {
+    border-radius: v.$radius-sm;
   }
 
   .table-wrapper {

@@ -21,24 +21,40 @@ refactor: true
     <p class="home-featured-kicker">먼저 보기</p>
     <h2 id="featured-title">주요 카테고리</h2>
     <ul>
-      {% assign featured_categories = 'ROS,Kubeflow,Project' | split: ',' %}
-      {% for featured in featured_categories %}
-        {% for branch in site.data.taxonomy %}
-          {% for child in branch.children %}
-            {% if child.name == featured %}
-              {% assign branch_label = branch.label | default: branch.name %}
-              {% assign child_label = child.label | default: child.name %}
-              {% assign child_icon = child.icon | default: branch.icon | default: 'far fa-folder' %}
-              {% capture child_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
+      {% assign taxonomy_topics = site.data.taxonomy.topics | default: site.data.taxonomy.taxonomy | default: site.data.taxonomy %}
+      {% assign featured_links = site.data.taxonomy.home_featured | default: site.data.taxonomy.featured %}
+      {% for featured in featured_links %}
+        {% assign featured_label = '' %}
+        {% assign featured_icon = featured.icon %}
+        {% assign featured_url = featured.url %}
+        {% if featured.type == 'project' %}
+          {% assign featured_label = featured.label | default: 'Projects' %}
+        {% else %}
+          {% for branch in taxonomy_topics %}
+            {% if branch.name == featured.name %}
+              {% assign featured_label = branch.label | default: branch.name %}
+              {% assign featured_icon = featured_icon | default: branch.icon | default: 'far fa-folder' %}
+              {% capture featured_url %}/categories/{{ branch.name | slugify | url_encode }}/{% endcapture %}
+            {% endif %}
+            {% for child in branch.children %}
+              {% if child.name == featured.name %}
+                {% assign branch_label = branch.label | default: branch.name %}
+                {% assign child_label = child.label | default: child.name %}
+                {% assign featured_label = branch_label | append: ' › ' | append: child_label %}
+                {% assign featured_icon = featured_icon | default: child.icon | default: branch.icon | default: 'far fa-folder' %}
+                {% capture featured_url %}/categories/{{ child.name | slugify | url_encode }}/{% endcapture %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+        {% if featured_label != '' and featured_url %}
               <li>
-                <a href="{{ child_url | relative_url | escape }}">
-                  <i class="{{ child_icon | escape }} fa-fw" aria-hidden="true"></i>
-                  <span>{{ branch_label | escape }} › {{ child_label | escape }}</span>
+                <a href="{{ featured_url | relative_url | escape }}">
+                  <i class="{{ featured_icon | default: 'far fa-folder' | escape }} fa-fw" aria-hidden="true"></i>
+                  <span>{{ featured_label | escape }}</span>
                 </a>
               </li>
-            {% endif %}
-          {% endfor %}
-        {% endfor %}
+        {% endif %}
       {% endfor %}
     </ul>
   </section>
