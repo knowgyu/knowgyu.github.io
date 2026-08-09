@@ -668,6 +668,7 @@ async function main() {
           }
           if (route.name === 'search-open') {
             await page.locator('#search-trigger').click().catch(() => {})
+            await page.locator('#search-input').waitFor({ state: 'visible', timeout: 5000 })
             await page.locator('#search-input').fill('ROS')
             await page.waitForFunction(() => {
               const wrapper = document.querySelector('#search-result-wrapper')
