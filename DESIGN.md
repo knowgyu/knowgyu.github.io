@@ -19,13 +19,13 @@
 - Shadows are reserved for overlays. Syntax/status colors are explicit exceptions.
 
 ## Color grammar
-- Light mode uses a white reading canvas, warm-white (`#f6f5f4`) navigation chrome, near-black text, and low-alpha warm-gray dividers.
+- Light mode uses a warm off-white (`#fbfaf8`) reading canvas, near-white surfaces, warm-neutral navigation chrome (`#f6f5f4`), near-black text, and low-alpha warm-gray dividers.
 - Dark mode uses a `#191919` reading canvas, a visibly separate `#202020` rail, soft-white text, and neutral gray interaction states.
 - `--main-bg`, `--sidebar-bg`, `--surface-color`, `--surface-muted-color`, `--border-color`, and `--accent-color` are the canonical visual roles. Page styles consume them instead of inventing route-specific palettes.
 - Blue is the only saturated chrome color. It is reserved for links, focus, disclosure icons, and the active-rail indicator; ordinary hover and selected fills are neutral.
 
 ## Responsive and accessibility
-The desktop rail is approximately 208px and neutral. Mobile uses the existing drawer and trigger. Reading remains single-column, zoomable, keyboard-focusable, and free of page-wide overflow at 360px. Article width controls, when present, are limited to 760px, 900px, and 1100px with 900px as the default.
+The desktop rail is 264px and neutral. Mobile uses the existing drawer and trigger. Reading remains single-column, zoomable, keyboard-focusable, and free of page-wide overflow at 360px. Article width controls, when present, are limited to 760px, 900px, and 1100px with 900px as the default.
 
 ## Forbidden patterns
-No unavailable chatbot by default, a disabled viewport-scaling directive, decorative layout gradients, glass blur, large surface shadows, duplicate search runtime IDs, sidebar search proxy, visible view counters, visible theme-demo footer copy, new dependencies, or new legacy console-prefixed tokens. Do not rewrite post bodies; front matter changes must stay limited to approved taxonomy, publication, and description contracts.
+No unavailable chatbot by default, a disabled viewport-scaling directive, decorative layout gradients, glass blur, large surface shadows, duplicate search runtime IDs, sidebar search proxy, visible view counters, visible theme-demo footer copy, new dependencies, or new legacy console-prefixed tokens. Visual changes do not rewrite post bodies; editorial metadata follows `docs/WRITING.md`.

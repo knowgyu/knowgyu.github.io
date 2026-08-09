@@ -17,9 +17,8 @@ def contrast(a, b):
     x, y = sorted((lum(a), lum(b)), reverse=True)
     return (x + 0.05) / (y + 0.05)
 forbidden_site_paths = [
+    root / '_site' / 'AGENTS.md',
     root / '_site' / 'DESIGN.md',
-    root / '_site' / 'DESIGN_GUIDE.md',
-    root / '_site' / 'WORKLOG.md',
     root / '_site' / 'embedding_scripts.sh',
     root / '_site' / '마크다운파일변환기.py',
     root / '_site' / 'tests',
