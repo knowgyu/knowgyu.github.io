@@ -1,7 +1,8 @@
 ---
 title: "Data Analysis Component + Visualization"
 author: knowgyu
-description: "기술 학습 기록"
+description: "Data Analysis Component + Visualization에서 Data Analysis를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2023-12-09 09:43:01 +0900
 math: true
 categories: [AI & CV, Kubeflow]

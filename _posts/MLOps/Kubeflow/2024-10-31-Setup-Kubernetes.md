@@ -1,7 +1,8 @@
 ---
 title: "Setup Kubernetes"
 author: knowgyu
-description: "Kubernetes 정리"
+description: "Setup Kubernetes의 핵심 개념과 Setup Kubernetes 내용을 정리한다."
+kind: technical-note
 date: 2023-11-19 14:02:58 +0900
 math: true
 categories: [AI & CV, Kubeflow]

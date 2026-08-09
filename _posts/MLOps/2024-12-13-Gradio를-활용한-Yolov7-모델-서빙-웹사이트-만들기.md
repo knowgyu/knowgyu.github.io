@@ -1,7 +1,8 @@
 ---
 title: "Gradio를 활용한 Yolov7 모델 서빙 웹사이트 만들기"
 author: knowgyu
-description: "Gradio를 활용한 Yolov7 모델 서빙 웹사이"
+description: "Gradio로 YOLOv7 이미지·비디오 추론 웹페이지를 만드는 과정을 정리한다."
+kind: project-log
 date: 2023-10-12 08:36:26 +0900
 math: true
 categories: [AI & CV, Gradio를 활용한 웹 기반 서빙]

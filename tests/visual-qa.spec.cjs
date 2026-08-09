@@ -26,6 +26,11 @@ const ROUTES = [
     path: '/posts/PV-Mount-&-HyperParameter-Tuning/',
     match: /PV|HyperParameter|마운트/,
   },
+  {
+    name: 'post-mermaid',
+    path: '/posts/아두이노-초음파-SLAM/',
+    resolve: false,
+  },
 ]
 const MODES = ['light', 'dark']
 const VIEWPORTS = [
@@ -47,7 +52,7 @@ const selected = (value, all) =>
   process.env[value]
     ? all.filter((entry) => process.env[value].split(',').includes(entry.name || entry))
     : all
-const isPostRoute = (name) => name === 'post' || name === 'post-code-heavy' || name === 'post-list-heavy'
+const isPostRoute = (name) => name === 'post' || name.startsWith('post-')
 
 function formatFailure(failure) {
   return [
@@ -414,7 +419,7 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
         }
       }
 
-      if (route === 'post' || route === 'post-code-heavy' || route === 'post-list-heavy') {
+      if (route === 'post' || route.startsWith('post-')) {
         const article = first('article.post-article')
         if (!article) {
           fail('article.post-article', 'presence', 'missing', 'required')
@@ -460,7 +465,7 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
 
           for (const selector of ['article.post-article > .content li', 'article.post-article > .content p']) {
             for (const element of document.querySelectorAll(selector)) {
-              if (!visible(element)) continue
+              if (!visible(element) || element.closest('.mermaid')) continue
               const elementStyle = style(element)
               const lineHeight = cssNumber(elementStyle.lineHeight)
               const fontSize = cssNumber(elementStyle.fontSize)
@@ -486,6 +491,32 @@ async function collectEvidence(page, routeName, viewport, screenshot) {
               const box = rect(element)
               if (box && box.right > innerWidth + 2)
                 fail(selector, 'right edge', `${box.right}px`, '<=viewport')
+            }
+          }
+
+          if (route === 'post-mermaid') {
+            const diagrams = [...document.querySelectorAll('article.post-article > .content .mermaid')].filter(visible)
+            if (!diagrams.length) fail('.mermaid', 'count', '0', '>0')
+            for (const diagram of diagrams) {
+              const diagramStyle = style(diagram)
+              const diagramBox = rect(diagram)
+              const contentBox = rect(content)
+              if (!['auto', 'scroll'].includes(diagramStyle.overflowX))
+                fail('.mermaid', 'overflow-x', diagramStyle.overflowX, 'auto or scroll')
+              if (diagramStyle.maxInlineSize === 'none')
+                fail('.mermaid', 'max-inline-size', diagramStyle.maxInlineSize, '<=100%')
+              if (diagramBox && contentBox && (diagramBox.left < contentBox.left - 2 || diagramBox.right > contentBox.right + 2))
+                fail('.mermaid', 'article containment', `${Math.round(diagramBox.left)}-${Math.round(diagramBox.right)}px`, `within ${Math.round(contentBox.left)}-${Math.round(contentBox.right)}px`)
+              const svg = diagram.querySelector('svg')
+              if (!svg) {
+                fail('.mermaid svg', 'presence', 'missing', 'required')
+                continue
+              }
+              const svgBox = rect(svg)
+              if (innerWidth <= 390 && diagram.scrollWidth <= diagram.clientWidth + 8)
+                fail('.mermaid', 'controlled horizontal scroll', `${diagram.scrollWidth}<=${diagram.clientWidth}`, 'scrollWidth > clientWidth')
+              if (innerWidth <= 390 && svgBox && svgBox.width < 480)
+                fail('.mermaid svg', 'mobile rendered width', `${Math.round(svgBox.width)}px`, '>=480px readable diagram')
             }
           }
 
@@ -608,7 +639,7 @@ async function main() {
         let routePath = route.path
         try {
           if (isPostRoute(route.name) && process.env.POST_PATH) routePath = process.env.POST_PATH
-          if (isPostRoute(route.name) && !process.env.POST_PATH) routePath = await resolvePostPath(page, baseURL, route)
+          if (isPostRoute(route.name) && !process.env.POST_PATH && route.resolve !== false) routePath = await resolvePostPath(page, baseURL, route)
 
           let navigationError
           const response = await page
@@ -642,6 +673,13 @@ async function main() {
               const wrapper = document.querySelector('#search-result-wrapper')
               const results = document.querySelector('#search-results')
               return wrapper && !wrapper.classList.contains('d-none') && results && results.textContent.trim().length > 0
+            }, null, { timeout: 5000 })
+          }
+          if (route.name === 'post-mermaid') {
+            await page.waitForFunction(() => {
+              const mermaid = document.querySelector('article.post-article > .content .mermaid')
+              const svg = mermaid?.querySelector('svg')
+              return mermaid && svg && mermaid.getAttribute('data-processed') === 'true'
             }, null, { timeout: 5000 })
           }
           await page.screenshot({ path: image, fullPage: true })

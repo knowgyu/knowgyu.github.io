@@ -3,7 +3,8 @@ title: "안녕하세요 !"
 author: knowgyu
 date: 2018-03-02 11:22:33 +0900
 published: false
-description: 자기소개글
+description: "안녕하세요 !에서 개인 소개나 작업 회고의 핵심 맥락을 정리한다."
+kind: reflection
 pin : true
 categories: []
 tags: []

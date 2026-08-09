@@ -1,7 +1,8 @@
 ---
 title: "Component-Write"
 author: knowgyu
-description: "컴포넌트 작성"
+description: "Component-Write의 핵심 개념과 Kubeflow 내용을 정리한다."
+kind: technical-note
 date: 2023-12-01 08:05:24 +0900
 math: true
 categories: [AI & CV, Kubeflow]

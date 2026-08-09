@@ -2,6 +2,7 @@
 title: "Setup Components(Prometheus & Grafana)"
 author: knowgyu
 description: "Prometheus Grafana 설정"
+kind: technical-note
 date: 2023-11-16 14:03:38 +0900
 math: true
 categories: [AI & CV, Kubeflow]

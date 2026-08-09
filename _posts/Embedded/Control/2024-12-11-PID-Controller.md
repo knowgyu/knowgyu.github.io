@@ -1,7 +1,8 @@
 ---
 title: "PID Controller"
 author: knowgyu
-description: "PID Controller 정리"
+description: "PID Controller의 핵심 개념과 ⭐ 고전제어 PID Control 내용을 정리한다."
+kind: technical-note
 date: 2022-10-25 07:24:20 +0900
 math: true
 categories: [Embedded System, Control Engineering]

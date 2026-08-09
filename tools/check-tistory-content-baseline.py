@@ -29,6 +29,7 @@ PRIVATE_POST = POSTS / "얘이제내려2000-11-30-First-Posting.md"
 PRIVATE_TOKENS = ("얘이제내려", "First-Posting", "안녕하세요 !")
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 VALID_KINDS = {"technical-note", "project-log", "reflection"}
+DESCRIPTION_MAX = 80
 LEGACY_PROJECT_POSTS = {
     Path("_posts/Embedded/2024-12-10-Aruco-마커를-활용한-자율주행-RC카.md"),
     Path("_posts/Embedded/2024-12-16-아두이노-초음파-SLAM.md"),
@@ -221,10 +222,10 @@ def clean_description(text: str, categories: list[str]) -> str:
     text = ENDING_PUNCTUATION.sub("", text).strip()
     if not re.search(r"[가-힣]", text):
         text = fallback_description(text, categories)
-    text = text[:28].rstrip()
+    text = text[:DESCRIPTION_MAX].rstrip()
     if not re.search(r"[가-힣]", text):
         text = fallback_description(text, categories)
-    return text[:28].rstrip()
+    return text[:DESCRIPTION_MAX].rstrip()
 
 
 def title_from_front_matter(fm: dict[str, str], post: Path) -> str:
@@ -232,6 +233,45 @@ def title_from_front_matter(fm: dict[str, str], post: Path) -> str:
     if title:
         return title
     return re.sub(r"^\d{4}-\d{2}-\d{2}-", "", post.stem)
+
+
+def front_matter_lines(path: Path) -> list[str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return []
+    end = text.find("\n---", 4)
+    if end == -1:
+        return []
+    return text[4:end].splitlines()
+
+
+def comparable_text(text: str) -> str:
+    return re.sub(r"[^0-9A-Za-z가-힣]", "", text).lower()
+
+
+def is_unhelpful_description(description: str, title: str, max_description: int = DESCRIPTION_MAX) -> str | None:
+    cleaned = description.strip()
+    if cleaned.lower() in PLACEHOLDERS:
+        return "blank or placeholder description"
+    if not cleaned:
+        return "missing description"
+    if len(cleaned) < 8:
+        return "description too short to be useful"
+    if len(cleaned) > max_description:
+        return f"description over {max_description} chars"
+    if EMOJI.search(cleaned):
+        return "description contains emoji"
+    if not re.search(r"[가-힣]", cleaned):
+        return "description lacks Korean wording"
+    title_key = comparable_text(title)
+    desc_key = comparable_text(cleaned)
+    if title_key and desc_key == title_key:
+        return "description repeats title"
+    if title_key and len(desc_key) >= 8 and len(desc_key) < len(title_key) and title_key.startswith(desc_key):
+        return "description is a truncated title"
+    if cleaned in {"기술 학습 기록", "정리", "학습 기록", "프로젝트 기록"}:
+        return "description is too generic"
+    return None
 
 
 def normalize_post(path: Path) -> bool:
@@ -257,8 +297,7 @@ def normalize_post(path: Path) -> bool:
         generated = clean_description(title_from_front_matter(fm, path), inline_list(fm.get("categories")))
         needs_description = (
             description.lower() in PLACEHOLDERS
-            or len(description) > 28
-            or bool(ENDING_PUNCTUATION.search(description))
+            or len(description) > DESCRIPTION_MAX
             or bool(EMOJI.search(description))
             or not re.search(r"[가-힣]", description)
         )
@@ -287,7 +326,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true", help="fail when drift remains")
     parser.add_argument("--fix", action="store_true", help="normalize front matter in place")
-    parser.add_argument("--max-description", type=int, default=28)
+    parser.add_argument("--max-description", type=int, default=DESCRIPTION_MAX)
     args = parser.parse_args()
 
     posts = sorted(POSTS.rglob("*.md"))
@@ -310,21 +349,26 @@ def main() -> int:
             published += 1
         else:
             unpublished += 1
-            continue
 
         description = scalar(fm.get("description")).strip()
         categories = inline_list(fm.get("categories"))
+        title = title_from_front_matter(fm, post)
 
-        if description.lower() in PLACEHOLDERS:
-            findings.append(f"{rel}: blank or placeholder description")
-        if description and len(description) > args.max_description:
-            findings.append(f"{rel}: description over {args.max_description} chars")
-        if description and ENDING_PUNCTUATION.search(description):
-            findings.append(f"{rel}: description ends with punctuation")
-        if description and EMOJI.search(description):
-            findings.append(f"{rel}: description contains emoji")
-        if description and not re.search(r"[가-힣]", description):
-            findings.append(f"{rel}: description lacks Korean wording")
+        description_issue = is_unhelpful_description(description, title, args.max_description)
+        if description_issue:
+            findings.append(f"{rel}: {description_issue}")
+
+        raw_kind = fm.get("kind", "")
+        kind = scalar(raw_kind)
+        kind_lines = [line for line in front_matter_lines(post) if line.startswith("kind:")]
+        if len(kind_lines) != 1:
+            findings.append(f"{rel}: must have exactly one kind")
+        elif is_listish(raw_kind) or kind not in VALID_KINDS:
+            findings.append(f"{rel}: kind must be one of {', '.join(sorted(VALID_KINDS))}")
+
+        if not is_published:
+            continue
+
         if not categories:
             findings.append(f"{rel}: missing public categories")
         if len(categories) > 2:
@@ -338,10 +382,6 @@ def main() -> int:
             value = scalar(raw)
             if raw is not None and (is_listish(raw) or not value or not SLUG.fullmatch(value)):
                 findings.append(f"{rel}: {key} must be one lowercase-hyphenated scalar")
-        raw_kind = fm.get("kind", "")
-        kind = scalar(raw_kind)
-        if kind and (is_listish(raw_kind) or kind not in VALID_KINDS):
-            findings.append(f"{rel}: kind must be one of {', '.join(sorted(VALID_KINDS))}")
         if rel in LEGACY_PROJECT_POSTS and not scalar(fm.get("project")):
             findings.append(f"{rel}: migrated project post missing project metadata")
 

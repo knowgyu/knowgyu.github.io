@@ -1,7 +1,8 @@
 ---
 title: "ROS Recovery Behavior 설정(Backoff 추가)"
 author: knowgyu
-description: "ROS Recovery Behavior 설정(Bac"
+description: "ROS Recovery Behavior 설정(Backoff 추가)에서 개요를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2025-02-05 12:04:57 +0900
 math: true
 categories: [Embedded System, ROS]

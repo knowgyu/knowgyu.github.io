@@ -1,7 +1,8 @@
 ---
 title: "Pipeline-Write"
 author: knowgyu
-description: "파이프라인 작성"
+description: "Pipeline-Write의 핵심 개념과 Kubeflow Pipeline 작성 내용을 정리한다."
+kind: technical-note
 date: 2023-12-01 08:05:33 +0900
 math: true
 categories: [AI & CV, Kubeflow]

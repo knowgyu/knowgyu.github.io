@@ -1,7 +1,8 @@
 ---
 title: "Pipeline-Run"
 author: knowgyu
-description: "파이프라인 실행"
+description: "Pipeline-Run의 핵심 개념과 Kubeflow Pipeline 실행 내용을 정리한다."
+kind: technical-note
 date: 2023-12-02 08:05:44 +0900
 math: true
 categories: [AI & CV, Kubeflow]

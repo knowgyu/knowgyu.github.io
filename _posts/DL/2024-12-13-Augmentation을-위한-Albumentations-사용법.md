@@ -1,7 +1,8 @@
 ---
 title: "Data Augmentation을 위해 Albumentations 사용해보기"
 author: knowgyu
-description: "Data Augmentation을 위해 Albume"
+description: "Data Augmentation을 위해 Albumentations 사용해보기의 핵심 개념과 1. Albumentations란? 내용을 정리한다."
+kind: technical-note
 date: 2023-11-13 16:01:17 +0900
 math: true
 categories: [AI & CV, Dataset]

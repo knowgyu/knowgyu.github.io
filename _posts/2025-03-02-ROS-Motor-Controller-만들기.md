@@ -1,7 +1,8 @@
 ---
 title: "ROS Motor Controller 패키지 생성"
 author: knowgyu
-description: "ROS Motor Controller 패키지 생성"
+description: "ROS Motor Controller 패키지 생성에서 개요를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2025-01-28 10:00:36 +0900
 math: true
 categories: [Embedded System, ROS]

@@ -416,7 +416,26 @@ main {
 
 /* mermaid */
 .mermaid {
+  display: block;
+  max-inline-size: 100%;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   text-align: center;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+
+  svg {
+    display: block;
+    width: auto !important;
+    max-width: none !important;
+    height: auto;
+    margin-inline: auto;
+
+    @include bp.lt(bp.get(lg)) {
+      min-width: 36rem;
+    }
+  }
 }
 
 /* MathJax */

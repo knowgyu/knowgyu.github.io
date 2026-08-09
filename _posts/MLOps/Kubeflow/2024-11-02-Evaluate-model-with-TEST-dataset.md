@@ -2,6 +2,7 @@
 title: "Evaluate model with TEST dataset"
 author: knowgyu
 description: "테스트 데이터셋 평가"
+kind: project-log
 date: 2023-12-10 09:43:07 +0900
 math: true
 categories: [AI & CV, Kubeflow]

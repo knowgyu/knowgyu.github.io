@@ -1,7 +1,8 @@
 ---
 title: "Docker를 이용해 Gradio Yolov7모델 서빙 웹사이트 만들기"
 author: knowgyu
-description: "Docker를 이용해 Gradio Yolov7모델"
+description: "Docker로 Gradio YOLOv7 서빙 환경을 패키징하고 배포하는 과정을 정리한다."
+kind: project-log
 date: 2023-10-13 10:34:32 +0900
 math: true
 categories: [AI & CV, Gradio를 활용한 웹 기반 서빙]

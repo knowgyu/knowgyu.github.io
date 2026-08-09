@@ -1,7 +1,8 @@
 ---
 title: "Pipeline-Upload"
 author: knowgyu
-description: "파이프라인 업로드"
+description: "Pipeline-Upload의 핵심 개념과 Kubeflow Pipeline 업로드 내용을 정리한다."
+kind: technical-note
 date: 2023-11-27 07:14:47 +0900
 math: true
 categories: [AI & CV, Kubeflow]

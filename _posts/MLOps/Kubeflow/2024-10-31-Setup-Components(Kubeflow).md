@@ -2,6 +2,7 @@
 title: "Setup Components(Kubeflow)"
 author: knowgyu
 description: "Components(Kubeflow) 정리"
+kind: technical-note
 date: 2023-11-16 14:03:07 +0900
 math: true
 categories: [AI & CV, Kubeflow]

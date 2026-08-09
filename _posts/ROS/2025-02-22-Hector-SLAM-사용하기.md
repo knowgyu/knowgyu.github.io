@@ -1,7 +1,8 @@
 ---
 title: "Hector SLAM 사용하기"
 author: knowgyu
-description: "Hector SLAM 사용하기"
+description: "Hector SLAM 사용하기에서 Hector SLAM 개요를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2025-01-22 19:39:09 +0900
 math: true
 categories: [Embedded System, ROS]

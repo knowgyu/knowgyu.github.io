@@ -1,7 +1,8 @@
 ---
 title: "[Error] Docker CLI Context 에러"
 author: knowgyu
-description: "[Error] Docker CLI Context 에"
+description: "[Error] Docker CLI Context 에러의 핵심 개념과 현상 내용을 정리한다."
+kind: technical-note
 date: 2023-09-05 13:49:13 +0900
 math: true
 categories: [Computer Science, Docker]

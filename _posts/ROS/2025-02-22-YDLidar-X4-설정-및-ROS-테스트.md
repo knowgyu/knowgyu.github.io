@@ -1,7 +1,8 @@
 ---
 title: "YDLidar X4 설정 및 ROS 테스트"
 author: knowgyu
-description: "YDLidar X4 설정 및 ROS 테스트"
+description: "YDLidar X4 설정 및 ROS 테스트에서 개요를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2025-01-13 17:03:58 +0900
 math: true
 categories: [Embedded System, ROS]

@@ -1,7 +1,8 @@
 ---
 title: "Misc. Kubeflow Change password & Add User"
 author: knowgyu
-description: "기술 학습 기록"
+description: "Misc. Kubeflow Change password & Add User의 핵심 개념과 Change User Password 내용을 정리한다."
+kind: technical-note
 date: 2023-11-26 05:46:09 +0900
 math: true
 categories: [AI & CV, Kubeflow]

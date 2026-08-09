@@ -1,7 +1,8 @@
 ---
 title: "[PyTorch] float(), fuse(), eval()"
 author: knowgyu
-description: "PyTorch 함수 정리"
+description: "[PyTorch] float(), fuse(), eval()의 핵심 개념과 fuse() 내용을 정리한다."
+kind: technical-note
 date: 2023-11-15 12:09:49 +0900
 math: true
 categories: [AI & CV, PyTorch]

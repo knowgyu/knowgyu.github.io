@@ -1,7 +1,8 @@
 ---
 title: "ROS Navigation Stack 설정하기"
 author: knowgyu
-description: "ROS Navigation Stack 설정하기"
+description: "ROS Navigation Stack 설정하기에서 개요를 중심으로 설정·구현 흐름을 기록한다."
+kind: project-log
 date: 2025-02-03 10:30:37 +0900
 math: true
 categories: [Embedded System, ROS]

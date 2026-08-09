@@ -2,6 +2,7 @@
 title: "Setup Components(Seldon-core)"
 author: knowgyu
 description: "Components(Seldon core) 정리"
+kind: technical-note
 date: 2023-11-16 14:03:28 +0900
 math: true
 categories: [AI & CV, Kubeflow]
